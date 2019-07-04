@@ -1,0 +1,85 @@
+Command name argument expected.
+
+[m[1mAvailable commands for gcloud:[m
+
+[m  [1mAI and Machine Learning[m
+      ai-platform             Manage AI Platform jobs and models.
+      ml                      Use Google Cloud machine learning capabilities.
+      ml-engine               Manage AI Platform jobs and models.
+
+[m  [1mAPI Platform and Ecosystems[m
+      endpoints               Create, enable and manage API services.
+      service-management      Create, enable and manage API services.
+      services                List, enable and disable APIs and services.
+
+[m  [1mCompute[m
+      app                     Manage your App Engine deployments.
+      compute                 Create and manipulate Google Compute Engine
+                              resources.
+      container               Deploy and manage clusters of machines for running
+                              containers.
+      functions               Manage Google Cloud Functions.
+
+[m  [1mData Analytics[m
+      composer                Create and manage Cloud Composer Environments.
+      dataflow                Manage Google Cloud Dataflow jobs.
+      dataproc                Create and manage Google Cloud Dataproc clusters
+                              and jobs.
+      pubsub                  Manage Cloud Pub/Sub topics, subscriptions, and
+                              snapshots.
+
+[m  [1mDatabases[m
+      bigtable                Manage your Cloud Bigtable storage.
+      datastore               Manage your Cloud Datastore indexes.
+      spanner                 Command groups for Cloud Spanner.
+      sql                     Create and manage Google Cloud SQL databases.
+
+[m  [1mIdentity and Security[m
+      access-context-manager  Manage Access Context Manager resources.
+      auth                    Manage oauth2 credentials for the Google Cloud
+                              SDK.
+      iam                     Manage IAM service accounts and keys.
+      kms                     Manage cryptographic keys in the cloud.
+
+[m  [1mInternet of Things[m
+      iot                     Manage Cloud IoT resources.
+
+[m  [1mManagement Tools[m
+      builds                  Create and manage builds for Google Cloud Build.
+      debug                   Commands for interacting with the Cloud Debugger.
+      deployment-manager      Manage deployments of cloud resources.
+      logging                 Manage Stackdriver Logging.
+      organizations           Create and manage Google Cloud Platform
+                              Organizations.
+      projects                Create and manage project access policies.
+
+[m  [1mMobile[m
+      firebase                Work with Google Firebase.
+
+[m  [1mNetworking[m
+      dns                     Manage your Cloud DNS managed-zones and
+                              record-sets.
+      domains                 Manage domains for your Google Cloud projects.
+
+[m  [1mSDK Tools[m
+      alpha                   Alpha versions of gcloud commands.
+      beta                    Beta versions of gcloud commands.
+      components              List, install, update, or remove Google Cloud SDK
+                              components.
+      config                  View and edit Cloud SDK properties.
+      feedback                Provide feedback to the Google Cloud SDK team.
+      help                    Search gcloud help text.
+      info                    Display information about the current gcloud
+                              environment.
+      init                    Initialize or reinitialize gcloud.
+      meta                    Cloud meta introspection commands.
+      source                  Cloud git repository commands.
+      topic                   gcloud supplementary help.
+      version                 Print version information for Cloud SDK
+                              components.
+
+[m  [1mStorage[m
+      filestore               Create and manipulate Cloud Filestore resources.
+      redis                   Manage Cloud Memorystore Redis resources.
+
+[m
