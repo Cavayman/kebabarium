@@ -1,5 +1,7 @@
-Working easy to set up boilerplate. 
-To run: 
->go to root
->cd tutorials-servers 
->mvn spring-boot:run
+To run back-end server 
+./tutorial-server/ mvn spring-boot:run
+
+to run front-end 
+./tutorial-frontend/ npm start
+
+to run whole project just run server 
