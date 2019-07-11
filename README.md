@@ -1,4 +1,10 @@
-# spring-boot-angular6-maven-project
-Build and package spring boot and angular6 into a deployable war file
+ЗМІНИ СААААШІІ, ТО Я 
 
-The corresponding article can be found at https://techshard.com/2018/08/12/building-a-web-app-using-spring-boot-angular-6-and-maven/ and https://dzone.com/articles/building-a-web-app-using-spring-boot-angular-6-and
+
+To run back-end server 
+./tutorial-server/ mvn spring-boot:run
+
+to run front-end 
+./tutorial-frontend/ npm start
+
+to run whole project just run server 
