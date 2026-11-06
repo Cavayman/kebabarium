@@ -1,0 +1,27 @@
+{
+  "name": "kebabarium",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=22.22"
+  },
+  "scripts": {
+    "test": "npm test --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
+    "dev": "npm -w apps/worker run dev",
+    "deploy": "npm -w apps/worker run deploy",
+    "check-secrets": "npm -w apps/worker run check-secrets"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "esbuild@0.28.2": true,
+    "workerd@1.20260815.1": true,
+    "workerd@1.20261104.1": true,
+    "@parcel/watcher": false,
+    "lmdb": false,
+    "msgpackr-extract": false
+  }
+}

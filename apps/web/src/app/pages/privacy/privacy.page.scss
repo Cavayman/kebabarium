@@ -1,0 +1,8 @@
+:host { display: block; height: 100%; overflow: auto; }
+.doc { max-width: 720px; margin: 24px auto 64px; padding: 24px 28px; border-radius: 24px; line-height: 1.6; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: 24px; margin: 8px 0 4px; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 16px; margin: 22px 0 6px; }
+.muted { color: var(--dim); font-size: 13px; }
+.back { color: var(--dim); text-decoration: none; font-size: 13px; }
+a { color: var(--acc2); }
+code { font-family: var(--font-mono); font-size: 12px; background: rgba(255, 255, 255, 0.08); padding: 1px 5px; border-radius: 6px; }

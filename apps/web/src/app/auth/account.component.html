@@ -1,0 +1,33 @@
+<ng-container *transloco="let t">
+  @if (auth.me(); as me) {
+    <button type="button" class="avatar" (click)="menuOpen.set(!menuOpen())" aria-haspopup="menu" [attr.aria-expanded]="menuOpen()" [attr.aria-label]="me.displayName">
+      @if (me.avatarUrl) {
+        <img [src]="me.avatarUrl" alt="" referrerpolicy="no-referrer" />
+      } @else {
+        {{ initial() }}
+      }
+    </button>
+    @if (menuOpen()) {
+      <div class="menu glass" role="menu">
+        <div class="who"><b>{{ me.displayName }}</b></div>
+        <a role="menuitem" routerLink="/me" (click)="menuOpen.set(false)"><kb-icon name="user" [size]="14" />{{ t('auth.profile') }}</a>
+        <div class="row">
+          <span>{{ t('auth.language') }}</span>
+          <div class="seg">
+            <button type="button" data-lang="uk" [class.on]="langs.current() === 'uk'" (click)="setLang('uk')">Українська</button>
+            <button type="button" data-lang="en" [class.on]="langs.current() === 'en'" (click)="setLang('en')">English</button>
+          </div>
+        </div>
+        <label class="tog"><input type="checkbox" [checked]="me.showRealName" (change)="toggle('showRealName')" />{{ t('auth.showName') }}</label>
+        <label class="tog"><input type="checkbox" [checked]="me.hideFromLeaderboard" (change)="toggle('hideFromLeaderboard')" />{{ t('auth.hideLb') }}</label>
+        @if (auth.isAdmin()) {
+          <a role="menuitem" routerLink="/admin" (click)="menuOpen.set(false)">{{ t('auth.admin') }}</a>
+        }
+        <button type="button" role="menuitem" class="out" (click)="logout()">{{ t('auth.logout') }}</button>
+      </div>
+    }
+  } @else {
+    <button type="button" class="chip acc" (click)="ui.loginOpen.set(true)">{{ t('nav.login') }}</button>
+  }
+
+</ng-container>

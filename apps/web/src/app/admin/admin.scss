@@ -1,0 +1,80 @@
+// Shared styles for admin tabs (imported by each tab component).
+:host {
+  display: block;
+}
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+  .field {
+    width: auto;
+    flex: 1;
+    min-width: 160px;
+  }
+  select.field {
+    flex: none;
+  }
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+th,
+td {
+  text-align: left;
+  padding: 8px 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  vertical-align: middle;
+}
+th {
+  color: var(--dim);
+  font-weight: 600;
+  font-size: 12px;
+}
+td .field {
+  padding: 6px 8px;
+  font-size: 13px;
+}
+.muted {
+  color: var(--dim);
+  font-size: 12px;
+}
+.pill {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--hover);
+}
+.pill.dead {
+  color: var(--bad);
+}
+.pill.cand {
+  color: var(--acc2);
+}
+.act {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.chip.sm {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+.danger {
+  color: var(--bad);
+}
+.card {
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  margin-bottom: 8px;
+}
+.scroll {
+  overflow-x: auto;
+}

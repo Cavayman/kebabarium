@@ -1,0 +1,220 @@
+// Design tokens and global styles (spec §5; visual reference docs/superpowers/mockups/home.html).
+// Rules: no coloured glows, flat buttons, neutral drop shadows only.
+
+:root {
+  --bg: #0a0a0c;
+  --fg: #ffffff;
+  --dim: #a3a3a8;
+  --muted: #6d6d73;
+  --acc: #ff7a00; // brand accent — never a rating colour
+  --acc-hover: #ff8a1f;
+  --acc2: #ffb347;
+  --ok: #3ee07a;
+  --bad: #ff6b6b;
+  --glass: rgba(28, 28, 32, 0.55);
+  --glass-strong: rgba(22, 22, 26, 0.82);
+  --edge: rgba(255, 255, 255, 0.13);
+  --hover: rgba(255, 255, 255, 0.08);
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  --radius: 22px;
+  --chip-h: 34px;
+  --font-body: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Unbounded', var(--font-body);
+  --font-mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+// thin dark scrollbars everywhere
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  backdrop-filter: blur(20px) saturate(170%);
+  border: 1px solid var(--edge);
+  box-shadow: var(--shadow);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background: var(--glass-strong);
+  }
+}
+
+.chip {
+  height: var(--chip-h);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--hover);
+  color: var(--fg);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.16);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--acc2);
+    outline-offset: 2px;
+  }
+  &.acc {
+    background: var(--acc);
+    color: #fff;
+    &:hover {
+      background: var(--acc-hover);
+    }
+  }
+  &[disabled] {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.mini {
+  border: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--hover);
+  color: var(--dim);
+  cursor: pointer;
+  &:hover {
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+  }
+}
+
+.seg {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+
+  button {
+    border: 0;
+    background: none;
+    padding: 5px 4px;
+    border-radius: 999px;
+    color: var(--dim);
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    &.on {
+      background: var(--acc2);
+      color: #1a0a00;
+    }
+  }
+}
+
+.field {
+  width: 100%;
+  font-size: 14px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--edge);
+  border-radius: 12px;
+  padding: 9px 11px;
+  outline: none;
+  &:focus {
+    border-color: var(--acc2);
+  }
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@keyframes kb-pop {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes kb-sheet {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

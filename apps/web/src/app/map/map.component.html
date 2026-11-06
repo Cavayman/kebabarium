@@ -1,0 +1,10 @@
+<div class="kb-map">
+  <div #mapEl class="kb-map-canvas"></div>
+  <div #overlay class="kb-map-overlay" aria-hidden="true">
+    @for (l of labels(); track l.id) {
+      <div class="tag" [class.dead]="l.dead" [style.transform]="'translate(' + l.x + 'px,' + l.y + 'px) translate(-50%, -130%)'">
+        @if (l.score) {<b>{{ l.score }}</b>{{ ' ' }}}{{ l.text }}
+      </div>
+    }
+  </div>
+</div>

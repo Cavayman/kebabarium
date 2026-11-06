@@ -1,0 +1,28 @@
+{
+  "name": "@kebabarium/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --env dev --port 8787",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "db:migrate:local": "wrangler d1 migrations apply kebabarium --local --env dev",
+    "db:seed:local": "wrangler d1 execute kebabarium --local --env dev --file=seed/dev.sql",
+    "deploy": "npm -w @kebabarium/web run build && wrangler d1 migrations apply kebabarium --remote && wrangler deploy",
+    "check-secrets": "node scripts/check-secrets.mjs"
+  },
+  "dependencies": {
+    "@kebabarium/shared": "*",
+    "hono": "^4.13.0",
+    "jose": "^6.2.15",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.23.0",
+    "@cloudflare/workers-types": "^5.20261106.1",
+    "typescript": "~6.0.0",
+    "vitest": "^4.1.0",
+    "wrangler": "^4.158.0"
+  }
+}

@@ -1,0 +1,187 @@
+{
+  "brand": "kebabarium",
+  "nav": {
+    "near": "Nearby",
+    "login": "Log in",
+    "city": "City",
+    "spots": "{{n}} spots"
+  },
+  "fab": {
+    "review": "Leave a review"
+  },
+  "legend": {
+    "caption": "taller & greener = tastier"
+  },
+  "layout": {
+    "reset": "Reset",
+    "collapse": "Collapse",
+    "close": "Close"
+  },
+  "lb": {
+    "title": "Top in {{city}}",
+    "spots": "Spots",
+    "chains": "Chains",
+    "districts": "Areas",
+    "tasters": "Tasters",
+    "chainSpots": "{{n}} spots",
+    "ratings": "{{n}} ratings",
+    "empty": "No ratings yet",
+    "short": "Top"
+  },
+  "feed": {
+    "title": "What people say",
+    "live": "live",
+    "all": "All",
+    "ours": "Ours",
+    "google": "Google",
+    "threads": "Threads",
+    "badgeOurs": "ours",
+    "threadsDown": "Threads is temporarily unavailable",
+    "empty": "Quiet so far. Be the first!",
+    "pending": "in review",
+    "anon": "anonymous"
+  },
+  "caption": {
+    "rated": "{{who}} gave {{n}}★",
+    "google": "new Google review · {{n}}★",
+    "low": "oops… {{n}}★",
+    "threads": "mentioned on Threads",
+    "new": "new spot on the map ✨"
+  },
+  "card": {
+    "independent": "independent spot",
+    "chain": "{{chain}} · chain {{score}} ({{n}} spots)",
+    "total": "overall",
+    "ours": "ours",
+    "google": "Google",
+    "reviews": "{{n}} reviews",
+    "open": "open",
+    "closedTemp": "temporarily closed",
+    "dead": "closed",
+    "movedTo": "closed — moved: {{name}}",
+    "movedFrom": "formerly: {{name}}",
+    "rate": "Rate",
+    "route": "Directions",
+    "more": "All reviews",
+    "noReviews": "No reviews yet",
+    "googleBadge": "Google"
+  },
+  "review": {
+    "title": "Leave a review",
+    "place": "Spot",
+    "placePh": "Start typing a name…",
+    "rating": "Rating",
+    "text": "What do you think?",
+    "optional": "optional, up to 280 characters",
+    "textPh": "fresh lavash, great sauce…",
+    "nick": "Signature",
+    "nickOptional": "optional",
+    "nickPh": "anonymous taster",
+    "hint": "Without logging in your review appears after a quick check and weighs a bit less. Log in to make your ratings count fully and keep your history.",
+    "send": "Send",
+    "sent": "Thanks! Your review is {{status}}",
+    "statusPublished": "live",
+    "statusPending": "going live in a few minutes",
+    "errPlace": "Pick a spot from the list.",
+    "errStars": "Give it some stars.",
+    "errCooldown": "You already rated this spot. Next review here in {{days}} days.",
+    "errRate": "Too many reviews in a row. Try again a bit later.",
+    "errBanned": "You can't post reviews.",
+    "errBot": "Bot check failed. Reload the page.",
+    "errClosed": "This spot is closed.",
+    "errNetwork": "Something went wrong. Try again.",
+    "words": [
+      "bad",
+      "meh",
+      "okay",
+      "tasty",
+      "top!"
+    ]
+  },
+  "near": {
+    "title": "Near you",
+    "locating": "Finding you…",
+    "scanning": "Looking for shawarma nearby…",
+    "widened": "Few spots right next to you — widened the search to {{km}} km",
+    "best": "best nearby",
+    "walk": "{{min}} min walk",
+    "m": "{{n}} m",
+    "km": "{{n}} km",
+    "empty": "Nothing nearby. Try a bigger radius.",
+    "noGps": "Couldn't find where you are. Tap the map to pick a point.",
+    "pickHint": "Tap a point on the map"
+  },
+  "auth": {
+    "title": "Log in",
+    "subtitle": "Log in with Google so your ratings count fully and your history is kept.",
+    "nickTitle": "How should we sign you?",
+    "nickHint": "3–24 characters: letters, digits, _ . -",
+    "nickTaken": "That nickname is taken",
+    "nickBad": "Only letters, digits, _ . - (3–24 characters)",
+    "save": "Save",
+    "profile": "My profile",
+    "language": "Language",
+    "showName": "Show my first and last name",
+    "hideLb": "Hide me from the leaderboard",
+    "admin": "Admin",
+    "logout": "Log out",
+    "notConfigured": "Sign-in is not configured yet"
+  },
+  "me": {
+    "title": "My profile",
+    "count": "{{n}} ratings",
+    "top": "My top",
+    "history": "History",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Delete this rating?",
+    "empty": "You haven't rated anything yet. Shawarma time!"
+  },
+  "boot": {
+    "ready": "ready. enjoy!"
+  },
+  "fallback": {
+    "noWebgl": "Your browser can't show the 3D map, so here is the list of spots."
+  },
+  "notFound": {
+    "title": "404 — no shawarma here",
+    "back": "Back to the map"
+  },
+  "privacy": {
+    "title": "Privacy"
+  },
+  "common": {
+    "loading": "Loading…",
+    "retry": "Try again",
+    "cancel": "Cancel",
+    "yes": "Yes"
+  },
+  "admin": {
+    "title": "Admin",
+    "places": "Spots",
+    "chains": "Chains",
+    "moderation": "Moderation",
+    "bans": "Bans",
+    "sync": "Sync",
+    "search": "Search…",
+    "status": "Status",
+    "all": "all",
+    "deadCandidates": "Possibly closed",
+    "movedTo": "Moved to…",
+    "save": "Save",
+    "approve": "Approve",
+    "hide": "Hide",
+    "hideAll": "Hide all from them",
+    "ban": "Ban",
+    "unban": "Unban",
+    "runNow": "Run now",
+    "budget": "API budget this month",
+    "pending": "Pending",
+    "held": "Held",
+    "newChain": "New chain",
+    "empty": "Empty"
+  },
+  "map": {
+    "moved": "moved → {{name}}"
+  }
+}

@@ -1,0 +1,168 @@
+kb-map {
+  display: block;
+  position: absolute;
+  inset: 0;
+}
+
+.kb-map,
+.kb-map-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.kb-map-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+
+  > * {
+    position: absolute;
+    left: 0;
+    top: 0;
+    will-change: transform;
+  }
+
+  .tag {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+    background: rgba(20, 20, 24, 0.6);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--edge);
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    b {
+      color: var(--acc2);
+    }
+    &.dead {
+      color: #999;
+      font-weight: 600;
+    }
+  }
+
+  // ---------- review drop ----------
+  .drop {
+    width: 0;
+    height: 0;
+  }
+  .drop .e {
+    position: absolute;
+    left: -15px;
+    top: 0;
+    font-size: 28px;
+    animation: kb-fall 2.6s cubic-bezier(0.5, 0, 0.6, 1) forwards;
+  }
+  .drop .cap {
+    position: absolute;
+    left: 0;
+    top: 0;
+    white-space: nowrap;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: rgba(20, 20, 24, 0.75);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--edge);
+    animation: kb-cap 2.6s ease forwards;
+  }
+  .drop .ring {
+    position: absolute;
+    left: -18px;
+    top: -6px;
+    width: 36px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #ffb066;
+    opacity: 0;
+    animation: kb-burst 0.8s ease-out 1.5s forwards;
+  }
+
+  // ---------- radar ----------
+  .radar {
+    width: 0;
+    height: 0;
+  }
+  .radar-plane {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform-origin: 0 0;
+  }
+  .radar-disc {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .radar-area {
+    background: radial-gradient(circle, rgba(255, 122, 0, 0.06) 0, rgba(255, 122, 0, 0.1) 60%, rgba(255, 122, 0, 0.18) 100%);
+    border: 1.5px solid rgba(255, 154, 51, 0.6);
+  }
+  .radar-sweep {
+    will-change: transform;
+    background: conic-gradient(from 0deg, transparent 0deg, transparent 290deg, rgba(255, 122, 0, 0.3) 350deg, rgba(255, 179, 71, 0.6) 360deg);
+    animation: kb-spin 1.6s linear infinite;
+  }
+  .radar-ring {
+    border: 2px solid var(--acc2);
+    opacity: 0;
+    will-change: transform, opacity;
+    animation: kb-ping 1.8s ease-out infinite;
+    &.r2 {
+      animation-delay: 0.6s;
+    }
+    &.r3 {
+      animation-delay: 1.2s;
+    }
+  }
+  .radar.done .radar-sweep,
+  .radar.done .radar-ring {
+    display: none;
+  }
+  .radar-me {
+    position: absolute;
+    left: -9px;
+    top: -9px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    border: 4px solid var(--acc);
+    box-shadow: 0 0 0 5px rgba(255, 122, 0, 0.2);
+  }
+}
+
+@keyframes kb-fall {
+  0% { transform: translateY(-150px) scale(0.6); opacity: 0; }
+  12% { opacity: 1; }
+  45% { transform: translateY(-40px) scale(1.15); }
+  55% { transform: translateY(-52px) scale(1); }
+  70% { transform: translateY(-36px); }
+  100% { transform: translateY(-8px) scale(0.4); opacity: 0; }
+}
+@keyframes kb-cap {
+  0% { transform: translate(-50%, -150px); opacity: 0; }
+  20% { opacity: 1; transform: translate(-50%, -100px); }
+  80% { opacity: 1; transform: translate(-50%, -104px); }
+  100% { opacity: 0; transform: translate(-50%, -112px); }
+}
+@keyframes kb-burst {
+  0% { transform: scale(0.3); opacity: 1; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+@keyframes kb-spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+@keyframes kb-ping {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0.9; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
