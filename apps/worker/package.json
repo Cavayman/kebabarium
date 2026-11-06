@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit",
     "db:migrate:local": "wrangler d1 migrations apply kebabarium --local --env dev",
     "db:seed:local": "wrangler d1 execute kebabarium --local --env dev --file=seed/dev.sql",
-    "deploy": "wrangler d1 migrations apply kebabarium --remote && wrangler deploy",
+    "deploy": "npm -w @kebabarium/web run build && wrangler d1 migrations apply kebabarium --remote && wrangler deploy",
     "check-secrets": "node scripts/check-secrets.mjs"
   },
   "dependencies": {

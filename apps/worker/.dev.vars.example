@@ -1,0 +1,12 @@
+# Copy to .dev.vars for `npm run dev` (never commit .dev.vars).
+SESSION_SECRET=dev-session-secret-change-me-0123456789
+IP_HASH_SECRET=dev-ip-hash-secret
+ADMIN_EMAILS=you@example.com
+# Optional in dev — without them the app uses the open MapLibre map and seed data:
+# GOOGLE_PLACES_KEY=
+# GOOGLE_MAPS_BROWSER_KEY=
+# GOOGLE_MAP_ID=
+# GOOGLE_OAUTH_CLIENT_ID=
+# TURNSTILE_SITE_KEY=
+# TURNSTILE_SECRET=
+# THREADS_TOKEN=

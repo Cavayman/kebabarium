@@ -12,7 +12,7 @@
     "test": "npm test --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
     "dev": "npm -w apps/worker run dev",
-    "deploy": "npm run build && npm -w apps/worker run deploy",
+    "deploy": "npm -w apps/worker run deploy",
     "check-secrets": "npm -w apps/worker run check-secrets"
   },
   "allowScripts": {

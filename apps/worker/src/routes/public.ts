@@ -35,7 +35,8 @@ publicRoutes.get('/config', (c) => {
     mapId: e.GOOGLE_MAP_ID ?? null,
     turnstileSiteKey: e.TURNSTILE_SITE_KEY ?? null,
     googleClientId: e.GOOGLE_OAUTH_CLIENT_ID ?? null,
-    mapProvider: e.GOOGLE_MAPS_BROWSER_KEY || e.ENVIRONMENT === 'production' ? 'google' : 'maplibre',
+    // Google content may only be shown on a Google map: the open map is allowed only while no Google key exists at all.
+    mapProvider: e.GOOGLE_MAPS_BROWSER_KEY || e.GOOGLE_PLACES_KEY ? 'google' : 'maplibre',
   };
   return c.json(body, 200, { 'Cache-Control': 'public, max-age=300' });
 });
