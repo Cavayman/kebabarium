@@ -12,13 +12,14 @@ export const SYNC = {
   refreshPerRun: 1,
   deadNotSeenDays: 30,
   deadNoActivityDays: 180,
-  threadsPerRun: 4,
+  /** Threads allows ~500 keyword searches per rolling 7 days: 2/hour = 336/week. */
+  threadsPerRun: 2,
 } as const;
 
 export const CAPS: Record<string, number> = {
   'places.text_search_pro': 4500,
   'places.details_enterprise_atmosphere': 900,
-  'threads.search': 20000,
+  'threads.search': 1800,
 };
 
 export type SyncKind = 'discovery' | 'refresh' | 'threads' | 'all';
