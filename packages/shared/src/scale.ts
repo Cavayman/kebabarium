@@ -9,7 +9,7 @@ const STOPS: ReadonlyArray<readonly [number, string]> = [
   [4.9, '#22c77a'],
 ];
 export const DEAD_COLOR = '#2e2e2e';
-export const NO_SCORE_COLOR = '#4a4a4f';
+export const NO_SCORE_COLOR = '#a1a1aa';
 
 export function ratingStops(): Array<[number, string]> {
   return STOPS.map(([v, c]) => [v, c]);

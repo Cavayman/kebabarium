@@ -45,7 +45,7 @@ export class GoogleMapProvider implements MapProvider {
       mapId: this.config.mapId ?? undefined,
       center: city.center,
       zoom: city.zoom + 1, // Google zoom levels are one step "closer" than MapLibre's 512px tiles
-      tilt: 58,
+      // no tilt here: a tilt above the zoom's maximum (~43° at z13.4) is dropped to 0 at construction; setTilt() below clamps instead
       heading: -18,
       renderingType: RenderingType.VECTOR,
       colorScheme: google.maps.ColorScheme.DARK, // the Map ID's dark-mode slot holds our style
@@ -69,6 +69,7 @@ export class GoogleMapProvider implements MapProvider {
       }, 0);
     });
     await new Promise<void>((resolve) => google.maps.event.addListenerOnce(this.map, 'idle', () => resolve()));
+    this.map.setTilt(58); // clamped by Google to the most this zoom allows
     this.render();
   }
 

@@ -21,7 +21,7 @@ describe('ratingColor', () => {
     expect(g).toBeGreaterThan(0xd1 - 1);
   });
   it('returns neutral grey for null and dark grey for dead', () => {
-    expect(ratingColor(null)).toBe('#4a4a4f');
+    expect(ratingColor(null)).toBe('#a1a1aa'); // light neutral: must stay visible on the dark map, unlike dead (#2e2e2e)
     expect(ratingColor(4.8, true)).toBe('#2e2e2e');
   });
   it('exposes the stops for gradients', () => {
