@@ -4,6 +4,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "types": [
+      "google.maps",
       "vitest/globals"
     ]
   },
