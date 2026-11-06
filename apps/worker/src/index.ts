@@ -9,12 +9,13 @@ import { adminRoutes } from './routes/admin';
 import { authRoutes } from './routes/auth';
 import { publicRoutes } from './routes/public';
 import { reviewRoutes } from './routes/reviews';
+import { apiBodyLimit, apiSecurityHeaders } from './security';
 
 export type { AppEnv } from './env';
 
 export const app = new Hono<AppEnv>();
 
-app.use('/api/*', csrfGuard, withUser);
+app.use('/api/*', apiSecurityHeaders, apiBodyLimit, csrfGuard, withUser);
 app.get('/api/health', (c) => c.json({ ok: true, env: c.env.ENVIRONMENT }));
 app.route('/api', publicRoutes);
 app.route('/api', authRoutes);
