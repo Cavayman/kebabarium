@@ -1,5 +1,10 @@
-*.iml
-.idea
 node_modules
-target
+dist
+.wrangler
+.dev.vars
+*.log
+.angular
+coverage
 .superpowers/
+.idea
+*.iml
