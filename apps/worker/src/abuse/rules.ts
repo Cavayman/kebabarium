@@ -35,11 +35,8 @@ function sameIdentity(id: Identity): { sql: string; args: unknown[] } {
   return { sql: `(${parts.join(' OR ')})`, args };
 }
 
-export async function evaluate(db: D1Database, ctx: ReviewContext): Promise<Decision> {
-  const { identity: id, now } = ctx;
-  const anon = id.userId == null;
-
-  // 1. bans
+/** True when the identity (user, device or network) has an active ban. */
+export async function isBanned(db: D1Database, id: Identity, now = new Date()): Promise<boolean> {
   const ban = await db
     .prepare(
       `SELECT id FROM abuse_bans WHERE (until IS NULL OR until > ?) AND (
@@ -48,7 +45,15 @@ export async function evaluate(db: D1Database, ctx: ReviewContext): Promise<Deci
     )
     .bind(iso(now), id.ipPrefixHash, id.deviceId, id.userId ? String(id.userId) : '-')
     .first();
-  if (ban) return { decision: 'reject', status: 403, code: 'banned', retryAfterSec: 0 };
+  return ban != null;
+}
+
+export async function evaluate(db: D1Database, ctx: ReviewContext): Promise<Decision> {
+  const { identity: id, now } = ctx;
+  const anon = id.userId == null;
+
+  // 1. bans
+  if (await isBanned(db, id, now)) return { decision: 'reject', status: 403, code: 'banned', retryAfterSec: 0 };
 
   // 2. per-place cooldown (logged-in edits of their own rating never reach here)
   const same = sameIdentity(id);

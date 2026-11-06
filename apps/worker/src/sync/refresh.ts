@@ -54,7 +54,14 @@ export async function runRefresh(db: D1Database, env: Env, stats: SyncStats, fet
         d = await google.details(t.googlePlaceId);
       } catch (e) {
         stats.errors.push(e instanceof GoogleError ? e.message : `refresh: ${String(e)}`);
-        break;
+        // Never retry the same place forever: push it to the back of the queue; a place Google no longer knows goes to admin review.
+        const gone = e instanceof GoogleError && (e.status === 404 || e.status === 400);
+        await db
+          .prepare(`UPDATE places SET google_last_synced_at = ?, dead_candidate = CASE WHEN ? THEN 1 ELSE dead_candidate END WHERE id = ?`)
+          .bind(new Date().toISOString(), gone ? 1 : 0, t.id)
+          .run();
+        if (e instanceof GoogleError && e.status >= 500) break;
+        continue;
       }
       const next = nextStatus(t, d);
       if (next.status === 'dead' && t.status !== 'dead') stats.markedDead++;

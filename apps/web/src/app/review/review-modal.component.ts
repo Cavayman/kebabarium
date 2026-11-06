@@ -18,7 +18,7 @@ import { AuthStore } from '../auth/auth.store';
 import { ApiService } from '../core/api.service';
 import { ConfigStore } from '../core/config.store';
 import { IconComponent } from '../ui/icon.component';
-import { renderTurnstile } from './turnstile';
+import { renderTurnstile, type TurnstileWidget } from './turnstile';
 
 const MAX_TEXT = 280;
 
@@ -51,6 +51,7 @@ export class ReviewModalComponent {
   readonly error = signal<string | null>(null);
   readonly sending = signal(false);
   private token: string | null = null;
+  private widget: TurnstileWidget | null = null;
 
   private readonly placeInput = viewChild<ElementRef<HTMLInputElement>>('placeInput');
   private readonly textArea = viewChild<ElementRef<HTMLTextAreaElement>>('textArea');
@@ -81,7 +82,10 @@ export class ReviewModalComponent {
       const el = this.turnstileEl()?.nativeElement;
       if (key && el && !this.auth.me()) {
         void renderTurnstile(el, key, (tok) => (this.token = tok))
-          .then((remove) => destroy.onDestroy(remove))
+          .then((w) => {
+            this.widget = w;
+            destroy.onDestroy(() => w.remove());
+          })
           .catch(() => this.error.set(this.t.translate('review.errBot')));
       }
     });
@@ -121,6 +125,9 @@ export class ReviewModalComponent {
         },
         error: (e: HttpErrorResponse) => {
           this.sending.set(false);
+          // the token was consumed server-side: get a fresh one for the next attempt
+          this.token = null;
+          this.widget?.reset();
           this.error.set(this.messageFor(e));
         },
       });

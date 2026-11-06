@@ -27,7 +27,13 @@ export function loadTurnstile(): Promise<void> {
   return loading;
 }
 
-export async function renderTurnstile(el: HTMLElement, sitekey: string, onToken: (t: string | null) => void): Promise<() => void> {
+export interface TurnstileWidget {
+  /** Tokens are single-use: call after every submit attempt. */
+  reset(): void;
+  remove(): void;
+}
+
+export async function renderTurnstile(el: HTMLElement, sitekey: string, onToken: (t: string | null) => void): Promise<TurnstileWidget> {
   await loadTurnstile();
   const id = window.turnstile!.render(el, {
     sitekey,
@@ -38,5 +44,5 @@ export async function renderTurnstile(el: HTMLElement, sitekey: string, onToken:
     'expired-callback': () => onToken(null),
     'error-callback': () => onToken(null),
   });
-  return () => window.turnstile?.remove(id);
+  return { reset: () => window.turnstile?.reset(id), remove: () => window.turnstile?.remove(id) };
 }

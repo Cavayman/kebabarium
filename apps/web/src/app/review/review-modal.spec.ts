@@ -3,6 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import type { PlaceSummary } from '@kebabarium/shared';
 import { AuthStore } from '../auth/auth.store';
+import { ConfigStore } from '../core/config.store';
 import { provideTestI18n } from '../core/testing';
 import { ReviewModalComponent } from './review-modal.component';
 
@@ -52,6 +53,24 @@ describe('ReviewModalComponent', () => {
     req.flush({ error: { code: 'cooldown', message: '', retryAfterSec: 3 * 86400 + 5 } }, { status: 429, statusText: 'Too Many' });
     f.detectChanges();
     expect(f.nativeElement.querySelector('.err').textContent).toContain('через 4 дн.');
+  });
+
+  it('resets the single-use Turnstile token after a failed submit', async () => {
+    const reset = vi.fn();
+    window.turnstile = { render: (_el, o) => ((o['callback'] as (t: string) => void)('tok-1'), 'w1'), reset, remove: () => {} };
+    TestBed.inject(ConfigStore).config.set({ turnstileSiteKey: 'site', mapsBrowserKey: null, mapId: null, googleClientId: null, mapProvider: 'maplibre' });
+    const f = open();
+    await f.whenStable();
+    await new Promise((r) => setTimeout(r));
+    f.componentInstance.stars.set(4);
+    f.nativeElement.querySelector('.send').click();
+    const req = http.expectOne('/api/places/2/reviews');
+    expect(req.request.body.turnstileToken).toBe('tok-1');
+    req.flush({ error: { code: 'rate_limited', message: '' } }, { status: 429, statusText: 'Too Many' });
+    expect(reset).toHaveBeenCalledWith('w1');
+    f.nativeElement.querySelector('.send').click();
+    expect(http.expectOne('/api/places/2/reviews').request.body.turnstileToken).toBeUndefined();
+    delete window.turnstile;
   });
 
   it('hides the nickname field for logged-in users', () => {

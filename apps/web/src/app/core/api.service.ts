@@ -176,4 +176,5 @@ export interface AdminSyncRun {
   externalAdded: number;
   threadsStatus: string | null;
   error: string | null;
+  notes: string | null;
 }

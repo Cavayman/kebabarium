@@ -18,11 +18,12 @@ export interface SyncRunRow {
   externalAdded: number;
   threadsStatus: string | null;
   error: string | null;
+  notes: string | null;
 }
 
 export const SYNC_RUN_SELECT = `SELECT id, kind, started_at AS startedAt, finished_at AS finishedAt, calls_used AS callsUsed,
   places_added AS placesAdded, places_updated AS placesUpdated, marked_dead AS markedDead, external_added AS externalAdded,
-  threads_status AS threadsStatus, error FROM sync_runs`;
+  threads_status AS threadsStatus, error, notes FROM sync_runs`;
 
 export async function startSyncRun(db: D1Database, kind: SyncKind): Promise<number> {
   const r = await db.prepare(`INSERT INTO sync_runs (kind) VALUES (?) RETURNING id`).bind(kind).first<{ id: number }>();
@@ -58,7 +59,7 @@ export async function runSync(db: D1Database, env: Env, kind: SyncKind, runId?: 
   await db
     .prepare(
       `UPDATE sync_runs SET finished_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'), calls_used = ?, places_added = ?, places_updated = ?,
-         marked_dead = ?, external_added = ?, threads_status = ?, error = ? WHERE id = ?`,
+         marked_dead = ?, external_added = ?, threads_status = ?, error = ?, notes = ? WHERE id = ?`,
     )
     .bind(
       stats.callsUsed,
@@ -68,6 +69,7 @@ export async function runSync(db: D1Database, env: Env, kind: SyncKind, runId?: 
       stats.externalAdded,
       stats.threadsStatus,
       error,
+      notes.join('; ') || null,
       id,
     )
     .run();

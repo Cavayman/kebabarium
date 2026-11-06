@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { ABUSE } from '../abuse/config';
 import { contentFlags } from '../abuse/content';
 import { identity } from '../abuse/identity';
-import { evaluate } from '../abuse/rules';
+import { evaluate, isBanned } from '../abuse/rules';
 import { verifyTurnstile } from '../abuse/turnstile';
 import { requireUser } from '../auth/middleware';
 import { getPlace } from '../db/places';
@@ -61,6 +61,7 @@ reviewRoutes.post('/places/:id/reviews', async (c) => {
   } else {
     const own = await findUserRating(db, id, who.userId);
     if (own) {
+      if (await isBanned(db, who)) throw new ApiError(403, 'banned', 'You cannot post reviews');
       const flags = contentFlags(input.text);
       const status = flags.length ? 'held' : own.status === 'held' ? 'held' : 'published';
       await updateRatingWithHistory(db, own, { stars: input.stars, text: input.text ?? null, status, holdReasons: flags });
@@ -111,6 +112,7 @@ reviewRoutes.put('/places/:id/rating', requireUser, async (c) => {
   const input = await body(c, ratingSchema);
   const own = await findUserRating(c.env.DB, id, c.get('user')!.id);
   if (!own) throw new ApiError(404, 'rating_not_found', 'You have not rated this place');
+  if (await isBanned(c.env.DB, await identity(c))) throw new ApiError(403, 'banned', 'You cannot post reviews');
   const flags = contentFlags(input.text);
   await updateRatingWithHistory(c.env.DB, own, {
     stars: input.stars,

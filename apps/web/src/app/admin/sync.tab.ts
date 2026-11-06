@@ -25,13 +25,13 @@ type Kind = 'discovery' | 'refresh' | 'threads' | 'all';
       </div>
       <div class="scroll">
         <table>
-          <thead><tr><th>#</th><th>kind</th><th>start</th><th>calls</th><th>+places</th><th>upd</th><th>dead</th><th>+ext</th><th>threads</th><th>error</th></tr></thead>
+          <thead><tr><th>#</th><th>kind</th><th>start</th><th>calls</th><th>+places</th><th>upd</th><th>dead</th><th>+ext</th><th>threads</th><th>error / notes</th></tr></thead>
           <tbody>
             @for (r of runs(); track r.id) {
               <tr>
                 <td class="muted">{{ r.id }}</td><td>{{ r.kind }}</td><td class="muted">{{ r.startedAt.slice(5, 16).replace('T', ' ') }}</td>
                 <td>{{ r.callsUsed }}</td><td>{{ r.placesAdded }}</td><td>{{ r.placesUpdated }}</td><td>{{ r.markedDead }}</td><td>{{ r.externalAdded }}</td>
-                <td>{{ r.threadsStatus ?? '—' }}</td><td class="danger">{{ r.error }}</td>
+                <td>{{ r.threadsStatus ?? '—' }}</td><td><span class="danger">{{ r.error }}</span> <span class="muted">{{ r.notes }}</span></td>
               </tr>
             } @empty {
               <tr><td colspan="10" class="muted">{{ t('admin.empty') }}</td></tr>
