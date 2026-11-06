@@ -1,4 +1,7 @@
 <div class="app" *transloco="let t">
+  @if (!boot.shown()) {
+    <kb-boot [stats]="stats()" [ready]="mapReady() || !webgl" [city]="city()" (done)="onBootDone()" />
+  }
   @if (webgl && currentCity(); as c) {
     <kb-map
       [city]="c"

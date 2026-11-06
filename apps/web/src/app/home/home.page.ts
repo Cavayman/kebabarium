@@ -21,13 +21,16 @@ import { PlaceCardComponent } from '../place/place-card.component';
 import { ReviewModalComponent } from '../review/review-modal.component';
 import { NearbyPanel } from '../nearby/nearby.panel';
 import { AccountComponent } from '../auth/account.component';
+import { BootScreenComponent } from '../boot/boot-screen.component';
+import { BootState } from '../boot/boot.state';
+import type { CityStats } from '@kebabarium/shared';
 import { NearbyService } from '../nearby/nearby.service';
 
 const PLACES_REFRESH_MS = 120_000;
 
 @Component({
   selector: 'kb-home',
-  imports: [MapComponent, NavbarComponent, LeaderboardPanel, FeedPanel, LegendComponent, DockComponent, IconComponent, PlaceCardComponent, ReviewModalComponent, NearbyPanel, AccountComponent, TranslocoDirective],
+  imports: [MapComponent, NavbarComponent, LeaderboardPanel, FeedPanel, LegendComponent, DockComponent, IconComponent, PlaceCardComponent, ReviewModalComponent, NearbyPanel, AccountComponent, BootScreenComponent, TranslocoDirective],
   providers: [NearbyService],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './home.page.html',
@@ -41,6 +44,8 @@ export class HomePage {
   protected readonly layout = inject(LayoutStore);
   protected readonly auth = inject(AuthStore);
   protected readonly nearby = inject(NearbyService);
+  protected readonly boot = inject(BootState);
+  readonly stats = signal<CityStats | null>(null);
   private readonly api = inject(ApiService);
   private readonly router = inject(Router);
   private readonly transloco = inject(TranslocoService);
@@ -87,13 +92,23 @@ export class HomePage {
     inject(DestroyRef).onDestroy(() => this.nearby.close());
   }
 
+  private statsLoaded = false;
   loadPlaces(slug: string): void {
+    if (!this.statsLoaded) {
+      this.statsLoaded = true;
+      this.api.stats(slug).subscribe({ next: (s) => this.stats.set(s), error: () => undefined });
+    }
     this.api.places(slug).subscribe({ next: (p) => this.places.set(p), error: () => this.places.set([]) });
   }
 
   onMapReady(): void {
     this.mapReady.set(true);
-    this.map()?.grow();
+    if (this.boot.shown()) this.map()?.grow();
+  }
+
+  onBootDone(): void {
+    this.boot.shown.set(true);
+    if (this.mapReady()) this.map()?.grow();
   }
 
   onPlaceClick(id: number): void {
