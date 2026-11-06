@@ -3,6 +3,7 @@ import { HTTPException } from 'hono/http-exception';
 import type { AppEnv } from './env';
 import { ApiError } from './errors';
 import { csrfGuard, withUser } from './auth/middleware';
+import { adminRoutes } from './routes/admin';
 import { authRoutes } from './routes/auth';
 import { publicRoutes } from './routes/public';
 import { reviewRoutes } from './routes/reviews';
@@ -16,6 +17,7 @@ app.get('/api/health', (c) => c.json({ ok: true, env: c.env.ENVIRONMENT }));
 app.route('/api', publicRoutes);
 app.route('/api', authRoutes);
 app.route('/api', reviewRoutes);
+app.route('/api', adminRoutes);
 
 app.notFound((c) => {
   if (c.req.path.startsWith('/api/')) {
