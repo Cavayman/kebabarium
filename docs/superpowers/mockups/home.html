@@ -14,16 +14,16 @@
   #app{position:relative;height:100%;min-height:680px;overflow:hidden}
   #map{position:absolute;inset:0}
   .glass{background:var(--glass);backdrop-filter:blur(20px) saturate(170%);-webkit-backdrop-filter:blur(20px) saturate(170%);
-    border:1px solid var(--edge);box-shadow:inset 0 1px 0 var(--hi),0 12px 40px rgba(0,0,0,.45)}
+    border:1px solid var(--edge);box-shadow:0 12px 40px rgba(0,0,0,.4)}
   button{font:inherit;cursor:pointer}
 
   /* compact pill navbar */
   .nav{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:4;display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;white-space:nowrap}
   .logo{font-family:Unbounded,sans-serif;font-weight:800;font-size:14px;padding:0 10px 0 8px;display:flex;align-items:center;gap:6px}
-  .logo .k{background:linear-gradient(90deg,#ffb347,#ff5a00);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .logo .k{color:#ff8a1f}
   .chip{border:0;background:rgba(255,255,255,.08);color:var(--fg);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:700}
   .chip:hover{background:rgba(255,255,255,.16)}
-  .chip.acc{background:linear-gradient(135deg,#ffb347,#ff5a00);color:#1a0a00}
+  .chip.acc{background:#ff7a00;color:#fff}
   .city{position:relative}
   .city .menu{display:none;position:absolute;top:44px;left:0;min-width:170px;padding:6px;border-radius:16px}
   .city.open .menu{display:block}
@@ -40,14 +40,14 @@
   .r:hover{background:rgba(255,255,255,.06)}
   .r .m{width:22px;text-align:center;font-size:16px}
   .r .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
-  .r .v{font-weight:800;color:var(--acc2);font-variant-numeric:tabular-nums} .r .v.hot{color:#ffd75e;text-shadow:0 0 10px #ffb32e88} .r .v.warm{color:#ffb32e} .r .v.mid{color:#d98a3c} .r .v.cold{color:#9c8f84}
+  .r .v{font-weight:800;color:var(--acc2);font-variant-numeric:tabular-nums} .r .v.hot{color:#3fd68a} .r .v.warm{color:#a6d13a} .r .v.mid{color:#e3c12a} .r .v.cold{color:#f59e1b}
 
   /* chat feed */
   .feed{position:absolute;right:12px;bottom:12px;z-index:3;width:320px;max-width:calc(100% - 24px);height:330px;border-radius:22px;display:flex;flex-direction:column}
   .feed .hd{display:flex;justify-content:space-between;align-items:center;padding:12px 14px 6px}
   .feed .hd b{font-family:Unbounded,sans-serif;font-size:13px;font-weight:600}
   .live{font-size:11px;font-weight:800;color:var(--ok);display:flex;align-items:center;gap:5px}
-  .live i{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);animation:pulse 1.4s infinite}
+  .live i{width:7px;height:7px;border-radius:50%;background:var(--ok);animation:pulse 1.4s infinite}
   @keyframes pulse{50%{opacity:.35}}
   .feed .bd{flex:1;overflow:hidden;padding:4px 12px 12px;display:flex;flex-direction:column;justify-content:flex-end;gap:8px}
   .msg{display:flex;gap:8px;align-items:flex-end;animation:in .35s cubic-bezier(.2,1.4,.4,1)}
@@ -63,12 +63,12 @@
   .src.k{background:#ff7a0033;color:var(--acc2)} .src.g{background:#4f8cff33;color:#8fb4ff} .src.t{background:#b06bff33;color:#d2adff}
 
   .legend{position:absolute;left:12px;bottom:12px;z-index:3;padding:8px 12px;font-size:11px;color:var(--dim);border-radius:16px}
-  .legend{width:190px} .legend .grad{width:100%;height:8px;border-radius:4px;margin:5px 0 3px;background:linear-gradient(90deg,#6e5a48 0%,#b8742e 40%,#ff8a1f 65%,#ffb32e 80%,#ffd75e 100%)}
+  .legend{width:190px} .legend .grad{width:100%;height:8px;border-radius:4px;margin:5px 0 3px;background:linear-gradient(90deg,#e5484d 0%,#ef6a3c 30%,#f59e1b 50%,#e3c12a 67%,#a6d13a 80%,#4fd46b 90%,#22c77a 100%)}
   .legend .lbls{display:flex;justify-content:space-between}
 
   /* emoji drop + caption */
   .drop{position:relative;width:0;height:0;pointer-events:none}
-  .drop .e{position:absolute;left:-15px;font-size:28px;filter:drop-shadow(0 0 10px #ff7a00aa);animation:fall 2.6s cubic-bezier(.5,0,.6,1) forwards}
+  .drop .e{position:absolute;left:-15px;font-size:28px;animation:fall 2.6s cubic-bezier(.5,0,.6,1) forwards}
   .drop .cap{position:absolute;left:0;transform:translateX(-50%);white-space:nowrap;font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px;
     background:rgba(20,20,24,.75);backdrop-filter:blur(10px);border:1px solid var(--edge);animation:cap 2.6s ease forwards}
   .drop .ring{position:absolute;left:-18px;top:-6px;width:36px;height:12px;border-radius:50%;border:2px solid #ffb066;opacity:0;animation:burst .8s ease-out 1.5s forwards}
@@ -97,7 +97,7 @@
   .ava{font-weight:800;font-size:13px;font-family:Unbounded,sans-serif}
   .st{color:var(--acc2);letter-spacing:1px;font-size:11px}
   .dock{position:absolute;left:50%;transform:translateX(-50%);bottom:14px;z-index:4;display:none;gap:8px}
-  .dock .chip{border:1px solid var(--edge)} .dock .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);font-style:normal}
+  .dock .chip{border:1px solid var(--edge)} .dock .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);font-style:normal}
   .hidden{display:none!important}
   @media (max-width:560px){
     .lb,.feed{left:8px!important;right:8px!important;width:auto!important;max-width:none!important;top:auto!important;bottom:62px!important;animation:sheet .3s cubic-bezier(.2,1.2,.4,1)}
@@ -128,9 +128,10 @@
   .send{height:42px!important;justify-content:center;font-size:14px;margin-top:6px}
   @media (max-width:560px){ .grip{display:none} .chip.rev span{display:none} .resetl{display:none!important} .modal-bg{align-items:flex-end;padding:0} .modal{border-radius:24px 24px 0 0;width:100%} }
   .fab{position:absolute;left:50%;transform:translateX(-50%);bottom:18px;z-index:5;display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 22px;border:0;border-radius:999px;
-    font:inherit;font-size:15px;font-weight:800;color:#1a0a00;background:linear-gradient(135deg,#ffb347,#ff5a00);
-    box-shadow:0 10px 30px #ff5a0066,inset 0 1px 0 #fff6;transition:transform .15s}
-  .fab:hover{transform:translateX(-50%) translateY(-2px) scale(1.03)} .fab:active{transform:translateX(-50%) scale(.97)}
+    font:inherit;font-size:15px;font-weight:700;color:#fff;background:#ff7a00;
+    box-shadow:0 8px 24px rgba(0,0,0,.45);transition:transform .15s,background .15s}
+  .fab:hover{background:#ff8a1f}
+  .fab:hover{transform:translateX(-50%) translateY(-1px)} .fab:active{transform:translateX(-50%) scale(.97)}
   .dock{bottom:76px!important}
   .near{position:absolute;right:12px;top:74px;z-index:3;width:330px;max-width:calc(100% - 24px);padding:12px;border-radius:22px;animation:sheet .35s cubic-bezier(.2,1.2,.4,1)}
   .near h3{white-space:nowrap} .near .rad{margin-left:auto;font-size:11px;color:var(--dim);margin-right:6px}
@@ -152,7 +153,7 @@
   .radar.done .sweep,.radar.done .ring{display:none}
   @keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
   @keyframes ping{0%{width:0;height:0;opacity:.9}100%{width:var(--d);height:var(--d);opacity:0}}
-  .me{width:18px;height:18px;border-radius:50%;background:#fff;border:4px solid #ff7a00;box-shadow:0 0 0 6px #ff7a0040,0 0 20px #ff7a00}
+  .me{width:16px;height:16px;border-radius:50%;background:#fff;border:4px solid #ff7a00;box-shadow:0 0 0 5px #ff7a0033}
   .scanmsg{position:absolute;left:50%;top:70px;transform:translateX(-50%);z-index:5;font-size:13px;font-weight:700;padding:8px 14px;border-radius:999px}
   @media (max-width:560px){ .fab{bottom:14px;height:46px} .dock{bottom:70px!important} .near{left:8px!important;right:8px!important;width:auto!important;top:auto!important;bottom:70px!important} .fab span{display:inline} }
   .ftabs{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin:0 12px 4px;background:rgba(255,255,255,.05);padding:3px;border-radius:999px}
@@ -163,9 +164,9 @@
   .rads span{white-space:nowrap;font-size:11px;font-weight:700;color:var(--dim);padding:3px 7px;border-radius:999px;cursor:pointer}
   .rads span.on{background:var(--acc2);color:#1a0a00}
   .nnote{font-size:11px;color:var(--dim);margin:0 2px 6px}
-  .boot{position:fixed;inset:0;z-index:50;background:radial-gradient(ellipse at 50% 55%,#140c06 0%,#050505 65%);display:flex;align-items:center;justify-content:center;padding:16px;transition:opacity .6s ease,visibility .6s}
+  .boot{position:fixed;inset:0;z-index:50;background:#060606;display:flex;align-items:center;justify-content:center;padding:16px;transition:opacity .6s ease,visibility .6s}
   .boot.out{opacity:0;visibility:hidden}
-  .term-boot{width:520px;max-width:100%;border-radius:14px;background:rgba(14,12,11,.85);border:1px solid rgba(255,255,255,.08);box-shadow:0 30px 80px #000c,0 0 60px #ff8a1f14;overflow:hidden;font-family:'JetBrains Mono',ui-monospace,Consolas,monospace}
+  .term-boot{width:520px;max-width:100%;border-radius:14px;background:rgba(14,12,11,.85);border:1px solid rgba(255,255,255,.08);box-shadow:0 30px 80px #000c;overflow:hidden;font-family:'JetBrains Mono',ui-monospace,Consolas,monospace}
   .tb-hd{display:flex;align-items:center;gap:6px;padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.06);font-size:11px;color:#6d6a66}
   .tb-hd i{width:10px;height:10px;border-radius:50%;background:#3a3633} .tb-hd i:nth-child(1){background:#ff5f57} .tb-hd i:nth-child(2){background:#febc2e} .tb-hd i:nth-child(3){background:#28c840}
   .tb-hd span{margin-left:auto;margin-right:auto;transform:translateX(-20px)}
@@ -192,7 +193,7 @@
   .card .scores{display:flex;gap:6px;margin:12px 0 8px}
   .card .sc{flex:1;background:rgba(255,255,255,.06);border-radius:14px;padding:7px;text-align:center}
   .card .sc b{display:block;font-size:17px;font-weight:800} .card .sc span{font-size:10px;color:var(--dim)}
-  .card .sc.main{background:linear-gradient(135deg,#ffd75e2a,#ff8a1f2a)} .card .sc.main b{color:#ffc04d}
+  .card .sc.main{background:rgba(255,255,255,.08)} .card .sc.main b{color:var(--sc,#3fd68a)}
   .card .revs{max-height:150px;overflow:auto;display:flex;flex-direction:column;gap:6px;padding-right:4px}
   .card .rv{background:rgba(255,255,255,.05);border-radius:12px;padding:7px 9px}
   .card .rv .h{display:flex;justify-content:space-between;font-size:11px;color:var(--dim)} .card .rv .h b{color:var(--fg)}
@@ -242,7 +243,7 @@
     <div class="nnote" id="nnote"></div>
     <div class="nlist" id="nlist"></div>
   </div>
-  <div class="legend glass" id="legend"><span data-i="legend">вищий і яскравіший = смачніше</span><div class="grad"></div><div class="lbls"><span>3.0</span><span>4.0</span><span>5.0</span></div></div>
+  <div class="legend glass" id="legend"><span data-i="legend">вищий і зеленіший = смачніше</span><div class="grad"></div><div class="lbls"><span>1</span><span>3</span><span>5</span></div></div>
 
   <div class="feed glass" id="feed">
     <div class="hd drag"><span class="grip" title="перетягни">⋮⋮</span><b><span class="ic"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></span><span data-i="feed">Що кажуть</span></b><span style="display:flex;gap:8px;align-items:center"><span class="live"><i></i><span data-i="live">наживо</span></span><button class="mini" onclick="collapse('feed')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 12h12"/></svg></button></span></div>
@@ -301,7 +302,7 @@ const map = new maplibregl.Map({container:'map', center:[24.022,49.832], zoom:12
     {id:'mid',type:'line',source:'omt','source-layer':'transportation',filter:['in',['get','class'],['literal',['tertiary','secondary']]],paint:{'line-color':'#55555e','line-width':['interpolate',['linear'],['zoom'],11,.6,15,2]}},
     {id:'major',type:'line',source:'omt','source-layer':'transportation',filter:['in',['get','class'],['literal',['primary','trunk','motorway']]],paint:{'line-color':'#9a9aa4','line-width':['interpolate',['linear'],['zoom'],11,1,15,3]}},
     {id:'bars',type:'fill-extrusion',source:'bars',paint:{
-      'fill-extrusion-color':['case',['get','closed'],'#2e2e2e',['==',['get','far'],true],'#3a2c22',['interpolate',['linear'],['get','r'],1,'#3d3631',3,'#6e5a48',3.8,'#b8742e',4.3,'#ff8a1f',4.6,'#ffb32e',4.9,'#ffd75e']],
+      'fill-extrusion-color':['case',['get','closed'],'#2e2e2e',['==',['get','far'],true],'#3a2c22',['interpolate',['linear'],['get','r'],1,'#e5484d',2.2,'#ef6a3c',3,'#f59e1b',3.7,'#e3c12a',4.2,'#a6d13a',4.6,'#4fd46b',4.9,'#22c77a']],
       'fill-extrusion-height':['interpolate',['exponential',2],['zoom'],12,['get','h'],13.5,['*',['get','h'],.5],16,['*',['get','h'],.12]],'fill-extrusion-opacity':.95}},
   ]}});
 
@@ -326,7 +327,7 @@ map.on('click', e => { const hit=map.queryRenderedFeatures(e.point,{layers:['bar
   popup.setLngLat([p.lng,p.lat]).setHTML(`<div class="card glass">
     <div class="row"><div class="logo-img ${p.closed?'dead':''}" style="--lg:${LOGO_BG[i%LOGO_BG.length]}">${initials(p.n)}</div>
       <div><h4>${p.n}</h4><div class="sub">${p.chain||'незалежний заклад'} · ${p.cnt} відгуків</div></div></div>
-    <div class="scores"><div class="sc main"><b>${f1(p.r)}</b><span>загалом</span></div><div class="sc"><b>${f1(p.us)}</b><span>наші</span></div><div class="sc"><b>${f1(p.g)}</b><span>Google</span></div></div>
+    <div class="scores"><div class="sc main" style="--sc:${p.r>=4.6?'#3fd68a':p.r>=4.2?'#a6d13a':p.r>=3.7?'#e3c12a':p.r>=3?'#f59e1b':'#ff6b6b'}"><b>${f1(p.r)}</b><span>загалом</span></div><div class="sc"><b>${f1(p.us)}</b><span>наші</span></div><div class="sc"><b>${f1(p.g)}</b><span>Google</span></div></div>
     <div class="revs">${REVIEWS.map(([s,w,r,t,a])=>`<div class="rv"><div class="h"><span><b>${w}</b><span class="src ${s}">${s==='k'?'наш':'G'}</span> <span class=st>${'★'.repeat(r)}</span></span><span>${a}</span></div><p>${t}</p></div>`).join('')}</div>
     <div class="st ${p.closed?'dead':'ok'}">${p.closed?'● не працює — переїхали на Коновальця':'● відчинено до 23:00'}</div>
     <div class="cta"><button class="chip acc" onclick="openReview(${i})">Оцінити</button><button class="chip"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-8-8 18-2-8-8-2z"/></svg>Маршрут</button></div>
@@ -465,7 +466,7 @@ function finishScan(c){
   document.getElementById("nnote").textContent = R_KM>STEPS[0] && countIn(c,STEPS[0])<MIN_RESULTS ? "Зовсім поруч мало місць — розширив пошук до "+R_KM+" км" : ""; radarM.getElement().classList.add("done");
   const near=PLACES.map((p,i)=>({p,i,km:hav(c,[p.lng,p.lat])})).filter(x=>x.km<=R_KM&&!x.p.closed).sort((a,b)=>b.p.r-a.p.r||a.km-b.km);
   bars.features.forEach(f=>f.properties.far=!near.some(x=>x.i===f.properties.i)); map.getSource("bars").setData(bars);
-  const grad=r=>r>=4.7?"linear-gradient(135deg,#ffe27a,#ffa51f);box-shadow:0 0 16px #ffb32e77":r>=4.4?"linear-gradient(135deg,#ffc04d,#ff8a1f)":r>=4.0?"linear-gradient(135deg,#d9822c,#a8601f);color:#fff":r>=3.5?"#5c4a3b;color:#e0d2c4":"#3a332e;color:#9c8f84";
+  const grad=r=>r>=4.6?"#22c77a;color:#04210f":r>=4.2?"#7fd45a;color:#0f2405":r>=3.7?"#e3c12a;color:#2a2100":r>=3?"#f59e1b;color:#2a1600":"#e5484d;color:#fff";
   document.getElementById("nlist").innerHTML = near.length ? near.map((x,k)=>{ const m=Math.round(x.km*1000), walk=Math.max(1,Math.round(x.km/0.08));
     return `<div class="ni" style="animation-delay:${k*90}ms" onclick="focusPlace(${x.i})"><div class="sc" style="--g:${grad(x.p.r)}">${x.p.r}</div>
       <div class="t"><b>${x.p.n}</b><span>${m<1000?m+" м":(x.km).toFixed(1)+" км"} · ${walk} хв пішки ${k===0?'· <span class="badge">найкраще поруч</span>':""}</span></div>
@@ -525,8 +526,8 @@ makeDraggable("near");
 })();
 next();
 
-const I18N={uk:{brand:"кебабаріум",near:"Поруч",login:"Увійти",review:"Відгук",reset:"Як було",m_title:"Залишити відгук",m_place:"Заклад",m_rate:"Оцінка",m_send:"Надіслати",t_spots:"Місця",t_chains:"Мережі",t_districts:"Райони",t_people:"Люди",legend:"вищий і яскравіший = смачніше",feed:"Що кажуть",t_top:"Топ",live:"наживо",top:"Топ Львова"},
-            en:{brand:"kebabarium",near:"Nearby",login:"Log in",review:"Review",reset:"Reset",m_title:"Leave a review",m_place:"Spot",m_rate:"Rating",m_send:"Send",t_spots:"Spots",t_chains:"Chains",t_districts:"Areas",t_people:"Tasters",legend:"taller & deeper = tastier",feed:"What people say",t_top:"Top",live:"live",top:"Top in Lviv"}};
+const I18N={uk:{brand:"кебабаріум",near:"Поруч",login:"Увійти",review:"Відгук",reset:"Як було",m_title:"Залишити відгук",m_place:"Заклад",m_rate:"Оцінка",m_send:"Надіслати",t_spots:"Місця",t_chains:"Мережі",t_districts:"Райони",t_people:"Люди",legend:"вищий і зеленіший = смачніше",feed:"Що кажуть",t_top:"Топ",live:"наживо",top:"Топ Львова"},
+            en:{brand:"kebabarium",near:"Nearby",login:"Log in",review:"Review",reset:"Reset",m_title:"Leave a review",m_place:"Spot",m_rate:"Rating",m_send:"Send",t_spots:"Spots",t_chains:"Chains",t_districts:"Areas",t_people:"Tasters",legend:"taller & greener = tastier",feed:"What people say",t_top:"Top",live:"live",top:"Top in Lviv"}};
 let LANG="uk";
 function toggleLang(){ LANG=LANG==="uk"?"en":"uk";
   document.querySelectorAll("[data-i]").forEach(el=>el.textContent=I18N[LANG][el.dataset.i]);
