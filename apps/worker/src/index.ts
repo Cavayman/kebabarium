@@ -5,6 +5,7 @@ import { ApiError } from './errors';
 import { csrfGuard, withUser } from './auth/middleware';
 import { authRoutes } from './routes/auth';
 import { publicRoutes } from './routes/public';
+import { reviewRoutes } from './routes/reviews';
 
 export type { AppEnv } from './env';
 
@@ -14,6 +15,7 @@ app.use('/api/*', csrfGuard, withUser);
 app.get('/api/health', (c) => c.json({ ok: true, env: c.env.ENVIRONMENT }));
 app.route('/api', publicRoutes);
 app.route('/api', authRoutes);
+app.route('/api', reviewRoutes);
 
 app.notFound((c) => {
   if (c.req.path.startsWith('/api/')) {
