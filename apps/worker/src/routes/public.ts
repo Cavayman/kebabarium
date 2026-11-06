@@ -28,13 +28,16 @@ function num(v: string | undefined, name: string): number {
   return n;
 }
 
+const CLIENT_ID_RE = /^[\w-]+\.apps\.googleusercontent\.com$/;
+
 publicRoutes.get('/config', (c) => {
   const e = c.env;
   const body: RuntimeConfig = {
     mapsBrowserKey: e.GOOGLE_MAPS_BROWSER_KEY ?? null,
     mapId: e.GOOGLE_MAP_ID ?? null,
     turnstileSiteKey: e.TURNSTILE_SITE_KEY ?? null,
-    googleClientId: e.GOOGLE_OAUTH_CLIENT_ID ?? null,
+    // only ever expose something shaped like a client id (guards against a secret pasted into the wrong variable)
+    googleClientId: CLIENT_ID_RE.test(e.GOOGLE_OAUTH_CLIENT_ID ?? '') ? e.GOOGLE_OAUTH_CLIENT_ID! : null,
     // Google content may only be shown on a Google map: the open map is allowed only while no Google key exists at all.
     mapProvider: e.GOOGLE_MAPS_BROWSER_KEY || e.GOOGLE_PLACES_KEY ? 'google' : 'maplibre',
   };

@@ -21,3 +21,14 @@ describe('GET /api/config map provider', () => {
     expect((await config({ ENVIRONMENT: 'production' })).mapProvider).toBe('maplibre');
   });
 });
+
+describe('GET /api/config Google client id', () => {
+  it('serves a real OAuth client id', async () => {
+    const id = '123-abc.apps.googleusercontent.com';
+    expect((await config({ GOOGLE_OAUTH_CLIENT_ID: id })).googleClientId).toBe(id);
+  });
+
+  it('never serves a value that is not a client id (e.g. a client secret pasted by mistake)', async () => {
+    expect((await config({ GOOGLE_OAUTH_CLIENT_ID: 'GOCSPX-not-a-client-id' })).googleClientId).toBeNull();
+  });
+});
