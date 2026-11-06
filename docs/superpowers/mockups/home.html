@@ -40,7 +40,7 @@
   .r:hover{background:rgba(255,255,255,.06)}
   .r .m{width:22px;text-align:center;font-size:16px}
   .r .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
-  .r .v{font-weight:800;color:var(--acc2)}
+  .r .v{font-weight:800;color:var(--acc2);font-variant-numeric:tabular-nums} .r .v.hot{color:#ffd75e;text-shadow:0 0 10px #ffb32e88} .r .v.warm{color:#ffb32e} .r .v.mid{color:#d98a3c} .r .v.cold{color:#9c8f84}
 
   /* chat feed */
   .feed{position:absolute;right:12px;bottom:12px;z-index:3;width:320px;max-width:calc(100% - 24px);height:330px;border-radius:22px;display:flex;flex-direction:column}
@@ -63,7 +63,7 @@
   .src.k{background:#ff7a0033;color:var(--acc2)} .src.g{background:#4f8cff33;color:#8fb4ff} .src.t{background:#b06bff33;color:#d2adff}
 
   .legend{position:absolute;left:12px;bottom:12px;z-index:3;padding:8px 12px;font-size:11px;color:var(--dim);border-radius:16px}
-  .legend{width:190px} .legend .grad{width:100%;height:8px;border-radius:4px;margin:5px 0 3px;background:linear-gradient(90deg,#ffffff 0%,#ffd9b0 30%,#ff9a3c 50%,#ff6a00 70%,#ff3a1a 85%,#e60000 100%)}
+  .legend{width:190px} .legend .grad{width:100%;height:8px;border-radius:4px;margin:5px 0 3px;background:linear-gradient(90deg,#6e5a48 0%,#b8742e 40%,#ff8a1f 65%,#ffb32e 80%,#ffd75e 100%)}
   .legend .lbls{display:flex;justify-content:space-between}
 
   /* emoji drop + caption */
@@ -163,6 +163,25 @@
   .rads span{white-space:nowrap;font-size:11px;font-weight:700;color:var(--dim);padding:3px 7px;border-radius:999px;cursor:pointer}
   .rads span.on{background:var(--acc2);color:#1a0a00}
   .nnote{font-size:11px;color:var(--dim);margin:0 2px 6px}
+  .boot{position:fixed;inset:0;z-index:50;background:radial-gradient(ellipse at 50% 60%,#1a0f08 0%,#070707 60%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .6s ease, visibility .6s}
+  .boot.out{opacity:0;visibility:hidden}
+  .spit{position:relative;filter:drop-shadow(0 0 30px #ff8a1f33)}
+  .meat{animation:turn 1.4s linear infinite}
+  @keyframes turn{from{transform:translateX(0)}to{transform:translateX(-120px)}}
+  .glow{animation:flick 1.1s ease-in-out infinite alternate;transform-origin:60px 176px}
+  @keyframes flick{from{opacity:.65;transform:scale(.92)}to{opacity:1;transform:scale(1.06)}}
+  .sparks{position:absolute;left:50%;bottom:6px;width:0;height:0}
+  .sparks i{position:absolute;width:3px;height:3px;border-radius:50%;background:#ffd75e;box-shadow:0 0 6px #ffb32e;opacity:0;animation:spark 1.8s ease-out infinite}
+  .sparks i:nth-child(1){left:-30px;animation-delay:.1s} .sparks i:nth-child(2){left:-12px;animation-delay:.7s} .sparks i:nth-child(3){left:6px;animation-delay:.3s}
+  .sparks i:nth-child(4){left:22px;animation-delay:1.1s} .sparks i:nth-child(5){left:36px;animation-delay:.5s}
+  @keyframes spark{0%{transform:translate(0,0);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx,8px),-70px);opacity:0}}
+  .sparks i:nth-child(odd){--dx:-10px}
+  .bword{font-family:Unbounded,sans-serif;font-weight:800;font-size:22px;letter-spacing:.5px}
+  .bword .k{background:linear-gradient(90deg,#ffd75e,#ff8a1f);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .bbar{width:180px;height:4px;border-radius:2px;background:rgba(255,255,255,.08);overflow:hidden}
+  .bbar i{display:block;height:100%;width:0;border-radius:2px;background:linear-gradient(90deg,#b8742e,#ff8a1f,#ffd75e);box-shadow:0 0 10px #ffb32e;transition:width .35s ease}
+  .bmsg{font-size:13px;color:#a3a3a8;min-height:18px;transition:opacity .25s}
+  @media (prefers-reduced-motion:reduce){ .meat,.glow,.sparks i{animation:none} }
   /* detail card */
   .maplibregl-popup{z-index:6} .maplibregl-popup-content{background:transparent!important;padding:0!important;box-shadow:none!important}
   .maplibregl-popup-tip{display:none} .maplibregl-popup-close-button{color:#ccc;font-size:18px;right:8px;top:6px;z-index:2}
@@ -175,7 +194,7 @@
   .card .scores{display:flex;gap:6px;margin:12px 0 8px}
   .card .sc{flex:1;background:rgba(255,255,255,.06);border-radius:14px;padding:7px;text-align:center}
   .card .sc b{display:block;font-size:17px;font-weight:800} .card .sc span{font-size:10px;color:var(--dim)}
-  .card .sc.main{background:linear-gradient(135deg,#ffb34733,#ff5a0033)} .card .sc.main b{color:var(--acc2)}
+  .card .sc.main{background:linear-gradient(135deg,#ffd75e2a,#ff8a1f2a)} .card .sc.main b{color:#ffc04d}
   .card .revs{max-height:150px;overflow:auto;display:flex;flex-direction:column;gap:6px;padding-right:4px}
   .card .rv{background:rgba(255,255,255,.05);border-radius:12px;padding:7px 9px}
   .card .rv .h{display:flex;justify-content:space-between;font-size:11px;color:var(--dim)} .card .rv .h b{color:var(--fg)}
@@ -188,6 +207,25 @@
 </style>
 </head>
 <body>
+<div id="boot" class="boot">
+  <div class="spit">
+    <svg viewBox="0 0 120 190" width="120" height="190" aria-hidden="true">
+      <defs>
+        <clipPath id="cone"><path d="M28 18 Q60 8 92 18 L80 160 Q60 168 40 160 Z"/></clipPath>
+        <linearGradient id="shade" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".55"/><stop offset=".35" stop-color="#000" stop-opacity="0"/><stop offset=".7" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".6"/></linearGradient>
+        <radialGradient id="ember" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffd75e"/><stop offset=".45" stop-color="#ff8a1f" stop-opacity=".7"/><stop offset="1" stop-color="#ff8a1f" stop-opacity="0"/></radialGradient>
+      </defs>
+      <rect x="58" y="0" width="4" height="182" rx="2" fill="#6b6b70"/>
+      <g clip-path="url(#cone)"><g class="meat"><rect x="0" y="8" width="240" height="11" rx="2" fill="#8a4a22"/><rect x="0" y="9" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="120" y="9" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="18" width="240" height="11" rx="2" fill="#b8642a"/><rect x="23" y="19" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="143" y="19" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="28" width="240" height="11" rx="2" fill="#d98a3c"/><rect x="46" y="29" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="166" y="29" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="38" width="240" height="11" rx="2" fill="#a8561f"/><rect x="9" y="39" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="129" y="39" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="48" width="240" height="11" rx="2" fill="#c97a34"/><rect x="32" y="49" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="152" y="49" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="58" width="240" height="11" rx="2" fill="#8a4a22"/><rect x="55" y="59" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="175" y="59" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="68" width="240" height="11" rx="2" fill="#b8642a"/><rect x="18" y="69" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="138" y="69" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="78" width="240" height="11" rx="2" fill="#d98a3c"/><rect x="41" y="79" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="161" y="79" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="88" width="240" height="11" rx="2" fill="#a8561f"/><rect x="4" y="89" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="124" y="89" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="98" width="240" height="11" rx="2" fill="#c97a34"/><rect x="27" y="99" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="147" y="99" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="108" width="240" height="11" rx="2" fill="#8a4a22"/><rect x="50" y="109" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="170" y="109" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="118" width="240" height="11" rx="2" fill="#b8642a"/><rect x="13" y="119" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="133" y="119" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="128" width="240" height="11" rx="2" fill="#d98a3c"/><rect x="36" y="129" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="156" y="129" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="138" width="240" height="11" rx="2" fill="#a8561f"/><rect x="59" y="139" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="179" y="139" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/></g><rect x="20" y="0" width="80" height="170" fill="url(#shade)"/></g>
+      <path d="M28 18 Q60 8 92 18" fill="none" stroke="#ffcf7a" stroke-opacity=".35" stroke-width="2"/>
+      <ellipse class="glow" cx="60" cy="176" rx="46" ry="12" fill="url(#ember)"/>
+    </svg>
+    <div class="sparks"><i></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <div class="bword"><span class="k">кебабаріум</span></div>
+  <div class="bbar"><i id="bprog"></i></div>
+  <div class="bmsg" id="bmsg">розпалюємо гриль…</div>
+</div>
 <div id="app">
   <div id="map"></div>
 
@@ -219,7 +257,7 @@
     <div class="nnote" id="nnote"></div>
     <div class="nlist" id="nlist"></div>
   </div>
-  <div class="legend glass" id="legend"><span data-i="legend">вищий і червоніший = смачніше</span><div class="grad"></div><div class="lbls"><span>3.0</span><span>4.0</span><span>5.0</span></div></div>
+  <div class="legend glass" id="legend"><span data-i="legend">вищий і яскравіший = смачніше</span><div class="grad"></div><div class="lbls"><span>3.0</span><span>4.0</span><span>5.0</span></div></div>
 
   <div class="feed glass" id="feed">
     <div class="hd drag"><span class="grip" title="перетягни">⋮⋮</span><b><span class="ic"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></span><span data-i="feed">Що кажуть</span></b><span style="display:flex;gap:8px;align-items:center"><span class="live"><i></i><span data-i="live">наживо</span></span><button class="mini" onclick="collapse('feed')"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 12h12"/></svg></button></span></div>
@@ -278,7 +316,7 @@ const map = new maplibregl.Map({container:'map', center:[24.022,49.832], zoom:12
     {id:'mid',type:'line',source:'omt','source-layer':'transportation',filter:['in',['get','class'],['literal',['tertiary','secondary']]],paint:{'line-color':'#55555e','line-width':['interpolate',['linear'],['zoom'],11,.6,15,2]}},
     {id:'major',type:'line',source:'omt','source-layer':'transportation',filter:['in',['get','class'],['literal',['primary','trunk','motorway']]],paint:{'line-color':'#9a9aa4','line-width':['interpolate',['linear'],['zoom'],11,1,15,3]}},
     {id:'bars',type:'fill-extrusion',source:'bars',paint:{
-      'fill-extrusion-color':['case',['get','closed'],'#2e2e2e',['==',['get','far'],true],'#3a2c22',['interpolate',['linear'],['get','r'],3,'#ffffff',3.6,'#ffd9b0',4.0,'#ff9a3c',4.4,'#ff6a00',4.7,'#ff3a1a',5,'#e60000']],
+      'fill-extrusion-color':['case',['get','closed'],'#2e2e2e',['==',['get','far'],true],'#3a2c22',['interpolate',['linear'],['get','r'],1,'#3d3631',3,'#6e5a48',3.8,'#b8742e',4.3,'#ff8a1f',4.6,'#ffb32e',4.9,'#ffd75e']],
       'fill-extrusion-height':['interpolate',['exponential',2],['zoom'],12,['get','h'],13.5,['*',['get','h'],.5],16,['*',['get','h'],.12]],'fill-extrusion-opacity':.95}},
   ]}});
 
@@ -319,7 +357,7 @@ const LB={spots:[["Шаурма на Коновальця",4.8],["Doner біля
  districts:[["Сихівський",4.31],["Франківський",4.24],["Галицький",4.18],["Личаківський",4.05],["Залізничний",3.92]],
  people:[["oleg","142"],["marta_k","97"],["shaurma_hunter","81"],["lev_doner","64"],["sasha","40"]]};
 const MED=[1,2,3,4,5].map(n=>`<i class="rk rk${n}">${n}</i>`);
-function lb(k){ document.getElementById('lbrows').innerHTML=LB[k].map((r,i)=>`<div class="r"><span class="m">${MED[i]}</span><span class="nm">${r[0]}</span><span class="v">${typeof r[1]==='number'?r[1].toFixed(k==='districts'?2:1):r[1]}</span></div>`).join('');
+function lb(k){ document.getElementById('lbrows').innerHTML=LB[k].map((r,i)=>`<div class="r"><span class="m">${MED[i]}</span><span class="nm">${r[0]}</span><span class="v ${typeof r[1]==='number'?(r[1]>=4.7?'hot':r[1]>=4.4?'warm':r[1]>=4?'mid':'cold'):''}">${typeof r[1]==='number'?r[1].toFixed(k==='districts'?2:1):r[1]}</span></div>`).join('');
   document.querySelectorAll('#lbtabs span').forEach(s=>s.classList.toggle('on',s.dataset.k===k)); }
 document.getElementById('lbtabs').onclick=e=>{ if(e.target.dataset.k) lb(e.target.dataset.k); }; lb('spots');
 
@@ -442,7 +480,7 @@ function finishScan(c){
   document.getElementById("nnote").textContent = R_KM>STEPS[0] && countIn(c,STEPS[0])<MIN_RESULTS ? "Зовсім поруч мало місць — розширив пошук до "+R_KM+" км" : ""; radarM.getElement().classList.add("done");
   const near=PLACES.map((p,i)=>({p,i,km:hav(c,[p.lng,p.lat])})).filter(x=>x.km<=R_KM&&!x.p.closed).sort((a,b)=>b.p.r-a.p.r||a.km-b.km);
   bars.features.forEach(f=>f.properties.far=!near.some(x=>x.i===f.properties.i)); map.getSource("bars").setData(bars);
-  const grad=r=>r>=4.7?"linear-gradient(135deg,#ff3a1a,#e60000)":r>=4.4?"linear-gradient(135deg,#ff8a1f,#ff3a1a)":r>=4.0?"linear-gradient(135deg,#ffb347,#ff7a00)":"linear-gradient(135deg,#ffffff,#ffd9b0)";
+  const grad=r=>r>=4.7?"linear-gradient(135deg,#ffe27a,#ffa51f);box-shadow:0 0 16px #ffb32e77":r>=4.4?"linear-gradient(135deg,#ffc04d,#ff8a1f)":r>=4.0?"linear-gradient(135deg,#d9822c,#a8601f);color:#fff":r>=3.5?"#5c4a3b;color:#e0d2c4":"#3a332e;color:#9c8f84";
   document.getElementById("nlist").innerHTML = near.length ? near.map((x,k)=>{ const m=Math.round(x.km*1000), walk=Math.max(1,Math.round(x.km/0.08));
     return `<div class="ni" style="animation-delay:${k*90}ms" onclick="focusPlace(${x.i})"><div class="sc" style="--g:${grad(x.p.r)}">${x.p.r}</div>
       <div class="t"><b>${x.p.n}</b><span>${m<1000?m+" м":(x.km).toFixed(1)+" км"} · ${walk} хв пішки ${k===0?'· <span class="badge">найкраще поруч</span>':""}</span></div>
@@ -454,9 +492,26 @@ function focusPlace(i){ const p=PLACES[i]; map.easeTo({center:[p.lng,p.lat],zoom
 function closeNear(silent){ document.getElementById("near").classList.add("hidden"); if(radarM){radarM.remove();radarM=null;} if(meM){meM.remove();meM=null;}
   bars.features.forEach(f=>f.properties.far=false); if(map.getSource("bars")) map.getSource("bars").setData(bars); }
 makeDraggable("near");
+
+// ---------- boot screen ----------
+(function(){
+  const msgs=["розпалюємо гриль…","крутимо шаурму…","нарізаємо мапу Львова…","рахуємо найсмачніші…","майже готово…"];
+  const t0=performance.now(), MIN=1800; let i=0, p=8, ready=false;
+  const bm=document.getElementById("bmsg"), bp=document.getElementById("bprog");
+  const mi=setInterval(()=>{ i=(i+1)%msgs.length; bm.style.opacity=0; setTimeout(()=>{ bm.textContent=msgs[i]; bm.style.opacity=1; },220); },900);
+  const pi=setInterval(()=>{ p=Math.min(ready?100:88, p+(ready?20:Math.random()*9)); bp.style.width=p+"%"; if(p>=100) done(); },160);
+  function done(){ const wait=Math.max(0,MIN-(performance.now()-t0)); clearInterval(pi);
+    setTimeout(()=>{ clearInterval(mi); document.getElementById("boot").classList.add("out"); regrow(); },wait+250); }
+  function regrow(){ if(!map.getSource("bars")) return; const s0=performance.now();
+    (function g(now){ const k=Math.min(1,(now-s0)/1600), e=1-Math.pow(1-k,3);
+      bars.features.forEach(f=>f.properties.h=f.properties.target*e); map.getSource("bars").setData(bars);
+      if(k<1) requestAnimationFrame(g); })(s0); }
+  map.once("idle",()=>{ ready=true; });
+  setTimeout(()=>{ ready=true; },6000); // never block longer than 6 s
+})();
 next();
 
-const I18N={uk:{brand:"кебабаріум",near:"Поруч",login:"Увійти",review:"Відгук",reset:"Як було",m_title:"Залишити відгук",m_place:"Заклад",m_rate:"Оцінка",m_send:"Надіслати",t_spots:"Місця",t_chains:"Мережі",t_districts:"Райони",t_people:"Люди",legend:"вищий і червоніший = смачніше",feed:"Що кажуть",t_top:"Топ",live:"наживо",top:"Топ Львова"},
+const I18N={uk:{brand:"кебабаріум",near:"Поруч",login:"Увійти",review:"Відгук",reset:"Як було",m_title:"Залишити відгук",m_place:"Заклад",m_rate:"Оцінка",m_send:"Надіслати",t_spots:"Місця",t_chains:"Мережі",t_districts:"Райони",t_people:"Люди",legend:"вищий і яскравіший = смачніше",feed:"Що кажуть",t_top:"Топ",live:"наживо",top:"Топ Львова"},
             en:{brand:"kebabarium",near:"Nearby",login:"Log in",review:"Review",reset:"Reset",m_title:"Leave a review",m_place:"Spot",m_rate:"Rating",m_send:"Send",t_spots:"Spots",t_chains:"Chains",t_districts:"Areas",t_people:"Tasters",legend:"taller & deeper = tastier",feed:"What people say",t_top:"Top",live:"live",top:"Top in Lviv"}};
 let LANG="uk";
 function toggleLang(){ LANG=LANG==="uk"?"en":"uk";

@@ -54,8 +54,8 @@ Why now: the 2019 Java/Angular 6 version is a static stub that no longer builds 
 - **Visuals** (from the mockup sessions):
   - dark theme, orange accent; map is line-art (streets only, no fills/labels clutter);
   - 3D extruded columns; height on a stretched, progressive scale starting at 3.0 (below 3 = short stub); **height also scales down with zoom** so columns stay readable when zoomed in;
-  - the legend's gradient spans the full 3.0–5.0 range with the same colour stops as the columns, caption "вищий і червоніший = смачніше";
-  - colour gradient by rating: **white (3.0) → orange (~4.0) → pure red (5.0)**; the best spots are clearly red; dead spots are dark grey;
+  - the legend's gradient spans the full 3.0–5.0 range with the same colour stops as the columns, caption "вищий і яскравіший = смачніше";
+  - colour by rating = **"Ember" palette** (owner pick): how "hot" a spot is — cold ash `#3d3631` (1) → `#6e5a48` (3.0) → amber `#b8742e` (3.8) → orange `#ff8a1f` (4.3) → `#ffb32e` (4.6) → glowing gold `#ffd75e` (4.9+); top spots also get a soft glow; **no pure red, no pure white**; dead spots dark grey; the same scale colours columns, score tiles, leaderboard numbers and the legend;
   - frosted glass panels (blur + translucency), friendly rounded fonts (mockup: Unbounded for headings/logo, Manrope for text), columns grow on load;
   - **emoji used sparingly** — only in the review-drop animation; UI chrome uses thin line icons (pin, navigate arrow, trophy, chat), letter avatars, gold/silver/bronze rank badges, ★ for stars; too many emoji looked childish;
   - all navbar controls have the same height; logo is an orange rounded-square mark with three bars + wordmark;
@@ -69,6 +69,10 @@ Why now: the 2019 Java/Angular 6 version is a static stub that no longer builds 
   - when a new review arrives, its emoji (🤤 😋 🔥 🤢 … chosen by rating) **falls from above into that place's column** with a small ring burst, plus a **short caption pill** saying what happened ("oleg поставив 5⭐", "новий заклад на мапі ✨", "ой… 2⭐ від Google") — pure eye candy;
   - click-to-open detail card with logo + recent reviews; leaderboard panel with tabs (spots / chains / districts / tasters);
   - city picker in navbar.
+
+### Loading screen
+
+On a cold start the app shows a black/ember boot screen: an animated doner spit (meat layers scrolling sideways so it looks like it turns, flickering ember glow and sparks underneath), the "кебабаріум" wordmark, an ember-gradient progress bar and rotating captions ("розпалюємо гриль…", "крутимо шаурму…", "рахуємо найсмачніші…"). It stays at least ~1.8 s, at most 6 s, fades out when the map and first data are ready, and only then the columns grow. Respects `prefers-reduced-motion`. Not shown on in-app navigation.
 
 ## 6. Architecture (builder's proposal, my call — owner can override)
 
