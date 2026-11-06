@@ -53,6 +53,11 @@ describe('cities & places', () => {
     expect(body).toMatchObject({ chainName: 'Кебаб-Шеф', chainScore: 4.4, chainSpots: 2 });
   });
 
+  it('returns up to `limit` reviews on request', async () => {
+    const { body } = await get<PlaceDetail>('/api/places/1?limit=50');
+    expect(body.reviews.length).toBe(7);
+  });
+
   it('404s an unknown place', async () => {
     const { res } = await get('/api/places/99999');
     expect(res.status).toBe(404);

@@ -98,7 +98,8 @@ publicRoutes.get('/places/near', async (c) => {
 
 publicRoutes.get('/places/:id', async (c) => {
   const id = num(c.req.param('id'), 'id');
-  const detail = await loadPlaceDetail(c.env.DB, id, await viewerOf(c));
+  const limit = Math.min(50, Math.max(1, Math.floor(Number(c.req.query('limit') ?? 5)) || 5));
+  const detail = await loadPlaceDetail(c.env.DB, id, await viewerOf(c), limit);
   if (!detail) throw new ApiError(404, 'place_not_found', 'Place not found');
   return c.json(detail, 200, { 'Cache-Control': 'no-store' });
 });

@@ -1,11 +1,17 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AuthStore } from './auth/auth.store';
+import { ToastComponent } from './ui/toast';
 
 @Component({
   selector: 'kb-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, ToastComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<router-outlet />`,
+  template: `<router-outlet /><kb-toast />`,
   styles: `:host { display: block; height: 100%; }`,
 })
-export class App {}
+export class App {
+  constructor() {
+    inject(AuthStore).load();
+  }
+}

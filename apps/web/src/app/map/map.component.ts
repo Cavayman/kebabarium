@@ -47,6 +47,8 @@ export class MapComponent {
   readonly placeClick = output<number>();
   readonly mapClick = output<LngLat>();
   readonly ready = output<void>();
+  /** Camera moved (rAF-throttled) — lets the page re-anchor HTML (place card) to the map. */
+  readonly moved = output<void>();
 
   readonly labels = signal<Label[]>([]);
   readonly failed = signal(false);
@@ -135,7 +137,10 @@ export class MapComponent {
 
   private scheduleLabels(): void {
     cancelAnimationFrame(this.frame);
-    this.frame = requestAnimationFrame(() => this.refreshLabels());
+    this.frame = requestAnimationFrame(() => {
+      this.refreshLabels();
+      this.moved.emit();
+    });
   }
 
   /** Pills over the top three spots and over dead spots that moved. */

@@ -48,8 +48,8 @@ export class ApiService {
   places(city: string): Observable<PlaceSummary[]> {
     return this.http.get<PlaceSummary[]>(`/api/cities/${city}/places`);
   }
-  place(id: number): Observable<PlaceDetail> {
-    return this.http.get<PlaceDetail>(`/api/places/${id}`);
+  place(id: number, limit?: number): Observable<PlaceDetail> {
+    return this.http.get<PlaceDetail>(`/api/places/${id}`, { params: params({ limit }) });
   }
   feed(city: string, q: { since?: string; source?: 'all' | ReviewSource; limit?: number } = {}): Observable<FeedResponse> {
     return this.http.get<FeedResponse>(`/api/cities/${city}/feed`, { params: params(q) });

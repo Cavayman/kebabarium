@@ -1,0 +1,42 @@
+<div class="bg" (click)="closed.emit()" *transloco="let t">
+  <form class="modal glass" role="dialog" aria-modal="true" [attr.aria-label]="t('review.title')" (click)="$event.stopPropagation()" (submit)="$event.preventDefault(); send()">
+    <div class="mh">
+      <b>{{ t('review.title') }}</b>
+      <button type="button" class="mini" (click)="closed.emit()" [attr.aria-label]="t('layout.close')"><kb-icon name="close" [size]="13" /></button>
+    </div>
+
+    <label class="lbl" for="rv-place">{{ t('review.place') }}</label>
+    <div class="sel">
+      <input #placeInput id="rv-place" class="field" autocomplete="off" [placeholder]="t('review.placePh')" [value]="query()" (input)="onQuery($any($event.target).value)" />
+      @if (suggestions().length) {
+        <ul class="sug glass" role="listbox">
+          @for (p of suggestions(); track p.id) {
+            <li role="option" (click)="choose(p)">{{ p.name }} <small>{{ p.score?.toFixed(1) ?? '—' }}</small></li>
+          }
+        </ul>
+      }
+    </div>
+
+    <span class="lbl">{{ t('review.rating') }}</span>
+    <div class="stars" role="radiogroup" [attr.aria-label]="t('review.rating')" (mouseleave)="hover.set(0)">
+      @for (n of [1, 2, 3, 4, 5]; track n) {
+        <button type="button" role="radio" [attr.aria-checked]="stars() === n" [attr.aria-label]="n + ' ★'" [class.on]="(hover() || stars()) >= n" (mouseenter)="hover.set(n)" (click)="stars.set(n); error.set(null)">★</button>
+      }
+      <span class="word">{{ words()[(hover() || stars()) - 1] ?? '' }}</span>
+    </div>
+
+    <label class="lbl" for="rv-text">{{ t('review.text') }} <small>({{ t('review.optional') }})</small></label>
+    <textarea #textArea id="rv-text" class="field" [maxLength]="maxText" [placeholder]="t('review.textPh')" [value]="text()" (input)="text.set($any($event.target).value)"></textarea>
+    <div class="cnt">{{ text().length }}/{{ maxText }}</div>
+
+    @if (!auth.me()) {
+      <label class="lbl" for="rv-nick">{{ t('review.nick') }} <small>({{ t('review.nickOptional') }})</small></label>
+      <input id="rv-nick" name="nickname" class="field" maxlength="24" [placeholder]="t('review.nickPh')" [value]="nickname()" (input)="nickname.set($any($event.target).value)" />
+      <div #turnstile class="ts"></div>
+      <p class="hint">{{ t('review.hint') }}</p>
+    }
+
+    <div class="err" role="alert">{{ error() }}</div>
+    <button type="button" class="chip acc send" [disabled]="sending()" (click)="send()">{{ t('review.send') }}</button>
+  </form>
+</div>

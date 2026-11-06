@@ -1,0 +1,80 @@
+<article class="card glass" [class.full]="full()" *transloco="let t" role="dialog" [attr.aria-label]="detail()?.name">
+  @if (!full()) {
+    <button type="button" class="mini close" (click)="closed.emit()" [attr.aria-label]="t('layout.close')"><kb-icon name="close" [size]="13" /></button>
+  }
+  @if (detail(); as d) {
+    <header class="row">
+      <kb-logo-tile [id]="d.id" [name]="d.name" [url]="d.logoUrl" [dead]="d.status === 'dead'" />
+      <div class="hd">
+        <h3>{{ d.name }}</h3>
+        <div class="sub">
+          @if (d.chainName) {
+            {{ t('card.chain', { chain: d.chainName, score: d.chainScore?.toFixed(1) ?? '—', n: d.chainSpots }) }}
+          } @else {
+            {{ t('card.independent') }}
+          }
+          · {{ t('card.reviews', { n: d.reviewCount }) }}
+        </div>
+      </div>
+    </header>
+
+    <div class="scores">
+      <div class="sc main"><b [style.color]="color(d.score)">{{ d.score?.toFixed(1) ?? '—' }}</b><span>{{ t('card.total') }}</span></div>
+      <div class="sc"><b>{{ d.ourScore?.toFixed(1) ?? '—' }}</b><span>{{ t('card.ours') }}</span></div>
+      <div class="sc"><b>{{ d.googleRating?.toFixed(1) ?? '—' }}</b><span>{{ t('card.google') }}</span></div>
+    </div>
+
+    <div class="revs">
+      @for (r of d.reviews; track r.id) {
+        <div class="rv">
+          <div class="h">
+            <span>
+              @if (r.source === 'google' && r.authorUrl) {
+                <a [href]="r.authorUrl" target="_blank" rel="noopener noreferrer nofollow"><b>{{ r.author }}</b></a>
+              } @else {
+                <b>{{ r.author }}</b>
+              }
+              <span class="src" [class]="'src src-' + r.source">{{ r.source === 'ours' ? t('feed.badgeOurs') : t('card.googleBadge') }}</span>
+              <span class="st">{{ stars(r.stars) }}</span>
+            </span>
+            <span class="when">{{ r.ownPending ? t('feed.pending') : ago(r.createdAt) }}</span>
+          </div>
+          @if (r.text) {
+            <p>{{ r.text }}</p>
+          }
+        </div>
+      } @empty {
+        <p class="none">{{ t('card.noReviews') }}</p>
+      }
+    </div>
+
+    @for (m of d.movedFrom; track m.id) {
+      <p class="moved">{{ t('card.movedFrom', { name: m.address ?? m.name }) }}</p>
+    }
+
+    <div class="status" [class.ok]="d.status === 'open'" [class.bad]="d.status === 'dead'">
+      ●
+      @switch (d.status) {
+        @case ('open') { {{ t('card.open') }} }
+        @case ('closed_temp') { {{ t('card.closedTemp') }} }
+        @default {
+          @if (d.movedTo) { {{ t('card.movedTo', { name: d.movedTo.name }) }} } @else { {{ t('card.dead') }} }
+        }
+      }
+    </div>
+
+    <div class="cta">
+      @if (d.status !== 'dead') {
+        <button type="button" class="chip acc rate" (click)="rate.emit(d.id)">{{ t('card.rate') }}</button>
+      }
+      <a class="chip" [href]="routeUrl(d)" target="_blank" rel="noopener noreferrer"><kb-icon name="nav" [size]="14" />{{ t('card.route') }}</a>
+      @if (!full()) {
+        <a class="chip more" [routerLink]="['/', city(), 'place', d.id]">{{ t('card.more') }}</a>
+      }
+    </div>
+  } @else if (error()) {
+    <p class="none">{{ t('review.errNetwork') }}</p>
+  } @else {
+    <p class="none">{{ t('common.loading') }}</p>
+  }
+</article>

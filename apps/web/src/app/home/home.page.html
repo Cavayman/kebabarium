@@ -10,6 +10,7 @@
       (ready)="onMapReady()"
       (placeClick)="onPlaceClick($event)"
       (mapClick)="onMapClick($event)"
+      (moved)="anchorCard()"
     />
   } @else if (!webgl) {
     <section class="fallback glass">
@@ -38,4 +39,21 @@
   <kb-feed-panel [class.off]="!layout.isOpen('feed')" [city]="city()" (drop)="onDrop($event)" (pick)="focusPlace($event)" />
   <kb-legend />
   <kb-dock (review)="openReview()" />
+
+  @if (selectedId(); as id) {
+    <kb-place-card
+      class="place-card"
+      [class.sheet]="layout.mobile()"
+      [style.left.px]="layout.mobile() ? null : cardPos()?.x"
+      [style.top.px]="layout.mobile() ? null : cardPos()?.y"
+      [placeId]="id"
+      [city]="city()"
+      (closed)="selectedId.set(null)"
+      (rate)="openReview($event)"
+    />
+  }
+
+  @if (reviewFor() !== undefined) {
+    <kb-review-modal [places]="places()" [placeId]="reviewFor() ?? null" (closed)="reviewFor.set(undefined)" (submitted)="onReviewed($event)" />
+  }
 </div>

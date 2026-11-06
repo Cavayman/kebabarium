@@ -99,7 +99,7 @@ export function visibleRatingSql(viewer: Viewer | undefined, params: unknown[]):
     : `r.status = 'published'`;
 }
 
-export async function loadPlaceDetail(db: D1Database, id: number, viewer?: Viewer): Promise<PlaceDetail | null> {
+export async function loadPlaceDetail(db: D1Database, id: number, viewer?: Viewer, limit = 5): Promise<PlaceDetail | null> {
   const row = await getPlace(db, id);
   if (!row || row.status === 'hidden') return null;
   const city = await loadCityPlaces(db, row.cityId);
@@ -118,7 +118,7 @@ export async function loadPlaceDetail(db: D1Database, id: number, viewer?: Viewe
        FROM ratings r JOIN chain ON chain.src = r.place_id JOIN places pl ON pl.id = r.place_id
        LEFT JOIN users u ON u.id = r.user_id
        WHERE ${visible}
-       ORDER BY r.created_at DESC LIMIT 5`,
+       ORDER BY r.created_at DESC LIMIT ${limit}`,
     )
     .bind(...params)
     .all<ReviewItem & { status: string }>();
@@ -126,13 +126,13 @@ export async function loadPlaceDetail(db: D1Database, id: number, viewer?: Viewe
     .prepare(
       `SELECT 'e' || e.id AS id, e.source, COALESCE(e.author, 'Google') AS author, e.author_url AS authorUrl, e.stars, e.text,
               e.place_id AS placeId, ?2 AS placeName, e.published_at AS createdAt, e.url
-       FROM external_reviews e WHERE e.place_id = ?1 AND e.source = 'google' ORDER BY e.published_at DESC LIMIT 5`,
+       FROM external_reviews e WHERE e.place_id = ?1 AND e.source = 'google' ORDER BY e.published_at DESC LIMIT ${limit}`,
     )
     .bind(id, row.name)
     .all<ReviewItem>();
   const reviews = [...ours.map(({ status, ...r }) => (status === 'published' ? r : { ...r, ownPending: true })), ...google]
     .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
-    .slice(0, 5);
+    .slice(0, limit);
 
   const movedFrom = city
     .filter((p) => p.row.movedToPlaceId === id)

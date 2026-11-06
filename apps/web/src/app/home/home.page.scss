@@ -54,3 +54,19 @@
     margin-left: auto;
   }
 }
+.place-card {
+  position: absolute;
+  z-index: 8;
+  left: 50%;
+  top: 90px;
+  &.sheet {
+    left: 8px;
+    right: 8px;
+    top: auto;
+    bottom: 8px;
+    ::ng-deep .card {
+      width: 100%;
+      max-width: none;
+    }
+  }
+}

@@ -15,12 +15,16 @@ import { LeaderboardPanel } from '../panels/leaderboard.panel';
 import { LegendComponent } from '../panels/legend.component';
 import { LayoutStore } from '../state/layout.store';
 import { IconComponent } from '../ui/icon.component';
+import { ToastService } from '../ui/toast';
+import { AuthStore } from '../auth/auth.store';
+import { PlaceCardComponent } from '../place/place-card.component';
+import { ReviewModalComponent } from '../review/review-modal.component';
 
 const PLACES_REFRESH_MS = 120_000;
 
 @Component({
   selector: 'kb-home',
-  imports: [MapComponent, NavbarComponent, LeaderboardPanel, FeedPanel, LegendComponent, DockComponent, IconComponent, TranslocoDirective],
+  imports: [MapComponent, NavbarComponent, LeaderboardPanel, FeedPanel, LegendComponent, DockComponent, IconComponent, PlaceCardComponent, ReviewModalComponent, TranslocoDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './home.page.html',
   styleUrl: './home.page.scss',
@@ -31,6 +35,7 @@ export class HomePage {
 
   protected readonly cfg = inject(ConfigStore);
   protected readonly layout = inject(LayoutStore);
+  protected readonly auth = inject(AuthStore);
   private readonly api = inject(ApiService);
   private readonly router = inject(Router);
   private readonly transloco = inject(TranslocoService);
@@ -80,11 +85,44 @@ export class HomePage {
 
   onPlaceClick(id: number): void {
     this.selectedId.set(id);
+    this.anchorCard();
   }
 
   onMapClick(_c: LngLat): void {
     this.selectedId.set(null);
     this.layout.closeSheets();
+  }
+
+  /** Desktop: the card floats next to its column top and follows the camera. */
+  readonly cardPos = signal<{ x: number; y: number } | null>(null);
+  anchorCard(): void {
+    const id = this.selectedId();
+    const p = id == null ? null : this.places().find((x) => x.id === id);
+    const m = this.map();
+    const xy = p && m ? m.project(p) : null;
+    if (!p || !m || !xy) return this.cardPos.set(null);
+    const top = xy.y - m.columnTopPx(p);
+    const w = 300;
+    const x = Math.min(Math.max(12, xy.x + 18), innerWidth - w - 12);
+    const y = Math.min(Math.max(70, top - 60), innerHeight - 440);
+    this.cardPos.set({ x, y });
+  }
+
+  // ---------- reviews ----------
+  readonly reviewFor = signal<number | null | undefined>(undefined); // undefined = closed, null = no preselection
+  private readonly toast = inject(ToastService);
+
+  onReviewed(r: { status: 'published' | 'pending'; placeId: number }): void {
+    this.toast.show(
+      this.transloco.translate('review.sent', {
+        status: this.transloco.translate(r.status === 'published' ? 'review.statusPublished' : 'review.statusPending'),
+      }),
+    );
+    this.loadPlaces(this.city());
+    if (r.status === 'published') {
+      const me = this.auth.me();
+      this.map()?.drop(r.placeId, null, me ? me.displayName : '✨');
+    }
   }
 
   onDrop(d: DropEvent): void {
@@ -95,11 +133,11 @@ export class HomePage {
     const p = this.places().find((x) => x.id === id);
     if (!p) return;
     this.selectedId.set(id);
-    void this.map()?.flyTo(p, 15, 55);
+    void this.map()?.flyTo(p, 15, 55).then(() => this.anchorCard());
   }
 
-  openReview(): void {
-    // wired in the review task
+  openReview(placeId: number | null = null): void {
+    this.reviewFor.set(placeId);
   }
 
   startNearby(): void {
