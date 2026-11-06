@@ -28,7 +28,7 @@ export class Radar {
       </div><div class="radar-me"></div>`;
     this.host.appendChild(root);
     this.root = root;
-    this.off = this.map.onMove(() => this.layout());
+    this.off = this.map.onMove(() => this.scheduleLayout());
     this.layout();
   }
 
@@ -43,10 +43,22 @@ export class Radar {
   }
 
   hide(): void {
+    cancelAnimationFrame(this.frame);
+    this.frame = 0;
     this.off?.();
     this.off = undefined;
     this.root?.remove();
     this.root = null;
+  }
+
+  private frame = 0;
+  /** Camera events can fire several times per frame: re-measure at most once per frame. */
+  private scheduleLayout(): void {
+    if (this.frame) return;
+    this.frame = requestAnimationFrame(() => {
+      this.frame = 0;
+      this.layout();
+    });
   }
 
   private layout(): void {
@@ -56,12 +68,10 @@ export class Radar {
     this.root.style.transform = `translate(${x}px, ${y}px)`;
     const plane = this.root.querySelector<HTMLElement>('.radar-plane')!;
     plane.style.transform = `perspective(900px) rotateX(${this.map.pitch()}deg)`;
+    // every disc (rings included) has the full size; rings animate only transform/opacity (GPU-composited)
     this.root.querySelectorAll<HTMLElement>('.radar-disc').forEach((el) => {
-      if (!el.classList.contains('radar-ring')) {
-        el.style.width = `${d}px`;
-        el.style.height = `${d}px`;
-      }
-      el.style.setProperty('--d', `${d}px`);
+      el.style.width = `${d}px`;
+      el.style.height = `${d}px`;
     });
   }
 }

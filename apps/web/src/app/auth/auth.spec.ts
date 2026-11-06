@@ -6,6 +6,8 @@ import { TranslocoService } from '@jsverse/transloco';
 import type { Me } from '@kebabarium/shared';
 import { provideTestI18n } from '../core/testing';
 import { AccountComponent } from './account.component';
+import { AuthDialogsComponent } from './auth-dialogs.component';
+import { AuthUiStore } from './auth-ui.store';
 import { AuthStore } from './auth.store';
 
 const me = (role: 'user' | 'admin' = 'user'): Me => ({
@@ -22,8 +24,17 @@ describe('AccountComponent', () => {
     http = TestBed.inject(HttpTestingController);
   });
 
-  it('signs in with the Google credential and asks for a nickname on first login', async () => {
+  it('opens sign-in outside the navbar (no overlay inside the transformed/blurred pill)', () => {
     const f = TestBed.createComponent(AccountComponent);
+    f.detectChanges();
+    (f.nativeElement.querySelector('.chip') as HTMLElement).click();
+    f.detectChanges();
+    expect(TestBed.inject(AuthUiStore).loginOpen()).toBe(true);
+    expect(f.nativeElement.querySelector('.bg')).toBeNull();
+  });
+
+  it('signs in with the Google credential and asks for a nickname on first login', async () => {
+    const f = TestBed.createComponent(AuthDialogsComponent);
     f.detectChanges();
     f.componentInstance.onCredential('google-jwt');
     const req = http.expectOne('/api/auth/google');
@@ -38,8 +49,8 @@ describe('AccountComponent', () => {
 
   it('reports a taken nickname', async () => {
     TestBed.inject(AuthStore).me.set({ ...me(), nickname: null });
-    const f = TestBed.createComponent(AccountComponent);
-    f.componentInstance.nicknameOpen.set(true);
+    const f = TestBed.createComponent(AuthDialogsComponent);
+    f.componentInstance.ui.nicknameOpen.set(true);
     f.componentInstance.nick.set('oleg');
     f.detectChanges();
     f.nativeElement.querySelector('.save').click();

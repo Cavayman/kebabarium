@@ -31,6 +31,27 @@ function coloredShadows(src: string): string[] {
   return hits;
 }
 
+/** Keyframes that animate layout properties (width/height/top/left/margin) re-layout every frame and stutter. */
+function layoutKeyframes(src: string): string[] {
+  const hits: string[] = [];
+  for (const m of src.matchAll(/@keyframes\s+([\w-]+)\s*\{([\s\S]*?)\n\}/g)) {
+    if (/(^|[\s{;])(width|height|top|left|right|bottom|margin[\w-]*)\s*:/m.test(m[2]!)) hits.push(m[1]!);
+  }
+  return hits;
+}
+
+describe('animation performance', () => {
+  it('detects layout-animating keyframes (self-check)', () => {
+    expect(layoutKeyframes('@keyframes a {\n  0% { width: 0; }\n  100% { width: 10px; }\n}')).toEqual(['a']);
+    expect(layoutKeyframes('@keyframes b {\n  to { transform: scale(1); opacity: 0; }\n}')).toEqual([]);
+  });
+
+  it('animates only compositor-friendly properties (transform/opacity)', () => {
+    const offenders = files(WEB).flatMap((f) => layoutKeyframes(readFileSync(f, 'utf8')).map((k) => `${f}: @keyframes ${k}`));
+    expect(offenders).toEqual([]);
+  });
+});
+
 describe('web style rules', () => {
   it('detects coloured glows (self-check)', () => {
     expect(coloredShadows('.x { box-shadow: 0 0 18px #ff5a0066; }')).toHaveLength(1);

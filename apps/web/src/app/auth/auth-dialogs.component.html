@@ -1,0 +1,35 @@
+<ng-container *transloco="let t">
+  @if (ui.loginOpen()) {
+    <div class="bg" (click)="ui.loginOpen.set(false)">
+      <div class="sheet glass" role="dialog" aria-modal="true" [attr.aria-label]="t('auth.title')" (click)="$event.stopPropagation()">
+        <button type="button" class="mini close" (click)="ui.loginOpen.set(false)" [attr.aria-label]="t('layout.close')"><kb-icon name="close" [size]="13" /></button>
+        <h2>{{ t('auth.title') }}</h2>
+        <p>{{ t('auth.subtitle') }}</p>
+        @if (clientId()) {
+          <div #gis class="gis"></div>
+        } @else {
+          <p class="muted">{{ t('auth.notConfigured') }}</p>
+        }
+        <div class="langs seg">
+          <button type="button" data-lang="uk" [class.on]="langs.current() === 'uk'" (click)="setLang('uk')">Українська</button>
+          <button type="button" data-lang="en" [class.on]="langs.current() === 'en'" (click)="setLang('en')">English</button>
+        </div>
+        <a class="privacy" routerLink="/privacy" (click)="ui.loginOpen.set(false)">{{ t('privacy.title') }}</a>
+      </div>
+    </div>
+  }
+
+  @if (ui.nicknameOpen()) {
+    <div class="bg">
+      <form class="sheet glass" role="dialog" aria-modal="true" (submit)="$event.preventDefault(); saveNickname()">
+        <h2>{{ t('auth.nickTitle') }}</h2>
+        <input class="field" name="nickname" maxlength="24" autocomplete="nickname" [value]="nick()" (input)="nick.set($any($event.target).value); nickError.set(null)" />
+        <p class="muted">{{ t('auth.nickHint') }}</p>
+        @if (nickError(); as e) {
+          <p class="err" role="alert">{{ e }}</p>
+        }
+        <button type="button" class="chip acc save" [disabled]="busy()" (click)="saveNickname()">{{ t('auth.save') }}</button>
+      </form>
+    </div>
+  }
+</ng-container>

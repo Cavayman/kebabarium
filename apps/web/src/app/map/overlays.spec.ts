@@ -3,7 +3,7 @@ import { dropEmoji } from './emoji-drop';
 import { FakeMapProvider } from './testing';
 
 describe('Radar overlay', () => {
-  it('is drawn to the real radius and rescales when the map moves', () => {
+  it('is drawn to the real radius and rescales when the map moves', async () => {
     const host = document.createElement('div');
     const map = new FakeMapProvider();
     const radar = new Radar(map, host);
@@ -13,7 +13,10 @@ describe('Radar overlay', () => {
 
     map.scale = 0.05;
     map.fireMove();
+    map.fireMove(); // several camera events in one frame → one re-measure
+    await new Promise((r) => requestAnimationFrame(() => r(null)));
     expect(disc.style.width).toBe('100px');
+    expect(host.querySelector<HTMLElement>('.radar-ring')!.style.width).toBe('100px');
 
     radar.finish();
     expect(host.querySelector('.radar')!.classList.contains('done')).toBe(true);

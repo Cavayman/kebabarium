@@ -102,3 +102,7 @@ Final: minor (deferred): admin approve can resurrect an author-deleted rating (5
 Final: minor (deferred): one unparseable Threads timestamp aborts the batch
 Final: minor (deferred): anonymous nicknames can imitate registered nicknames
 Final: minor (deferred): logout/admin removal not revoked server-side until cookie expiry/next login
+
+## Post-release fixes (owner report)
+Fix: "Увійти" sheet overlapped other components — root cause: the sign-in/nickname overlays (position: fixed) rendered inside the navbar, whose transform and backdrop-filter make it the containing block, so the "full-screen" layer was a 439x46 box inside the pill. Moved them to <kb-auth-dialogs> at the app root — auth.spec "opens sign-in outside the navbar" RED→GREEN, suite 165/165
+Fix: radar animation stutter — root cause: ring keyframes animated width/height (layout every frame on up to ~1000px elements) and camera events re-measured several times per frame. Rings now animate transform/opacity only; radar re-measures once per frame — web-style-rules "animates only compositor-friendly properties" RED→GREEN, suite 165/165
