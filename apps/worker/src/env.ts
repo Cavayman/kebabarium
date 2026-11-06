@@ -15,3 +15,10 @@ export interface Env {
   THREADS_APP_SECRET?: string;
   THREADS_TOKEN?: string;
 }
+
+export interface SessionUser {
+  id: number;
+  role: 'user' | 'admin';
+}
+
+export type AppEnv = { Bindings: Env; Variables: { user: SessionUser | null } };

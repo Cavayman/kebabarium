@@ -1,13 +1,15 @@
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import type { Env } from './env';
+import type { AppEnv } from './env';
 import { ApiError } from './errors';
+import { publicRoutes } from './routes/public';
 
-export type AppEnv = { Bindings: Env };
+export type { AppEnv } from './env';
 
 export const app = new Hono<AppEnv>();
 
 app.get('/api/health', (c) => c.json({ ok: true, env: c.env.ENVIRONMENT }));
+app.route('/api', publicRoutes);
 
 app.notFound((c) => {
   if (c.req.path.startsWith('/api/')) {
