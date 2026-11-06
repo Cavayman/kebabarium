@@ -175,6 +175,8 @@
     "ban": "Ban",
     "unban": "Unban",
     "runNow": "Run now",
+    "scanAll": "Scan the whole city",
+    "scanNew": "new",
     "budget": "API budget this month",
     "pending": "Pending",
     "held": "Held",

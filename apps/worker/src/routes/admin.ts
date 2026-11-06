@@ -6,8 +6,10 @@ import { getCityBySlug } from '../db/cities';
 import { getPlace, PLACE_SELECT, mapPlace } from '../db/places';
 import type { AppEnv } from '../env';
 import { ApiError } from '../errors';
-import { CAPS, SYNC_KINDS } from '../sync/config';
-import { runSync, startSyncRun, SYNC_RUN_SELECT } from '../sync/run';
+import { CAPS, SYNC, SYNC_KINDS } from '../sync/config';
+import { runDiscovery } from '../sync/discovery';
+import { newStats } from '../sync/stats';
+import { finishSyncRun, runSync, startSyncRun, SYNC_RUN_SELECT } from '../sync/run';
 import { body } from '../validate';
 
 export const adminRoutes = new Hono<AppEnv>();
@@ -257,6 +259,21 @@ adminRoutes.post('/admin/sync', async (c) => {
   const runId = await startSyncRun(c.env.DB, kind as (typeof SYNC_KINDS)[number]);
   c.executionCtx.waitUntil(runSync(c.env.DB, c.env, kind as (typeof SYNC_KINDS)[number], runId));
   return c.json({ runId }, 202);
+});
+
+/**
+ * One chunk of a full city scan, run while the request is open (the admin page calls it in a loop until
+ * `done` adds up to `total`). Chunks stay under the Workers Free limit of 50 outgoing fetches per request.
+ */
+adminRoutes.post('/admin/scan', async (c) => {
+  const { city: slug } = await body(c, z.object({ city: z.string().min(1).max(64) }));
+  const city = await getCityBySlug(c.env.DB, slug);
+  if (!city) throw new ApiError(404, 'city_not_found', 'City not found');
+  const runId = await startSyncRun(c.env.DB, 'scan');
+  const stats = newStats();
+  const progress = await runDiscovery(c.env.DB, c.env, city, stats, fetch, SYNC.scanCallsPerRequest);
+  const run = await finishSyncRun(c.env.DB, runId, 'scan', stats);
+  return c.json({ runId, ...progress, placesAdded: stats.placesAdded, callsUsed: stats.callsUsed, error: run.error, notes: [...new Set(stats.notes)] });
 });
 
 adminRoutes.get('/admin/sync-runs', async (c) => {

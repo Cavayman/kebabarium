@@ -110,6 +110,7 @@ export class ApiService {
     unban: (id: number) => this.http.delete<void>(`/api/admin/bans/${id}`),
     sync: (kind: 'discovery' | 'refresh' | 'threads' | 'all') => this.http.post<{ runId: number }>('/api/admin/sync', { kind }),
     syncRuns: () => this.http.get<AdminSyncRun[]>('/api/admin/sync-runs'),
+    scan: (city: string) => this.http.post<AdminScanChunk>('/api/admin/scan', { city }),
     budget: () => this.http.get<{ month: string; usage: { sku: string; used: number; cap: number }[] }>('/api/admin/budget'),
   };
 }
@@ -162,6 +163,18 @@ export interface AdminBan {
   reason: string | null;
   until: string | null;
   createdAt: string;
+}
+
+/** One chunk of a full city scan: `done` of `total` search pairs were finished by this request. */
+export interface AdminScanChunk {
+  runId: number;
+  done: number;
+  total: number;
+  cursor: number;
+  placesAdded: number;
+  callsUsed: number;
+  error: string | null;
+  notes: string[];
 }
 
 export interface AdminSyncRun {

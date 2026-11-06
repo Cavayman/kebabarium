@@ -1,10 +1,17 @@
-/** Minimal Places API (New) client. Field masks are chosen to stay on the Pro (search) and Enterprise+Atmosphere (details) SKUs. */
+/**
+ * Minimal Places API (New) client. Each field mask pins one billing SKU:
+ * - search: ids only → "Text Search Essentials (IDs Only)", free without a monthly cap;
+ * - basics: name/location/address/status of a newly found place → "Place Details Pro" (5 000 free/month);
+ * - details: rating + reviews for the refresh → "Place Details Enterprise + Atmosphere" (1 000 free/month).
+ */
 const BASE = 'https://places.googleapis.com/v1';
 
-export const SKU_SEARCH = 'places.text_search_pro';
+export const SKU_SEARCH = 'places.text_search_ids';
+export const SKU_BASICS = 'places.details_pro';
 export const SKU_DETAILS = 'places.details_enterprise_atmosphere';
 
-const SEARCH_MASK = 'places.id,places.displayName,places.location,places.formattedAddress,places.businessStatus,nextPageToken';
+const SEARCH_MASK = 'places.id,nextPageToken';
+const BASICS_MASK = 'id,displayName,location,formattedAddress,businessStatus';
 const DETAILS_MASK = 'rating,userRatingCount,businessStatus,reviews';
 
 export type BusinessStatus = 'OPERATIONAL' | 'CLOSED_TEMPORARILY' | 'CLOSED_PERMANENTLY';
@@ -52,14 +59,19 @@ export function googlePlaces(key: string, fetcher: typeof fetch = fetch) {
     return (await res.json()) as T;
   };
   return {
-    async textSearch(query: string, rect: Rect): Promise<{ places: FoundPlace[] }> {
+    /** One page of place ids; pass the returned token to get the next page (Google stops at 60 results). */
+    async searchIds(query: string, rect: Rect, pageToken?: string): Promise<{ ids: string[]; nextPageToken?: string }> {
       const res = await fetcher(`${BASE}/places:searchText`, {
         method: 'POST',
         headers: headers(SEARCH_MASK),
-        body: JSON.stringify({ textQuery: query, locationRestriction: { rectangle: rect }, languageCode: 'uk', pageSize: 20 }),
+        body: JSON.stringify({ textQuery: query, locationRestriction: { rectangle: rect }, languageCode: 'uk', pageSize: 20, ...(pageToken ? { pageToken } : {}) }),
       });
-      const data = await parse<{ places?: FoundPlace[] }>(res);
-      return { places: data.places ?? [] };
+      const data = await parse<{ places?: { id: string }[]; nextPageToken?: string }>(res);
+      return { ids: (data.places ?? []).map((p) => p.id), nextPageToken: data.nextPageToken || undefined };
+    },
+    async basics(placeId: string): Promise<FoundPlace> {
+      const res = await fetcher(`${BASE}/places/${encodeURIComponent(placeId)}?languageCode=uk`, { headers: headers(BASICS_MASK) });
+      return parse<FoundPlace>(res);
     },
     async details(placeId: string): Promise<PlaceDetails> {
       const res = await fetcher(`${BASE}/places/${encodeURIComponent(placeId)}?languageCode=uk`, { headers: headers(DETAILS_MASK) });

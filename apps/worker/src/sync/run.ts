@@ -25,12 +25,15 @@ export const SYNC_RUN_SELECT = `SELECT id, kind, started_at AS startedAt, finish
   places_added AS placesAdded, places_updated AS placesUpdated, marked_dead AS markedDead, external_added AS externalAdded,
   threads_status AS threadsStatus, error, notes FROM sync_runs`;
 
-export async function startSyncRun(db: D1Database, kind: SyncKind): Promise<number> {
+/** Hourly/manual sync kinds, plus "scan": one chunk of an admin-driven full city scan. */
+export type RunKind = SyncKind | 'scan';
+
+export async function startSyncRun(db: D1Database, kind: RunKind): Promise<number> {
   const r = await db.prepare(`INSERT INTO sync_runs (kind) VALUES (?) RETURNING id`).bind(kind).first<{ id: number }>();
   return r!.id;
 }
 
-async function step(stats: SyncStats, name: string, fn: () => Promise<void>): Promise<void> {
+async function step(stats: SyncStats, name: string, fn: () => Promise<unknown>): Promise<void> {
   try {
     await fn();
   } catch (e) {
@@ -53,6 +56,11 @@ export async function runSync(db: D1Database, env: Env, kind: SyncKind, runId?: 
     for (const city of cities) await step(stats, `threads:${city.slug}`, () => runThreads(db, env, city, stats, fetcher));
   }
 
+  return finishSyncRun(db, id, kind, stats);
+}
+
+/** Writes a run's stats to sync_runs and logs them. */
+export async function finishSyncRun(db: D1Database, id: number, kind: RunKind, stats: SyncStats): Promise<SyncRunRow> {
   const error = [...new Set(stats.errors)].join('; ') || null;
   const notes = [...new Set(stats.notes)];
   console.log(JSON.stringify({ level: error ? 'warn' : 'info', msg: 'sync', kind, runId: id, ...stats, errors: undefined, notes }));

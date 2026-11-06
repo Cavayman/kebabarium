@@ -123,6 +123,23 @@ describe('sync & budget', () => {
 
   it('reports budget usage against caps', async () => {
     const body = (await (await call('GET', '/api/admin/budget', admin)).json()) as { usage: { sku: string; used: number; cap: number }[] };
-    expect(body.usage.find((u) => u.sku === 'places.text_search_pro')).toMatchObject({ cap: 4500 });
+    expect(body.usage.map((u) => u.sku)).toEqual(['places.text_search_ids', 'places.details_pro', 'places.details_enterprise_atmosphere', 'threads.search']);
+    expect(body.usage.find((u) => u.sku === 'places.details_pro')).toMatchObject({ cap: 4500 });
+  });
+
+  it('scans one chunk of a city on demand and reports progress for the next chunk', async () => {
+    const res = await call('POST', '/api/admin/scan', admin, { city: 'lviv' });
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { runId: number; done: number; total: number; cursor: number; placesAdded: number; notes: string[] };
+    expect(body).toMatchObject({ done: 0, placesAdded: 0, notes: ['google_not_configured'] }); // the test env has no Places key
+    expect(body.total).toBeGreaterThan(400);
+    const runs = (await (await call('GET', '/api/admin/sync-runs', admin)).json()) as { id: number; kind: string; finishedAt: string | null }[];
+    expect(runs[0]).toMatchObject({ id: body.runId, kind: 'scan' });
+    expect(runs[0]!.finishedAt).not.toBeNull();
+  });
+
+  it('refuses a scan for regular users and unknown cities', async () => {
+    expect((await call('POST', '/api/admin/scan', user, { city: 'lviv' })).status).toBe(403);
+    expect((await call('POST', '/api/admin/scan', admin, { city: 'atlantis' })).status).toBe(404);
   });
 });

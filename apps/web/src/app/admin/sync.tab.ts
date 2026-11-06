@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { ApiService, type AdminSyncRun } from '../core/api.service';
 
@@ -21,6 +22,16 @@ type Kind = 'discovery' | 'refresh' | 'threads' | 'all';
       <div class="tools" style="margin-top: 14px">
         @for (k of kinds; track k) {
           <button type="button" class="chip sm" (click)="run(k)">{{ t('admin.runNow') }}: {{ k }}</button>
+        }
+      </div>
+      <div class="scan">
+        <button type="button" class="chip sm" data-scan (click)="scanAll()" [disabled]="scanning()">{{ t('admin.scanAll') }}</button>
+        @if (scanTotal()) {
+          <div class="bar"><i [style.width.%]="pct(scanDone(), scanTotal())"></i></div>
+          <span class="muted">{{ scanDone() }} / {{ scanTotal() }} · +{{ scanAdded() }} {{ t('admin.scanNew') }}</span>
+        }
+        @if (scanError(); as err) {
+          <span class="danger">{{ err }}</span>
         }
       </div>
       <div class="scroll">
@@ -48,6 +59,8 @@ type Kind = 'discovery' | 'refresh' | 'threads' | 'all';
     .bar { height: 8px; border-radius: 4px; background: var(--hover); overflow: hidden; }
     .bar i { display: block; height: 100%; background: var(--ok); }
     .bar i.hot { background: var(--bad); }
+    .scan { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; font-size: 12px; margin: 10px 0 14px; }
+    .scan .danger { grid-column: 1 / -1; }
   `,
 })
 export class SyncTab {
@@ -75,5 +88,38 @@ export class SyncTab {
 
   run(kind: Kind): void {
     this.api.admin.sync(kind).subscribe(() => setTimeout(() => this.load(), 1500));
+  }
+
+  readonly scanning = signal(false);
+  readonly scanDone = signal(0);
+  readonly scanTotal = signal(0);
+  readonly scanAdded = signal(0);
+  readonly scanError = signal<string | null>(null);
+
+  /** One full pass over the city: the server does a chunk per request, we keep asking until every pair is covered. */
+  async scanAll(): Promise<void> {
+    if (this.scanning()) return;
+    this.scanning.set(true);
+    this.scanDone.set(0);
+    this.scanAdded.set(0);
+    this.scanError.set(null);
+    try {
+      for (;;) {
+        const r = await firstValueFrom(this.api.admin.scan('lviv'));
+        this.scanTotal.set(r.total);
+        this.scanDone.update((d) => Math.min(r.total, d + r.done));
+        this.scanAdded.update((a) => a + r.placesAdded);
+        if (r.done === 0) {
+          this.scanError.set(r.error || r.notes.join(', ') || 'no progress');
+          break;
+        }
+        if (this.scanDone() >= r.total) break;
+      }
+    } catch (e) {
+      this.scanError.set(e instanceof Error ? e.message : String(e));
+    } finally {
+      this.scanning.set(false);
+      this.load();
+    }
   }
 }
