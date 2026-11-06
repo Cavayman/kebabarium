@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { columnHeight, ratingColor, ratingStops, zoomFactor } from '../src/scale';
+import { columnHeight, NO_SCORE_HEIGHT, ratingColor, ratingStops, zoomFactor } from '../src/scale';
 
 const hexToRgb = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 
@@ -36,7 +36,7 @@ describe('columnHeight', () => {
     expect(columnHeight(2.1, false)).toBe(30);
     expect(columnHeight(3, false)).toBe(30);
     expect(columnHeight(4.8, true)).toBe(60);
-    expect(columnHeight(null, false)).toBe(30);
+    expect(columnHeight(null, false)).toBe(NO_SCORE_HEIGHT);
   });
   it('makes 4.8 clearly taller than 4.6', () => {
     expect(columnHeight(4.8, false) / columnHeight(4.6, false)).toBeGreaterThan(1.25);
@@ -50,5 +50,12 @@ describe('zoomFactor', () => {
     expect(zoomFactor(13.5)).toBeCloseTo(0.5, 2);
     expect(zoomFactor(16)).toBeCloseTo(0.12, 2);
     expect(zoomFactor(18)).toBeCloseTo(0.12, 2);
+  });
+});
+
+describe('unscored columns', () => {
+  it('stand clearly taller than the lowest rated stub so new places are visible on the map', () => {
+    expect(NO_SCORE_HEIGHT).toBeGreaterThanOrEqual(3 * columnHeight(3, false));
+    expect(NO_SCORE_HEIGHT).toBeLessThan(columnHeight(4, false));
   });
 });

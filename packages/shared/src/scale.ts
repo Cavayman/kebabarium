@@ -38,10 +38,14 @@ export function ratingColor(r: number | null, dead = false): string {
   return last[1];
 }
 
+/** Unscored (freshly discovered) places: a grey column tall enough to see on the map, still below a 4.0. */
+export const NO_SCORE_HEIGHT = 120;
+
 /** Column height in metres (before zoom scaling). */
 export function columnHeight(r: number | null, dead: boolean): number {
   if (dead) return 60;
-  if (r == null || Number.isNaN(r) || r < 3) return 30;
+  if (r == null || Number.isNaN(r)) return NO_SCORE_HEIGHT;
+  if (r < 3) return 30;
   return 30 + Math.pow((r - 3) / 2, 2.2) * 1100;
 }
 
