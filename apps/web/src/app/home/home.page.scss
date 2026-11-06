@@ -70,3 +70,12 @@
     }
   }
 }
+.pick-hint {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  border: 1px solid var(--acc2);
+  pointer-events: none;
+}

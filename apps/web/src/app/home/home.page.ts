@@ -19,12 +19,15 @@ import { ToastService } from '../ui/toast';
 import { AuthStore } from '../auth/auth.store';
 import { PlaceCardComponent } from '../place/place-card.component';
 import { ReviewModalComponent } from '../review/review-modal.component';
+import { NearbyPanel } from '../nearby/nearby.panel';
+import { NearbyService } from '../nearby/nearby.service';
 
 const PLACES_REFRESH_MS = 120_000;
 
 @Component({
   selector: 'kb-home',
-  imports: [MapComponent, NavbarComponent, LeaderboardPanel, FeedPanel, LegendComponent, DockComponent, IconComponent, PlaceCardComponent, ReviewModalComponent, TranslocoDirective],
+  imports: [MapComponent, NavbarComponent, LeaderboardPanel, FeedPanel, LegendComponent, DockComponent, IconComponent, PlaceCardComponent, ReviewModalComponent, NearbyPanel, TranslocoDirective],
+  providers: [NearbyService],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './home.page.html',
   styleUrl: './home.page.scss',
@@ -36,6 +39,7 @@ export class HomePage {
   protected readonly cfg = inject(ConfigStore);
   protected readonly layout = inject(LayoutStore);
   protected readonly auth = inject(AuthStore);
+  protected readonly nearby = inject(NearbyService);
   private readonly api = inject(ApiService);
   private readonly router = inject(Router);
   private readonly transloco = inject(TranslocoService);
@@ -71,7 +75,15 @@ export class HomePage {
       const t = setInterval(() => this.loadPlaces(slug), PLACES_REFRESH_MS);
       onCleanup(() => clearInterval(t));
     });
-    inject(DestroyRef).onDestroy(() => this.selectedId.set(null));
+    this.nearby.attach({
+      flyTo: (c, zoom, pitch) => this.map()?.flyTo(c, zoom, pitch) ?? Promise.resolve(),
+      radar: () => this.map()?.radar ?? null,
+      setLit: (ids) => {
+        this.dimmed.set(ids ? new Set(this.places().filter((p) => !ids.has(p.id)).map((p) => p.id)) : new Set());
+        if (ids) this.layout.open('near');
+      },
+    });
+    inject(DestroyRef).onDestroy(() => this.nearby.close());
   }
 
   loadPlaces(slug: string): void {
@@ -88,7 +100,8 @@ export class HomePage {
     this.anchorCard();
   }
 
-  onMapClick(_c: LngLat): void {
+  onMapClick(c: LngLat): void {
+    if (this.nearby.mapClicked(c)) return;
     this.selectedId.set(null);
     this.layout.closeSheets();
   }
@@ -141,7 +154,14 @@ export class HomePage {
   }
 
   startNearby(): void {
-    // wired in the nearby task
+    this.selectedId.set(null);
+    if (this.layout.mobile()) this.layout.closeSheets();
+    void this.nearby.start();
+  }
+
+  closeNearby(): void {
+    this.nearby.close();
+    this.layout.collapse('near');
   }
 
   color(p: PlaceSummary): string {

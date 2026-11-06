@@ -37,6 +37,12 @@
     <kb-leaderboard-panel [city]="city()" [cityName]="title()" (pick)="focusPlace($event)" />
   }
   <kb-feed-panel [class.off]="!layout.isOpen('feed')" [city]="city()" (drop)="onDrop($event)" (pick)="focusPlace($event)" />
+  @if (nearby.result() && layout.isOpen('near')) {
+    <kb-nearby-panel [result]="nearby.result()" (radius)="nearby.setRadius($event)" (pick)="focusPlace($event)" (closed)="closeNearby()" />
+  }
+  @if (nearby.phase() === 'pick') {
+    <div class="pick-hint chip glass">{{ t('near.pickHint') }}</div>
+  }
   <kb-legend />
   <kb-dock (review)="openReview()" />
 
