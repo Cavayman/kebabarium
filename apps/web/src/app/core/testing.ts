@@ -8,7 +8,7 @@ export function provideTestI18n(lang: 'uk' | 'en' = 'uk') {
   return importProvidersFrom(
     TranslocoTestingModule.forRoot({
       langs: { uk, en },
-      translocoConfig: { availableLangs: ['uk', 'en'], defaultLang: lang },
+      translocoConfig: { availableLangs: ['uk', 'en'], defaultLang: lang, reRenderOnLangChange: true },
       preloadLangs: true,
     }),
   );

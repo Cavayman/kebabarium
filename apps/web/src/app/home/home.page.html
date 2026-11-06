@@ -27,7 +27,7 @@
     </section>
   }
 
-  <kb-navbar [cities]="cfg.cities()" [current]="currentCity()" (near)="startNearby()" />
+  <kb-navbar [cities]="cfg.cities()" [current]="currentCity()" (near)="startNearby()"><kb-account /></kb-navbar>
 
   @if (layout.hasCustomLayout() && !layout.mobile()) {
     <button type="button" class="chip glass reset" (click)="layout.reset()"><kb-icon name="reset" [size]="14" />{{ t('layout.reset') }}</button>

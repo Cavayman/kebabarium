@@ -1,0 +1,70 @@
+<main class="wrap" *transloco="let t">
+  <a class="chip glass back" routerLink="/">← {{ t('notFound.back') }}</a>
+  <section class="glass head">
+    <div class="ava">{{ (auth.me()?.displayName ?? '?')[0]?.toUpperCase() }}</div>
+    <div>
+      <h1>{{ auth.me()?.displayName }}</h1>
+      <p>{{ t('me.count', { n: data()?.count ?? 0 }) }}</p>
+    </div>
+  </section>
+
+  @if (data(); as d) {
+    @if (d.count === 0) {
+      <section class="glass box"><p class="muted">{{ t('me.empty') }}</p></section>
+    } @else {
+      <section class="glass box">
+        <h2>{{ t('me.top') }}</h2>
+        <ol class="top">
+          @for (p of d.top; track p.id; let i = $index) {
+            <li>
+              <span class="rk">{{ i + 1 }}</span>
+              <a class="nm" [routerLink]="['/lviv', 'place', p.id]">{{ p.name }}</a>
+              <span class="mine">{{ '★'.repeat(p.myStars) }}</span>
+              <span class="sc" [style.color]="color(p.score)">{{ p.score?.toFixed(1) ?? '—' }}</span>
+            </li>
+          }
+        </ol>
+      </section>
+
+      <section class="glass box">
+        <h2>{{ t('me.history') }}</h2>
+        @for (r of d.history; track r.id) {
+          <article class="rv">
+            <div class="h">
+              <b>{{ r.placeName }}</b>
+              <span class="st">{{ '★'.repeat(r.stars ?? 0) }}</span>
+              @if (r.ownPending) {
+                <span class="muted">{{ t('feed.pending') }}</span>
+              }
+              <span class="when">{{ r.createdAt.slice(0, 10) }}</span>
+            </div>
+            @if (editing() === r.placeId) {
+              <div class="edit">
+                <div class="stars">
+                  @for (n of [1, 2, 3, 4, 5]; track n) {
+                    <button type="button" [class.on]="editStars() >= n" (click)="editStars.set(n)">★</button>
+                  }
+                </div>
+                <textarea class="field" maxlength="280" [value]="editText()" (input)="editText.set($any($event.target).value)"></textarea>
+                <div class="act">
+                  <button type="button" class="chip" (click)="editing.set(null)">{{ t('common.cancel') }}</button>
+                  <button type="button" class="chip acc" (click)="save(r.placeId!)">{{ t('auth.save') }}</button>
+                </div>
+              </div>
+            } @else {
+              @if (r.text) {
+                <p>{{ r.text }}</p>
+              }
+              <div class="act">
+                <button type="button" class="chip" (click)="startEdit(r.placeId!, r.stars ?? 0, r.text)">{{ t('me.edit') }}</button>
+                <button type="button" class="chip danger" (click)="remove(r.placeId!)">{{ t('me.delete') }}</button>
+              </div>
+            }
+          </article>
+        }
+      </section>
+    }
+  } @else {
+    <p class="muted">{{ t('common.loading') }}</p>
+  }
+</main>

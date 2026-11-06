@@ -20,13 +20,14 @@ import { AuthStore } from '../auth/auth.store';
 import { PlaceCardComponent } from '../place/place-card.component';
 import { ReviewModalComponent } from '../review/review-modal.component';
 import { NearbyPanel } from '../nearby/nearby.panel';
+import { AccountComponent } from '../auth/account.component';
 import { NearbyService } from '../nearby/nearby.service';
 
 const PLACES_REFRESH_MS = 120_000;
 
 @Component({
   selector: 'kb-home',
-  imports: [MapComponent, NavbarComponent, LeaderboardPanel, FeedPanel, LegendComponent, DockComponent, IconComponent, PlaceCardComponent, ReviewModalComponent, NearbyPanel, TranslocoDirective],
+  imports: [MapComponent, NavbarComponent, LeaderboardPanel, FeedPanel, LegendComponent, DockComponent, IconComponent, PlaceCardComponent, ReviewModalComponent, NearbyPanel, AccountComponent, TranslocoDirective],
   providers: [NearbyService],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './home.page.html',

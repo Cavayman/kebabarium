@@ -1,0 +1,66 @@
+<ng-container *transloco="let t">
+  @if (auth.me(); as me) {
+    <button type="button" class="avatar" (click)="menuOpen.set(!menuOpen())" aria-haspopup="menu" [attr.aria-expanded]="menuOpen()" [attr.aria-label]="me.displayName">
+      @if (me.avatarUrl) {
+        <img [src]="me.avatarUrl" alt="" referrerpolicy="no-referrer" />
+      } @else {
+        {{ initial() }}
+      }
+    </button>
+    @if (menuOpen()) {
+      <div class="menu glass" role="menu">
+        <div class="who"><b>{{ me.displayName }}</b></div>
+        <a role="menuitem" routerLink="/me" (click)="menuOpen.set(false)"><kb-icon name="user" [size]="14" />{{ t('auth.profile') }}</a>
+        <div class="row">
+          <span>{{ t('auth.language') }}</span>
+          <div class="seg">
+            <button type="button" data-lang="uk" [class.on]="langs.current() === 'uk'" (click)="setLang('uk')">Українська</button>
+            <button type="button" data-lang="en" [class.on]="langs.current() === 'en'" (click)="setLang('en')">English</button>
+          </div>
+        </div>
+        <label class="tog"><input type="checkbox" [checked]="me.showRealName" (change)="toggle('showRealName')" />{{ t('auth.showName') }}</label>
+        <label class="tog"><input type="checkbox" [checked]="me.hideFromLeaderboard" (change)="toggle('hideFromLeaderboard')" />{{ t('auth.hideLb') }}</label>
+        @if (auth.isAdmin()) {
+          <a role="menuitem" routerLink="/admin" (click)="menuOpen.set(false)">{{ t('auth.admin') }}</a>
+        }
+        <button type="button" role="menuitem" class="out" (click)="logout()">{{ t('auth.logout') }}</button>
+      </div>
+    }
+  } @else {
+    <button type="button" class="chip acc" (click)="loginOpen.set(true)">{{ t('nav.login') }}</button>
+  }
+
+  @if (loginOpen()) {
+    <div class="bg" (click)="loginOpen.set(false)">
+      <div class="sheet glass" role="dialog" aria-modal="true" [attr.aria-label]="t('auth.title')" (click)="$event.stopPropagation()">
+        <button type="button" class="mini close" (click)="loginOpen.set(false)" [attr.aria-label]="t('layout.close')"><kb-icon name="close" [size]="13" /></button>
+        <h2>{{ t('auth.title') }}</h2>
+        <p>{{ t('auth.subtitle') }}</p>
+        @if (clientId()) {
+          <div #gis class="gis"></div>
+        } @else {
+          <p class="muted">{{ t('auth.notConfigured') }}</p>
+        }
+        <div class="langs seg">
+          <button type="button" data-lang="uk" [class.on]="langs.current() === 'uk'" (click)="setLang('uk')">Українська</button>
+          <button type="button" data-lang="en" [class.on]="langs.current() === 'en'" (click)="setLang('en')">English</button>
+        </div>
+        <a class="privacy" routerLink="/privacy" (click)="loginOpen.set(false)">{{ t('privacy.title') }}</a>
+      </div>
+    </div>
+  }
+
+  @if (nicknameOpen()) {
+    <div class="bg">
+      <form class="sheet glass" role="dialog" aria-modal="true" (submit)="$event.preventDefault(); saveNickname()">
+        <h2>{{ t('auth.nickTitle') }}</h2>
+        <input class="field" name="nickname" maxlength="24" autocomplete="nickname" [value]="nick()" (input)="nick.set($any($event.target).value); nickError.set(null)" />
+        <p class="muted">{{ t('auth.nickHint') }}</p>
+        @if (nickError(); as e) {
+          <p class="err" role="alert">{{ e }}</p>
+        }
+        <button type="button" class="chip acc save" [disabled]="busy()" (click)="saveNickname()">{{ t('auth.save') }}</button>
+      </form>
+    </div>
+  }
+</ng-container>

@@ -1,0 +1,144 @@
+:host {
+  display: block;
+  height: 100%;
+  overflow: auto;
+}
+.wrap {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px 12px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.back {
+  align-self: flex-start;
+  border: 1px solid var(--edge);
+}
+.head {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 16px;
+  border-radius: var(--radius);
+  h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+  }
+  p {
+    margin: 2px 0 0;
+    color: var(--dim);
+    font-size: 13px;
+  }
+}
+.ava {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--acc);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 20px;
+}
+.box {
+  padding: 14px;
+  border-radius: var(--radius);
+  h2 {
+    margin: 0 0 8px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+  }
+}
+.muted {
+  color: var(--dim);
+  font-size: 13px;
+}
+.top {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+}
+.rk {
+  width: 22px;
+  color: var(--dim);
+  font-weight: 800;
+  text-align: center;
+}
+.nm {
+  flex: 1;
+  color: var(--fg);
+  text-decoration: none;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mine,
+.st {
+  color: var(--acc2);
+  letter-spacing: 1px;
+  font-size: 12px;
+}
+.sc {
+  font-weight: 800;
+  min-width: 30px;
+  text-align: right;
+}
+.rv {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  .h {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 13px;
+  }
+  .when {
+    margin-left: auto;
+    color: var(--dim);
+    font-size: 11px;
+  }
+  p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+  }
+}
+.act {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  justify-content: flex-end;
+}
+.danger {
+  color: var(--bad);
+}
+.edit {
+  margin-top: 8px;
+  textarea {
+    height: 70px;
+    resize: none;
+  }
+}
+.stars button {
+  border: 0;
+  background: none;
+  font-size: 24px;
+  color: #44444a;
+  cursor: pointer;
+  &.on {
+    color: var(--acc2);
+  }
+}
