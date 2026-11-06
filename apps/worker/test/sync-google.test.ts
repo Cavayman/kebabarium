@@ -78,6 +78,19 @@ describe('chains & districts', () => {
 });
 
 describe('discovery', () => {
+  it('starts at the city centre and walks outwards', async () => {
+    const city = (await getCityBySlug(env.DB, 'lviv'))!;
+    const tiles = tilesFor(city);
+    const first = tiles[0]!;
+    expect(first.low.latitude).toBeLessThanOrEqual(city.centerLat);
+    expect(first.high.latitude).toBeGreaterThanOrEqual(city.centerLat);
+    expect(first.low.longitude).toBeLessThanOrEqual(city.centerLng);
+    expect(first.high.longitude).toBeGreaterThanOrEqual(city.centerLng);
+    const dist = (r: (typeof tiles)[number]) =>
+      Math.hypot((r.low.latitude + r.high.latitude) / 2 - city.centerLat, ((r.low.longitude + r.high.longitude) / 2 - city.centerLng) * Math.cos((city.centerLat * Math.PI) / 180));
+    for (let i = 1; i < tiles.length; i++) expect(dist(tiles[i]!)).toBeGreaterThanOrEqual(dist(tiles[i - 1]!));
+  });
+
   it('walks tiles in rotation and inserts new places once', async () => {
     const city = (await getCityBySlug(env.DB, 'lviv'))!;
     expect(tilesFor(city).length).toBeGreaterThan(50);
@@ -93,7 +106,7 @@ describe('discovery', () => {
     expect(calls[0]!.mask).toContain('places.id');
     expect(calls[0]!.mask).not.toContain('rating');
     expect(s1.placesAdded).toBe(1);
-    const cursor = await env.DB.prepare(`SELECT value FROM sync_cursor WHERE key = 'discovery:lviv'`).first<{ value: string }>();
+    const cursor = await env.DB.prepare(`SELECT value FROM sync_cursor WHERE key = 'discovery:centre:lviv'`).first<{ value: string }>();
     expect(cursor!.value).toBe('6');
 
     const s2 = newStats();

@@ -9,8 +9,18 @@ import type { SyncStats } from './stats';
 
 const KM_PER_DEG_LAT = 111.32;
 
-/** Row-major grid of ~tileKm squares covering the city bbox. */
+/** Grid of ~tileKm squares covering the city bbox, nearest to the city centre first (the centre fills in within hours). */
 export function tilesFor(city: CityRow): Rect[] {
+  const cos = Math.cos((city.centerLat * Math.PI) / 180);
+  const dist = (r: Rect) =>
+    Math.hypot((r.low.latitude + r.high.latitude) / 2 - city.centerLat, ((r.low.longitude + r.high.longitude) / 2 - city.centerLng) * cos);
+  return gridFor(city)
+    .map((r) => ({ r, d: dist(r) }))
+    .sort((a, b) => a.d - b.d)
+    .map((x) => x.r);
+}
+
+function gridFor(city: CityRow): Rect[] {
   const [minLng, minLat, maxLng, maxLat] = city.bbox;
   const dLat = SYNC.tileKm / KM_PER_DEG_LAT;
   const dLng = SYNC.tileKm / (KM_PER_DEG_LAT * Math.cos((city.centerLat * Math.PI) / 180));
@@ -75,7 +85,7 @@ export async function runDiscovery(db: D1Database, env: Env, city: CityRow, stat
   const google = googlePlaces(env.GOOGLE_PLACES_KEY, fetcher);
   const tiles = tilesFor(city);
   const total = tiles.length * SYNC.queries.length;
-  const key = `discovery:${city.slug}`;
+  const key = `discovery:centre:${city.slug}`; // "centre": centre-first tile order (old row-major cursors are ignored)
   const cur = await db.prepare(`SELECT value FROM sync_cursor WHERE key = ?`).bind(key).first<{ value: string }>();
   let cursor = Number(cur?.value ?? 0) % total;
 
