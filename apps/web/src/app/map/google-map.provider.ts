@@ -13,7 +13,8 @@ interface DeckViewport {
 }
 
 /**
- * Production map: Google vector map (cloud-styled via Map ID — import map-style/google-dark-lineart.json)
+ * Production map: Google vector map, cloud-styled via the Map ID's dark-mode style
+ * (Dark + Monochrome, POI labels hidden; map-style/google-dark-lineart.json is the legacy reference)
  * with deck.gl columns. Google ratings/reviews may only be shown on a Google map (spec §11).
  */
 export class GoogleMapProvider implements MapProvider {
@@ -47,6 +48,7 @@ export class GoogleMapProvider implements MapProvider {
       tilt: 58,
       heading: -18,
       renderingType: RenderingType.VECTOR,
+      colorScheme: google.maps.ColorScheme.DARK, // the Map ID's dark-mode slot holds our style
       disableDefaultUI: true,
       clickableIcons: false,
       gestureHandling: 'greedy',
