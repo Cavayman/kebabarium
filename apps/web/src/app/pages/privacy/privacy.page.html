@@ -1,0 +1,37 @@
+<main class="doc glass" *transloco="let t">
+  <a class="back" routerLink="/">← {{ t('notFound.back') }}</a>
+  <h1>{{ t('privacy.title') }}</h1>
+  @if (lang() === 'en') {
+    <p class="muted">Updated {{ updated }}</p>
+    <p>Kebabarium is a non-commercial fan site for rating shawarma and kebab spots.</p>
+    <h2>What we store</h2>
+    <ul>
+      <li><b>Reviews</b> you leave: stars, optional text and signature, the spot, the time.</li>
+      <li><b>Anti-spam markers</b>: a one-way hash of your IP address and of your network (/24 or /64), rotated monthly, and a random device id in a cookie. We never store your IP address itself.</li>
+      <li><b>If you log in with Google</b>: your Google account id, email, first and last name, profile picture, the nickname you choose and your settings. Your email is never shown to anyone.</li>
+      <li><b>Cookies</b>: <code>kb_session</code> (keeps you logged in, 30 days) and <code>kb_dev</code> (device id for anti-spam, 1 year). No advertising or tracking cookies.</li>
+    </ul>
+    <h2>Third-party content</h2>
+    <p>Spot data, ratings and reviews marked “Google” come from Google Maps. Posts marked “Threads” are public posts found via the Threads API; we show the author handle and a link to the original. The map is provided by Google Maps; Cloudflare Turnstile checks that reviewers are human.</p>
+    <h2>Your choices</h2>
+    <p>You can edit or delete your ratings, hide yourself from the leaderboard and choose whether your real name is shown. To delete your account and all your reviews, write to the address below.</p>
+    <h2>Contact</h2>
+    <p><a href="mailto:hello@kebabarium.app">hello&#64;kebabarium.app</a></p>
+  } @else {
+    <p class="muted">Оновлено {{ updated }}</p>
+    <p>Кебабаріум — некомерційний фан-сайт для оцінювання шаурми й кебабу.</p>
+    <h2>Що ми зберігаємо</h2>
+    <ul>
+      <li><b>Відгуки</b>, які ти залишаєш: зірки, текст і підпис (якщо є), заклад, час.</li>
+      <li><b>Позначки проти спаму</b>: односторонній хеш твоєї IP-адреси та мережі (/24 або /64), що змінюється щомісяця, і випадковий ідентифікатор пристрою в cookie. Саму IP-адресу ми ніколи не зберігаємо.</li>
+      <li><b>Якщо входиш через Google</b>: ідентифікатор акаунта Google, email, імʼя та прізвище, фото профілю, обраний нікнейм і налаштування. Email ніхто не бачить.</li>
+      <li><b>Cookies</b>: <code>kb_session</code> (тримає тебе в акаунті, 30 днів) і <code>kb_dev</code> (ідентифікатор пристрою проти спаму, 1 рік). Жодних рекламних чи стежильних cookies.</li>
+    </ul>
+    <h2>Чужий контент</h2>
+    <p>Дані про заклади, рейтинги й відгуки з позначкою «Google» — з Google Maps. Пости з позначкою «Threads» — публічні пости, знайдені через Threads API; ми показуємо автора й посилання на оригінал. Мапу надає Google Maps, а Cloudflare Turnstile перевіряє, що відгук пише людина.</p>
+    <h2>Що ти можеш</h2>
+    <p>Змінювати й видаляти свої оцінки, ховатися з лідерборду і вирішувати, чи показувати справжнє імʼя. Щоб видалити акаунт і всі відгуки — напиши на адресу нижче.</p>
+    <h2>Контакт</h2>
+    <p><a href="mailto:hello@kebabarium.app">hello&#64;kebabarium.app</a></p>
+  }
+</main>
