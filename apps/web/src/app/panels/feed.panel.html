@@ -1,0 +1,51 @@
+<ng-container *transloco="let t">
+  <kb-glass-panel class="feed" panelId="feed" icon="chat" [title]="t('feed.title')" [closeLabel]="t('layout.collapse')">
+    <span panel-extra class="live"><i></i>{{ t('feed.live') }}</span>
+    <div class="seg" role="tablist">
+      @for (f of filters; track f) {
+        <button type="button" role="tab" [class.on]="filter() === f" [attr.aria-selected]="filter() === f" (click)="filter.set(f)">{{ t('feed.' + f) }}</button>
+      }
+    </div>
+    @if (filter() === 'threads' && threadsDown()) {
+      <p class="note">{{ t('feed.threadsDown') }}</p>
+    }
+    <div #log class="bd" role="log" aria-live="polite">
+      @for (i of items(); track i.id) {
+        <div class="msg">
+          <div class="ava" [style.color]="avatarColor(i.author)" [style.background]="avatarColor(i.author) + '2e'">{{ initial(i.author || t('feed.anon')) }}</div>
+          <div class="bub">
+            <div class="who">
+              <b>{{ i.author || t('feed.anon') }}</b>
+              <span class="src" [class]="'src src-' + i.source">{{ i.source === 'ours' ? t('feed.badgeOurs') : t('feed.' + i.source) }}</span>
+              @if (i.stars) {
+                <span class="st">{{ stars(i.stars) }}</span>
+              }
+              @if (i.ownPending) {
+                <span class="pend">{{ t('feed.pending') }}</span>
+              }
+            </div>
+            @if (i.placeName) {
+              <button type="button" class="pl" (click)="pick.emit(i.placeId!)">{{ i.placeName }}</button>
+              @if (i.text) {
+                <span> · </span>
+              }
+            }
+            @if (i.text) {
+              <span class="tx">{{ i.text }}</span>
+            }
+            @if (i.url) {
+              <a class="ext" [href]="i.url" target="_blank" rel="noopener noreferrer nofollow">↗</a>
+            }
+          </div>
+        </div>
+      } @empty {
+        @if (!typing()) {
+          <p class="note">{{ t('feed.empty') }}</p>
+        }
+      }
+      @if (typing()) {
+        <div class="msg typing"><div class="ava"></div><div class="bub"><span></span><span></span><span></span></div></div>
+      }
+    </div>
+  </kb-glass-panel>
+</ng-container>

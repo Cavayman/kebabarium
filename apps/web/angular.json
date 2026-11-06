@@ -45,6 +45,7 @@
               "@fontsource/jetbrains-mono/cyrillic-400.css",
               "@fontsource/jetbrains-mono/latin-400.css",
               "@fontsource/jetbrains-mono/latin-700.css",
+              "maplibre-gl/dist/maplibre-gl.css",
               "src/styles/main.scss"
             ],
             "allowedCommonJsDependencies": [

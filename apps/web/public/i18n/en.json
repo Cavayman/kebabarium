@@ -1,9 +1,22 @@
 {
   "brand": "kebabarium",
-  "nav": { "near": "Nearby", "login": "Log in", "city": "City", "spots": "{{n}} spots" },
-  "fab": { "review": "Leave a review" },
-  "legend": { "caption": "taller & greener = tastier" },
-  "layout": { "reset": "Reset", "collapse": "Collapse", "close": "Close" },
+  "nav": {
+    "near": "Nearby",
+    "login": "Log in",
+    "city": "City",
+    "spots": "{{n}} spots"
+  },
+  "fab": {
+    "review": "Leave a review"
+  },
+  "legend": {
+    "caption": "taller & greener = tastier"
+  },
+  "layout": {
+    "reset": "Reset",
+    "collapse": "Collapse",
+    "close": "Close"
+  },
   "lb": {
     "title": "Top in {{city}}",
     "spots": "Spots",
@@ -12,7 +25,8 @@
     "tasters": "Tasters",
     "chainSpots": "{{n}} spots",
     "ratings": "{{n}} ratings",
-    "empty": "No ratings yet"
+    "empty": "No ratings yet",
+    "short": "Top"
   },
   "feed": {
     "title": "What people say",
@@ -76,7 +90,13 @@
     "errBot": "Bot check failed. Reload the page.",
     "errClosed": "This spot is closed.",
     "errNetwork": "Something went wrong. Try again.",
-    "words": ["bad", "meh", "okay", "tasty", "top!"]
+    "words": [
+      "bad",
+      "meh",
+      "okay",
+      "tasty",
+      "top!"
+    ]
   },
   "near": {
     "title": "Near you",
@@ -117,11 +137,25 @@
     "confirmDelete": "Delete this rating?",
     "empty": "You haven't rated anything yet. Shawarma time!"
   },
-  "boot": { "ready": "ready. enjoy!" },
-  "fallback": { "noWebgl": "Your browser can't show the 3D map, so here is the list of spots." },
-  "notFound": { "title": "404 — no shawarma here", "back": "Back to the map" },
-  "privacy": { "title": "Privacy" },
-  "common": { "loading": "Loading…", "retry": "Try again", "cancel": "Cancel", "yes": "Yes" },
+  "boot": {
+    "ready": "ready. enjoy!"
+  },
+  "fallback": {
+    "noWebgl": "Your browser can't show the 3D map, so here is the list of spots."
+  },
+  "notFound": {
+    "title": "404 — no shawarma here",
+    "back": "Back to the map"
+  },
+  "privacy": {
+    "title": "Privacy"
+  },
+  "common": {
+    "loading": "Loading…",
+    "retry": "Try again",
+    "cancel": "Cancel",
+    "yes": "Yes"
+  },
   "admin": {
     "title": "Admin",
     "places": "Spots",
@@ -146,5 +180,8 @@
     "held": "Held",
     "newChain": "New chain",
     "empty": "Empty"
+  },
+  "map": {
+    "moved": "moved → {{name}}"
   }
 }

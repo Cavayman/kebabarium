@@ -16,6 +16,7 @@ export class MapLibreMapProvider implements MapProvider {
 
   async init(el: HTMLElement, city: City): Promise<void> {
     const ml = await import('maplibre-gl');
+    ml.setWorkerUrl('/maplibre/maplibre-gl-worker.mjs');
     this.map = new ml.Map({
       container: el,
       center: [city.center.lng, city.center.lat],

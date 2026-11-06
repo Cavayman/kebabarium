@@ -1,0 +1,41 @@
+<div class="app" *transloco="let t">
+  @if (webgl && currentCity(); as c) {
+    <kb-map
+      [city]="c"
+      [places]="places()"
+      [dimmed]="dimmed()"
+      [providerKind]="cfg.config()?.mapProvider ?? 'google'"
+      [config]="cfg.config()"
+      [movedLabel]="movedLabel()"
+      (ready)="onMapReady()"
+      (placeClick)="onPlaceClick($event)"
+      (mapClick)="onMapClick($event)"
+    />
+  } @else if (!webgl) {
+    <section class="fallback glass">
+      <p>{{ t('fallback.noWebgl') }}</p>
+      <ol>
+        @for (p of ranked(); track p.id) {
+          <li>
+            <span class="score" [style.background]="color(p)">{{ p.score?.toFixed(1) ?? '—' }}</span>
+            <span class="nm">{{ p.name }}</span>
+            <span class="addr">{{ p.address }}</span>
+          </li>
+        }
+      </ol>
+    </section>
+  }
+
+  <kb-navbar [cities]="cfg.cities()" [current]="currentCity()" (near)="startNearby()" />
+
+  @if (layout.hasCustomLayout() && !layout.mobile()) {
+    <button type="button" class="chip glass reset" (click)="layout.reset()"><kb-icon name="reset" [size]="14" />{{ t('layout.reset') }}</button>
+  }
+
+  @if (layout.isOpen('lb')) {
+    <kb-leaderboard-panel [city]="city()" [cityName]="title()" (pick)="focusPlace($event)" />
+  }
+  <kb-feed-panel [class.off]="!layout.isOpen('feed')" [city]="city()" (drop)="onDrop($event)" (pick)="focusPlace($event)" />
+  <kb-legend />
+  <kb-dock (review)="openReview()" />
+</div>
