@@ -1,7 +1,9 @@
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
-import type { AppEnv } from './env';
+import type { AppEnv, Env } from './env';
 import { ApiError } from './errors';
+import { publishDue } from './services/publisher';
+import { runSync } from './sync/run';
 import { csrfGuard, withUser } from './auth/middleware';
 import { adminRoutes } from './routes/admin';
 import { authRoutes } from './routes/auth';
@@ -38,4 +40,13 @@ app.onError((err, c) => {
   return c.json({ error: { code: 'internal', message } }, 500);
 });
 
-export default { fetch: app.fetch };
+/** Cron: every 10 min publish due anonymous reviews; hourly run the sync (wrangler.jsonc triggers). */
+async function scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
+  if (controller.cron === '*/10 * * * *') {
+    ctx.waitUntil(publishDue(env.DB));
+    return;
+  }
+  ctx.waitUntil(Promise.all([publishDue(env.DB), runSync(env.DB, env, 'all')]));
+}
+
+export default { fetch: app.fetch, scheduled } satisfies ExportedHandler<Env>;
