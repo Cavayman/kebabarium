@@ -8,7 +8,7 @@
     "directory": "../web/dist/web/browser",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/api/*"]
+    "run_worker_first": ["/api/*", "/__scheduled"] // /__scheduled: local `wrangler dev --test-scheduled` trigger
   },
   "d1_databases": [
     { "binding": "DB", "database_name": "kebabarium", "database_id": "4f50f9c0-d2c0-4d38-9976-7b8038522c57", "migrations_dir": "migrations" }
