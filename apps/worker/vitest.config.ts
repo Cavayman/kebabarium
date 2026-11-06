@@ -1,8 +1,10 @@
 import { cloudflareTest, readD1Migrations } from '@cloudflare/vitest-pool-workers';
+import { readFileSync } from 'node:fs';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig(async () => {
   const migrations = await readD1Migrations('./migrations');
+  const seed = readFileSync('./seed/dev.sql', 'utf8');
   return {
     plugins: [
       cloudflareTest({
@@ -14,6 +16,7 @@ export default defineConfig(async () => {
           bindings: {
             ENVIRONMENT: 'dev',
             TEST_MIGRATIONS: migrations,
+            TEST_SEED: seed,
             SESSION_SECRET: 'test-session-secret-0123456789abcdef',
             IP_HASH_SECRET: 'test-ip-hash-secret',
             GOOGLE_OAUTH_CLIENT_ID: 'test-client.apps.googleusercontent.com',
