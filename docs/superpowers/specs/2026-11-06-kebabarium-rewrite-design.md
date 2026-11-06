@@ -1,6 +1,6 @@
 # Kebabarium — rewrite design (Node + Angular on Cloudflare)
 
-Date: 2026-11-06 · Owner: Oleg (Cavayman) · Status: draft v2 (owner decisions on Google & Threads recorded), awaiting approval
+Date: 2026-11-06 · Owner: Oleg (Cavayman) · Status: approved by owner 2026-11-06
 
 ## 1. Intent
 
@@ -21,7 +21,7 @@ Why now: the 2019 Java/Angular 6 version is a static stub that no longer builds 
 1. Public, no-login home page = map of the selected city with rating columns, live review feed, leaderboard (mockup: `docs/superpowers/mockups/home.html`).
 2. **"Поруч" (nearby)**: asks for GPS; the map flies to the user (zoom ~13.7, tilted), draws a **radar scan** around them (orange disc of the search radius, rotating sweep, expanding rings, a clear "you" dot) for ~2.5 s, then dims columns outside the radius and opens a **"Поруч з тобою" window** (desktop: top-right, other open panels stay as they are — users may have several windows open; phone: bottom sheet): spots within the radius, **radius chips 1 / 2 / 5 km; default 1 km, auto-widened to 2 then 5 km when fewer than 3 open spots are found, with a note "розширив пошук до N км"**; the radar circle is always drawn to the real radius and rescales with zoom/pan; best rating first, each with score tile, name, distance and walking minutes, "найкраще поруч" badge on #1, and a route button; tapping a row flies to the spot and opens its card. If GPS is denied/unavailable: tell the user and fall back to manual (tap on the map to set a point). The window is draggable/closable like the others; closing it restores all columns.
 2a. **Click/tap** a column → glass detail card that stays open until closed (✕ or click on empty map; no hover flicker): place **logo**, name, chain (if any), combined / ours / Google score, review count, a scrollable list of the latest ~5 reviews (ours + Google, source-marked), open/closed status, buttons "★ Оцінити" and "Маршрут".
-3. **Anyone can leave a review** (1–5 stars + optional text ≤ 280 chars + optional nickname) via a "Відгук" button in the navbar or "Оцінити" on a place card — **no login required**. Anonymous reviews go through the anti-abuse rules in §8b and weigh less. Logged-in users' ratings count fully, can be edited, and build their own history and personal top list.
+3. **Anyone can leave a review** (1–5 stars + optional text ≤ 280 chars + optional nickname) via the floating "Залишити відгук" button or "Оцінити" on a place card — **no login required**. Anonymous reviews go through the anti-abuse rules in §8b and weigh less. Logged-in users' ratings count fully, can be edited, and build their own history and personal top list.
 4. Backend database refreshed **automatically every hour** with new places, updated Google ratings/status, and fresh reviews/mentions.
 5. Spots that are permanently closed or long-inactive are marked **dead** (grey column, "не працює").
 6. **Chains**: each spot is stored individually, optionally linked to a chain; chain score = average of its spots.
@@ -54,7 +54,6 @@ Why now: the 2019 Java/Angular 6 version is a static stub that no longer builds 
 - **Visuals** (from the mockup sessions):
   - dark theme, orange accent; map is line-art (streets only, no fills/labels clutter);
   - 3D extruded columns; height on a stretched, progressive scale starting at 3.0 (below 3 = short stub); **height also scales down with zoom** so columns stay readable when zoomed in;
-  - the legend's gradient spans the full 3.0–5.0 range with the same colour stops as the columns, 
   - colour by rating = **traffic-light scale** (owner pick, replacing the earlier red-top and "Ember" versions): **1 red `#e5484d` → 2.2 `#ef6a3c` → 3 orange `#f59e1b` → 3.7 yellow `#e3c12a` → 4.2 lime `#a6d13a` → 4.6 `#4fd46b` → 4.9+ green `#22c77a`**; dead spots dark grey; the same scale colours columns, score tiles, leaderboard numbers, the card's main score and the legend (labels 1 / 3 / 5, caption "вищий і зеленіший = смачніше"). Brand orange stays the UI accent (buttons, active tabs, radar), not a rating colour;
   - **no glow effects anywhere** (owner: glows cheapen the look) — no neon/outer glows on columns, tiles, text, buttons or the boot terminal; only neutral drop shadows for elevation; buttons are flat (no gradients);
   - frosted glass panels (blur + translucency), friendly rounded fonts (mockup: Unbounded for headings/logo, Manrope for text), columns grow on load;
@@ -179,7 +178,7 @@ Admin:
 
 ## 10. Frontend screens
 
-1. **Home / map** (`/:city`, default `/lviv`) — exactly the mockup (`docs/superpowers/mockups/home.html`): pill navbar, leaderboard panel (🥇🥈🥉, tabs Місця / Мережі / Райони / Люди), rating legend, chat-style live feed, click-to-open detail card, emoji-drop + caption animation on new reviews. No stats strip, no ticker. On mobile: map full-screen, panels become a swipeable bottom sheet.
+1. **Home / map** (`/:city`, default `/lviv`) — exactly the mockup (`docs/superpowers/mockups/home.html`): pill navbar, leaderboard panel (gold/silver/bronze rank badges, tabs Місця / Мережі / Райони / Люди), rating legend, chat-style live feed, click-to-open detail card, emoji-drop + caption animation on new reviews. No stats strip, no ticker. On mobile: map full-screen, panels become a swipeable bottom sheet.
 2. **Place page** (`/:city/place/:id`) — full detail card, all ratings, Google reviews (with attribution), move history, rate button.
 3. **Review modal** — place autocomplete (pre-filled when opened from a place card), 5 big stars with a word (погано … топ!), optional text with counter, optional nickname, invisible/managed Cloudflare Turnstile, a hint that logging in makes ratings count fully, friendly cooldown errors ("наступний відгук сюди — через N днів"). Bottom sheet on phones.
 4. **Me** (`/me`) — my ratings timeline, my personal top, count/badges.
