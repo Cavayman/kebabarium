@@ -6,7 +6,7 @@
 <title>Кебабаріум · Львів</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Manrope:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{--fg:#fff;--dim:#a3a3a8;--acc:#ff7a00;--acc2:#ffb347;--ok:#3ee07a;
     --glass:rgba(28,28,32,.55);--edge:rgba(255,255,255,.13);--hi:rgba(255,255,255,.25)}
@@ -163,25 +163,23 @@
   .rads span{white-space:nowrap;font-size:11px;font-weight:700;color:var(--dim);padding:3px 7px;border-radius:999px;cursor:pointer}
   .rads span.on{background:var(--acc2);color:#1a0a00}
   .nnote{font-size:11px;color:var(--dim);margin:0 2px 6px}
-  .boot{position:fixed;inset:0;z-index:50;background:radial-gradient(ellipse at 50% 60%,#1a0f08 0%,#070707 60%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .6s ease, visibility .6s}
+  .boot{position:fixed;inset:0;z-index:50;background:radial-gradient(ellipse at 50% 55%,#140c06 0%,#050505 65%);display:flex;align-items:center;justify-content:center;padding:16px;transition:opacity .6s ease,visibility .6s}
   .boot.out{opacity:0;visibility:hidden}
-  .spit{position:relative;filter:drop-shadow(0 0 30px #ff8a1f33)}
-  .meat{animation:turn 1.4s linear infinite}
-  @keyframes turn{from{transform:translateX(0)}to{transform:translateX(-120px)}}
-  .glow{animation:flick 1.1s ease-in-out infinite alternate;transform-origin:60px 176px}
-  @keyframes flick{from{opacity:.65;transform:scale(.92)}to{opacity:1;transform:scale(1.06)}}
-  .sparks{position:absolute;left:50%;bottom:6px;width:0;height:0}
-  .sparks i{position:absolute;width:3px;height:3px;border-radius:50%;background:#ffd75e;box-shadow:0 0 6px #ffb32e;opacity:0;animation:spark 1.8s ease-out infinite}
-  .sparks i:nth-child(1){left:-30px;animation-delay:.1s} .sparks i:nth-child(2){left:-12px;animation-delay:.7s} .sparks i:nth-child(3){left:6px;animation-delay:.3s}
-  .sparks i:nth-child(4){left:22px;animation-delay:1.1s} .sparks i:nth-child(5){left:36px;animation-delay:.5s}
-  @keyframes spark{0%{transform:translate(0,0);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx,8px),-70px);opacity:0}}
-  .sparks i:nth-child(odd){--dx:-10px}
-  .bword{font-family:Unbounded,sans-serif;font-weight:800;font-size:22px;letter-spacing:.5px}
-  .bword .k{background:linear-gradient(90deg,#ffd75e,#ff8a1f);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .bbar{width:180px;height:4px;border-radius:2px;background:rgba(255,255,255,.08);overflow:hidden}
-  .bbar i{display:block;height:100%;width:0;border-radius:2px;background:linear-gradient(90deg,#b8742e,#ff8a1f,#ffd75e);box-shadow:0 0 10px #ffb32e;transition:width .35s ease}
-  .bmsg{font-size:13px;color:#a3a3a8;min-height:18px;transition:opacity .25s}
-  @media (prefers-reduced-motion:reduce){ .meat,.glow,.sparks i{animation:none} }
+  .term-boot{width:520px;max-width:100%;border-radius:14px;background:rgba(14,12,11,.85);border:1px solid rgba(255,255,255,.08);box-shadow:0 30px 80px #000c,0 0 60px #ff8a1f14;overflow:hidden;font-family:'JetBrains Mono',ui-monospace,Consolas,monospace}
+  .tb-hd{display:flex;align-items:center;gap:6px;padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.06);font-size:11px;color:#6d6a66}
+  .tb-hd i{width:10px;height:10px;border-radius:50%;background:#3a3633} .tb-hd i:nth-child(1){background:#ff5f57} .tb-hd i:nth-child(2){background:#febc2e} .tb-hd i:nth-child(3){background:#28c840}
+  .tb-hd span{margin-left:auto;margin-right:auto;transform:translateX(-20px)}
+  .tb-bd{padding:14px 16px 16px;font-size:13px;line-height:1.75;min-height:250px;color:#d8d4cf}
+  .tb-bd .p{color:#ffb32e} .tb-bd .d{color:#5f5a55} .tb-bd .ok{color:#3ee07a;font-weight:700} .tb-bd .v{color:#ffd75e} .tb-bd .warn{color:#ff8a1f}
+  .tb-bd .ln{display:flex;white-space:pre} .tb-bd .ln .lbl{flex:none} .tb-bd .ln .dots{flex:1;overflow:hidden;color:#3e3a37;margin:0 6px}
+  .tb-bd .ln .dots::before{content:"................................................................................"}
+  .tb-bd .spin{display:inline-block;width:1ch;color:#ffb32e}
+  .tb-bd .bar{color:#ffb32e} .tb-bd .bar .e{color:#3a3633}
+  .caret2{display:inline-block;width:8px;height:15px;background:#ffb32e;vertical-align:-3px;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .tb-bd .ready{margin-top:6px;font-weight:700;color:#ffd75e}
+  @media (max-width:560px){ .tb-bd{font-size:11.5px} }
+  @media (prefers-reduced-motion:reduce){ .caret2{animation:none} }
   /* detail card */
   .maplibregl-popup{z-index:6} .maplibregl-popup-content{background:transparent!important;padding:0!important;box-shadow:none!important}
   .maplibregl-popup-tip{display:none} .maplibregl-popup-close-button{color:#ccc;font-size:18px;right:8px;top:6px;z-index:2}
@@ -208,23 +206,10 @@
 </head>
 <body>
 <div id="boot" class="boot">
-  <div class="spit">
-    <svg viewBox="0 0 120 190" width="120" height="190" aria-hidden="true">
-      <defs>
-        <clipPath id="cone"><path d="M28 18 Q60 8 92 18 L80 160 Q60 168 40 160 Z"/></clipPath>
-        <linearGradient id="shade" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".55"/><stop offset=".35" stop-color="#000" stop-opacity="0"/><stop offset=".7" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".6"/></linearGradient>
-        <radialGradient id="ember" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffd75e"/><stop offset=".45" stop-color="#ff8a1f" stop-opacity=".7"/><stop offset="1" stop-color="#ff8a1f" stop-opacity="0"/></radialGradient>
-      </defs>
-      <rect x="58" y="0" width="4" height="182" rx="2" fill="#6b6b70"/>
-      <g clip-path="url(#cone)"><g class="meat"><rect x="0" y="8" width="240" height="11" rx="2" fill="#8a4a22"/><rect x="0" y="9" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="120" y="9" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="18" width="240" height="11" rx="2" fill="#b8642a"/><rect x="23" y="19" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="143" y="19" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="28" width="240" height="11" rx="2" fill="#d98a3c"/><rect x="46" y="29" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="166" y="29" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="38" width="240" height="11" rx="2" fill="#a8561f"/><rect x="9" y="39" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="129" y="39" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="48" width="240" height="11" rx="2" fill="#c97a34"/><rect x="32" y="49" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="152" y="49" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="58" width="240" height="11" rx="2" fill="#8a4a22"/><rect x="55" y="59" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="175" y="59" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="68" width="240" height="11" rx="2" fill="#b8642a"/><rect x="18" y="69" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="138" y="69" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="78" width="240" height="11" rx="2" fill="#d98a3c"/><rect x="41" y="79" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="161" y="79" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="88" width="240" height="11" rx="2" fill="#a8561f"/><rect x="4" y="89" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="124" y="89" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="98" width="240" height="11" rx="2" fill="#c97a34"/><rect x="27" y="99" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="147" y="99" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="108" width="240" height="11" rx="2" fill="#8a4a22"/><rect x="50" y="109" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="170" y="109" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="118" width="240" height="11" rx="2" fill="#b8642a"/><rect x="13" y="119" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="133" y="119" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="128" width="240" height="11" rx="2" fill="#d98a3c"/><rect x="36" y="129" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="156" y="129" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="0" y="138" width="240" height="11" rx="2" fill="#a8561f"/><rect x="59" y="139" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/><rect x="179" y="139" width="22" height="3" rx="1.5" fill="#ffd28a" opacity=".55"/></g><rect x="20" y="0" width="80" height="170" fill="url(#shade)"/></g>
-      <path d="M28 18 Q60 8 92 18" fill="none" stroke="#ffcf7a" stroke-opacity=".35" stroke-width="2"/>
-      <ellipse class="glow" cx="60" cy="176" rx="46" ry="12" fill="url(#ember)"/>
-    </svg>
-    <div class="sparks"><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="term-boot">
+    <div class="tb-hd"><i></i><i></i><i></i><span>kebabarium — zsh</span></div>
+    <div class="tb-bd" id="tblog"></div>
   </div>
-  <div class="bword"><span class="k">кебабаріум</span></div>
-  <div class="bbar"><i id="bprog"></i></div>
-  <div class="bmsg" id="bmsg">розпалюємо гриль…</div>
 </div>
 <div id="app">
   <div id="map"></div>
@@ -493,21 +478,50 @@ function closeNear(silent){ document.getElementById("near").classList.add("hidde
   bars.features.forEach(f=>f.properties.far=false); if(map.getSource("bars")) map.getSource("bars").setData(bars); }
 makeDraggable("near");
 
-// ---------- boot screen ----------
+// ---------- boot screen (terminal, time-based so it stays smooth under load) ----------
 (function(){
-  const msgs=["розпалюємо гриль…","крутимо шаурму…","нарізаємо мапу Львова…","рахуємо найсмачніші…","майже готово…"];
-  const t0=performance.now(), MIN=1800; let i=0, p=8, ready=false;
-  const bm=document.getElementById("bmsg"), bp=document.getElementById("bprog");
-  const mi=setInterval(()=>{ i=(i+1)%msgs.length; bm.style.opacity=0; setTimeout(()=>{ bm.textContent=msgs[i]; bm.style.opacity=1; },220); },900);
-  const pi=setInterval(()=>{ p=Math.min(ready?100:88, p+(ready?20:Math.random()*9)); bp.style.width=p+"%"; if(p>=100) done(); },160);
-  function done(){ const wait=Math.max(0,MIN-(performance.now()-t0)); clearInterval(pi);
-    setTimeout(()=>{ clearInterval(mi); document.getElementById("boot").classList.add("out"); regrow(); },wait+250); }
+  const boot=document.getElementById("boot"), log=document.getElementById("tblog");
+  let ready=false; map.once("idle",()=>{ ready=true; }); setTimeout(()=>{ ready=true; },7000);
+  const SPIN="⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏";
+  // timeline: t = start (ms), d = duration (ms)
+  const S=[
+    {k:"cmd",  text:"kebabarium --city lviv --hungry", d:700},
+    {k:"step", label:"locating city",            value:"Львів",             d:300},
+    {k:"step", label:"searching shawarma",       value:"312 spots",         d:420},
+    {k:"step", label:"validating reviews",       value:"4 812",             d:380},
+    {k:"step", label:"checking who's still open",value:"295 open · 17 dead",d:360},
+    {k:"step", label:"heating up the grill",     value:"230°C",             d:300},
+    {k:"bar",  label:"preparing map",                                       d:700},
+    {k:"ready",text:"ready. смачного!", d:500},
+  ];
+  let t=0; S.forEach(s=>{ s.t=t; t+=s.d+60; }); const END=t;
+  const rows=S.map(s=>{ const d=document.createElement("div"); d.style.display="none"; log.appendChild(d); return d; });
+  let clock=0, last=performance.now(), done=false;
+  function render(){
+    const now=performance.now(); let dt=now-last; last=now;
+    const bar=S.find(s=>s.k==="bar");
+    // hold the bar at 70% until the map is actually ready
+    if(!(clock>=bar.t+bar.d*0.7 && !ready)) clock+=Math.min(dt,1000);
+    S.forEach((s,i)=>{ const el=rows[i], local=clock-s.t; if(local<0){ el.style.display="none"; return; } el.style.display="";
+      const p=Math.min(1,local/s.d), sp=SPIN[Math.floor(now/70)%SPIN.length];
+      if(s.k==="cmd"){ const n=Math.ceil(s.text.length*Math.min(1,p*1.15));
+        el.innerHTML='<span class="d">~/lviv</span> <span class="p">$</span> '+s.text.slice(0,n)+(p<1?'<span class="caret2"></span>':''); }
+      else if(s.k==="step"){ const n=Math.ceil(s.label.length*Math.min(1,p*3));
+        el.className="ln"; el.innerHTML='<span class="lbl"><span class="p">›</span> '+s.label.slice(0,n)+'</span><span class="dots"></span><span class="st">'+(p<1?'<span class="spin">'+sp+'</span>':'<span class="v">'+s.value+'</span> <span class="ok">✓</span>')+'</span>'; }
+      else if(s.k==="bar"){ const i2=Math.round(20*p); el.className="ln";
+        el.innerHTML='<span class="lbl"><span class="p">›</span> '+s.label+' </span><span class="bar">['+"█".repeat(i2)+'<span class="e">'+"░".repeat(20-i2)+'</span>] '+Math.round(p*100)+'%</span>'; }
+      else if(s.k==="ready"){ el.className="ready"; el.innerHTML=s.text+'<span class="caret2"></span>'; }
+    });
+    if(clock>=END && !done){ done=true; finish(); }
+    if(!done) requestAnimationFrame(render);
+  }
+  requestAnimationFrame(render);
+  function finish(){ boot.classList.add("out"); regrow(); }
   function regrow(){ if(!map.getSource("bars")) return; const s0=performance.now();
     (function g(now){ const k=Math.min(1,(now-s0)/1600), e=1-Math.pow(1-k,3);
       bars.features.forEach(f=>f.properties.h=f.properties.target*e); map.getSource("bars").setData(bars);
       if(k<1) requestAnimationFrame(g); })(s0); }
-  map.once("idle",()=>{ ready=true; });
-  setTimeout(()=>{ ready=true; },6000); // never block longer than 6 s
+  boot.addEventListener("click",()=>{ if(!done){ done=true; finish(); } }); // tap to skip
 })();
 next();
 

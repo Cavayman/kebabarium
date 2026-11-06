@@ -72,7 +72,8 @@ Why now: the 2019 Java/Angular 6 version is a static stub that no longer builds 
 
 ### Loading screen
 
-On a cold start the app shows a black/ember boot screen: an animated doner spit (meat layers scrolling sideways so it looks like it turns, flickering ember glow and sparks underneath), the "кебабаріум" wordmark, an ember-gradient progress bar and rotating captions ("розпалюємо гриль…", "крутимо шаурму…", "рахуємо найсмачніші…"). It stays at least ~1.8 s, at most 6 s, fades out when the map and first data are ready, and only then the columns grow. Respects `prefers-reduced-motion`. Not shown on in-app navigation.
+On a cold start the app shows a **terminal-style boot screen** (owner pick, replacing an animated-doner version): a small glass terminal window (macOS-style dots, "kebabarium — zsh") on a near-black ember-tinted background, JetBrains Mono. It types `~/lviv $ kebabarium --city lviv --hungry`, then steps appear one by one with a braille spinner that turns into a gold value + green ✓ on a dotted leader line:
+`› locating city ....... Львів ✓`, `› searching shawarma ....... 312 spots ✓`, `› validating reviews ....... 4 812 ✓`, `› checking who's still open ....... 295 open · 17 dead ✓`, `› heating up the grill ....... 230°C ✓`, then `› preparing map [█████░░░] 70%` (the bar holds at 70% until the map/data are really ready) and `ready. смачного!` — then it fades into the map and the columns grow. **Numbers are real** (city, spot count, review count, open/dead counts from `/stats`). Total ≈ 3–4 s, max 7 s, tap to skip; animation is driven by elapsed time (not per-frame/timer steps) so it runs at the same speed on slow devices; respects `prefers-reduced-motion`; not shown on in-app navigation. This terminal touch is the only "nerdy" element left — the rest of the UI stays friendly.
 
 ## 6. Architecture (builder's proposal, my call — owner can override)
 
