@@ -14,6 +14,8 @@ export interface Env {
   THREADS_APP_ID?: string;
   THREADS_APP_SECRET?: string;
   THREADS_TOKEN?: string;
+  /** Test-only JWKS for Google ID tokens; honoured only when ENVIRONMENT is dev. */
+  TEST_GOOGLE_JWKS?: string;
 }
 
 export interface SessionUser {

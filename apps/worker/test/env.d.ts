@@ -6,6 +6,7 @@ declare global {
     interface Env extends WorkerEnv {
       TEST_MIGRATIONS: D1Migration[];
       TEST_SEED: string;
+      TEST_GOOGLE_PRIVATE_JWK: string;
     }
   }
 }
