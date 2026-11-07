@@ -59,6 +59,7 @@ h2 {
   text-overflow: ellipsis;
 }
 .pb {
+  flex: 1 1 auto; // fill fixed-height panels (feed, chat) so their input sits at the bottom
   padding: 0 12px 12px;
   overflow: auto;
   min-height: 0;
