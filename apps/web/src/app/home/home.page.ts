@@ -25,12 +25,14 @@ import { BootScreenComponent } from '../boot/boot-screen.component';
 import { BootState } from '../boot/boot.state';
 import type { CityStats } from '@kebabarium/shared';
 import { NearbyService } from '../nearby/nearby.service';
+import { DashboardView } from '../dashboard/dashboard.view';
+import { ViewStore } from '../state/view.store';
 
 const PLACES_REFRESH_MS = 120_000;
 
 @Component({
   selector: 'kb-home',
-  imports: [MapComponent, NavbarComponent, LeaderboardPanel, FeedPanel, LegendComponent, DockComponent, IconComponent, PlaceCardComponent, ReviewModalComponent, NearbyPanel, AccountComponent, BootScreenComponent, TranslocoDirective],
+  imports: [DashboardView, MapComponent, NavbarComponent, LeaderboardPanel, FeedPanel, LegendComponent, DockComponent, IconComponent, PlaceCardComponent, ReviewModalComponent, NearbyPanel, AccountComponent, BootScreenComponent, TranslocoDirective],
   providers: [NearbyService],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './home.page.html',
@@ -45,6 +47,8 @@ export class HomePage {
   protected readonly auth = inject(AuthStore);
   protected readonly nearby = inject(NearbyService);
   protected readonly boot = inject(BootState);
+  protected readonly view = inject(ViewStore);
+  readonly dash = computed(() => this.view.view() === 'dash');
   readonly stats = signal<CityStats | null>(null);
   private readonly api = inject(ApiService);
   private readonly router = inject(Router);
@@ -170,6 +174,7 @@ export class HomePage {
   }
 
   startNearby(): void {
+    if (this.dash()) this.view.set('map'); // the radar lives on the map
     this.selectedId.set(null);
     if (this.layout.mobile()) this.layout.closeSheets();
     void this.nearby.start();

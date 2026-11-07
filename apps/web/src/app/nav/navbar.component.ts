@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, inject, input, output, 
 import { Router } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
 import type { City } from '@kebabarium/shared';
+import { ViewStore } from '../state/view.store';
 import { IconComponent, LogoMarkComponent } from '../ui/icon.component';
 
 @Component({
@@ -28,6 +29,10 @@ import { IconComponent, LogoMarkComponent } from '../ui/icon.component';
           </ul>
         }
       </div>
+      <div class="views" role="group" [attr.aria-label]="t('nav.viewMap') + ' / ' + t('nav.viewDash')">
+        <button type="button" data-view="map" [class.on]="view.view() === 'map'" [attr.aria-pressed]="view.view() === 'map'" [attr.title]="t('nav.viewMap')" [attr.aria-label]="t('nav.viewMap')" (click)="view.set('map')"><kb-icon name="cube" [size]="15" /></button>
+        <button type="button" data-view="dash" [class.on]="view.view() === 'dash'" [attr.aria-pressed]="view.view() === 'dash'" [attr.title]="t('nav.viewDash')" [attr.aria-label]="t('nav.viewDash')" (click)="view.set('dash')"><kb-icon name="chart" [size]="15" /></button>
+      </div>
       <button class="chip" type="button" (click)="near.emit()"><kb-icon name="nav" [size]="15" /><span class="lbl">{{ t('nav.near') }}</span></button>
       <ng-content />
     </nav>
@@ -42,6 +47,11 @@ import { IconComponent, LogoMarkComponent } from '../ui/icon.component';
     .menu li { padding: 8px 10px; border-radius: 10px; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; gap: 10px; }
     .menu li:hover, .menu li[aria-selected=true] { background: var(--hover); }
     .menu small { color: var(--dim); }
+    .views { display: flex; gap: 2px; padding: 2px; border-radius: 999px; background: rgba(255,255,255,.06); }
+    .views button { width: 30px; height: 30px; border: 0; border-radius: 999px; display: grid; place-items: center; background: none; color: var(--dim); cursor: pointer; transition: background .15s, color .15s; }
+    .views button:hover { color: var(--fg); }
+    .views button.on { background: var(--acc); color: #1a0a00; }
+    .views button:focus-visible { outline: 2px solid var(--acc2); outline-offset: 1px; }
     @media (max-width: 560px) {
       .word { display: none; }
       .logo { padding: 0 4px; }
@@ -55,6 +65,7 @@ export class NavbarComponent {
   readonly current = input<City | null>(null);
   readonly near = output<void>();
   readonly cityOpen = signal(false);
+  protected readonly view = inject(ViewStore);
   private readonly router = inject(Router);
   private readonly el = inject<ElementRef<HTMLElement>>(ElementRef);
 

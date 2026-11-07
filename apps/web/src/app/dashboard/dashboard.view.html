@@ -1,0 +1,148 @@
+<div class="dash" *transloco="let t">
+  @let d = data();
+  <header class="hd">
+    <h1>{{ t('dash.title', { city: stats()?.city ?? cityName() }) }}</h1>
+    @if (stats()?.lastSyncAt; as at) {
+      <span class="upd">{{ t('dash.updated', { when: when(at) }) }}</span>
+    }
+  </header>
+
+  <section class="kpis">
+    <div class="kpi" data-kpi="spots"><b>{{ count(d.spots) }}</b><span>{{ t('dash.spots') }}</span></div>
+    <div class="kpi" data-kpi="reviews"><b>{{ count(d.reviews) }}</b><span>{{ t('dash.reviews') }}</span></div>
+    <div class="kpi" data-kpi="avg">
+      <b><i class="dot" [style.background]="color(d.avg)"></i>{{ d.avg != null ? d.avg.toFixed(2) : '—' }}</b><span>{{ t('dash.avg') }}</span>
+    </div>
+    <div class="kpi" data-kpi="open"><b>{{ count(d.open) }}</b><span>{{ t('dash.open') }}</span></div>
+  </section>
+
+  <div class="grid">
+    <section class="card top wide">
+      <h2><kb-icon name="trophy" [size]="15" />{{ t('dash.top') }}</h2>
+      <p class="hint">{{ t('dash.topHint') }}</p>
+      <ol>
+        @for (p of d.top; track p.id; let i = $index) {
+          <li (click)="pick.emit(p.id)" tabindex="0" (keydown.enter)="pick.emit(p.id)">
+            <span class="rank" [class]="'rank rank-' + (i + 1)">{{ i + 1 }}</span>
+            <span class="who">
+              <span class="nm">{{ p.name }}</span>
+              <small>{{ p.district ?? p.address ?? '' }}</small>
+            </span>
+            <span class="rv" [attr.title]="reviews(p.reviewCount)"><kb-icon name="chat" [size]="10" />{{ count(p.reviewCount) }}</span>
+            <span class="sc" [style.background]="color(p.score)">{{ p.score?.toFixed(1) }}</span>
+          </li>
+        } @empty {
+          <li class="empty">{{ t('dash.empty') }}</li>
+        }
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2><kb-icon name="chart" [size]="15" />{{ t('dash.hist') }}</h2>
+      <p class="hint">{{ t('dash.histHint') }}</p>
+      <div class="hist" role="img" [attr.aria-label]="t('dash.hist')">
+        @for (b of d.histogram; track b.label) {
+          <div class="col">
+            <div class="track">
+              @if (b.count === histMax() && b.count > 0) {
+                <span class="peak" [style.bottom.%]="binPct(b)">{{ b.count }}</span>
+              }
+              <div class="bar" [style.height.%]="binPct(b)" [style.background]="binColor(b)" [attr.title]="binTitle(b)"></div>
+            </div>
+            <span class="x">{{ b.label }}</span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="card">
+      <h2><kb-icon name="pin" [size]="15" />{{ t('dash.districts') }}</h2>
+      <p class="hint">{{ t('dash.districtsHint') }}</p>
+      <ul class="dots">
+        @for (x of d.districts; track x.name) {
+          <li [attr.title]="x.name + ': ' + x.avg.toFixed(2) + ' · ' + x.count">
+            <span class="nm">{{ x.name }}</span>
+            <span class="axis"><i class="pt" [style.left.%]="dotPct(x.avg)" [style.background]="color(x.avg)"></i></span>
+            <b>{{ x.avg.toFixed(2) }}</b>
+            <small>{{ x.count }}</small>
+          </li>
+        } @empty {
+          <li class="empty">{{ t('dash.empty') }}</li>
+        }
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><kb-icon name="chat" [size]="15" />{{ t('dash.discussed') }}</h2>
+      <ul class="bars">
+        @for (p of d.discussed; track p.id) {
+          <li (click)="pick.emit(p.id)" [attr.title]="p.name + ': ' + reviews(p.reviewCount)">
+            <span class="nm">{{ p.name }}</span>
+            <span class="len"><i [style.width.%]="barPct(p.reviewCount)"></i></span>
+            <b>{{ count(p.reviewCount) }}</b>
+          </li>
+        } @empty {
+          <li class="empty">{{ t('dash.empty') }}</li>
+        }
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><kb-icon name="gem" [size]="15" />{{ t('dash.gems') }}</h2>
+      <p class="hint">{{ t('dash.gemsHint') }}</p>
+      <div class="gems">
+        @for (p of d.gems; track p.id) {
+          <button type="button" class="gem" (click)="pick.emit(p.id)">
+            <span class="sc" [style.background]="color(p.score)">{{ p.score?.toFixed(1) }}</span>
+            <span class="nm">{{ p.name }}</span>
+            <small>{{ reviews(p.reviewCount) }}</small>
+          </button>
+        } @empty {
+          <p class="empty">{{ t('dash.empty') }}</p>
+        }
+      </div>
+    </section>
+
+    @if (d.chains.length) {
+      <section class="card">
+        <h2><kb-icon name="grip" [size]="15" />{{ t('dash.chains') }}</h2>
+        <ul class="chains">
+          @for (c of d.chains.slice(0, 8); track c.name) {
+            <li>
+              <span class="nm">{{ c.name }}</span>
+              <small>{{ t('dash.chainSpots', { n: c.spots }) }}</small>
+              @if (c.avg != null) {
+                <span class="sc" [style.background]="color(c.avg)">{{ c.avg.toFixed(1) }}</span>
+              }
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    <section class="card fresh">
+      <h2><kb-icon name="chat" [size]="15" />{{ t('dash.fresh') }}</h2>
+      <ul>
+        @for (r of fresh(); track r.id) {
+          <li>
+            <div class="meta">
+              <b>{{ r.author || t('feed.anon') }}</b>
+              @if (r.stars) {
+                <span class="st">{{ stars(r.stars) }}</span>
+              }
+              <time [attr.datetime]="r.createdAt">{{ when(r.createdAt) }}</time>
+            </div>
+            @if (r.placeName && r.placeId) {
+              <button type="button" class="pl" (click)="pick.emit(r.placeId)">{{ r.placeName }}</button>
+            }
+            @if (r.text) {
+              <p>{{ r.text }}</p>
+            }
+          </li>
+        } @empty {
+          <li class="empty">{{ t('dash.empty') }}</li>
+        }
+      </ul>
+    </section>
+  </div>
+</div>

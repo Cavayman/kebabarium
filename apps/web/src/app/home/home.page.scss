@@ -70,6 +70,15 @@
     }
   }
 }
+/* dashboard: the card floats centred at the bottom instead of stretching edge to edge */
+@media (min-width: 561px) {
+  .place-card.sheet {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: min(520px, calc(100% - 16px));
+  }
+}
 .pick-hint {
   position: absolute;
   top: 70px;

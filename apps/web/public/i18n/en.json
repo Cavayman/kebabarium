@@ -1,5 +1,28 @@
 {
   "brand": "kebabarium",
+  "dash": {
+    "title": "{{city}} in numbers",
+    "spots": "spots",
+    "reviews": "ratings behind them",
+    "avg": "city average",
+    "open": "open now",
+    "updated": "data updated {{when}}",
+    "top": "Top 10",
+    "topHint": "weighted by how many and how fresh the reviews are",
+    "hist": "How they score",
+    "histHint": "how many spots have each score",
+    "histBar": "{{label}}: {{n}}",
+    "districts": "Districts",
+    "districtsHint": "average score of the district’s spots",
+    "discussed": "Most talked about",
+    "gems": "Hidden gems",
+    "gemsHint": "4.7 or better, but few reviews so far",
+    "chains": "Chains",
+    "chainSpots": "{{n}} spots",
+    "fresh": "Fresh reviews",
+    "empty": "Nothing here yet",
+    "toMap": "On the map"
+  },
   "reviews": {
     "none": "no reviews yet",
     "one": "{{n}} review",
@@ -11,7 +34,9 @@
     "near": "Nearby",
     "login": "Log in",
     "city": "City",
-    "spots": "{{n}} spots"
+    "spots": "{{n}} spots",
+    "viewMap": "3D map",
+    "viewDash": "Dashboard"
   },
   "fab": {
     "review": "Leave a review"

@@ -32,29 +32,33 @@
 
   <kb-navbar [cities]="cfg.cities()" [current]="currentCity()" (near)="startNearby()"><kb-account /></kb-navbar>
 
-  @if (layout.hasCustomLayout() && !layout.mobile()) {
-    <button type="button" class="chip glass reset" (click)="layout.reset()"><kb-icon name="reset" [size]="14" />{{ t('layout.reset') }}</button>
-  }
+  @if (dash()) {
+    <kb-dashboard [city]="city()" [cityName]="title()" [places]="places()" [stats]="stats()" (pick)="selectedId.set($event)" />
+  } @else {
+    @if (layout.hasCustomLayout() && !layout.mobile()) {
+      <button type="button" class="chip glass reset" (click)="layout.reset()"><kb-icon name="reset" [size]="14" />{{ t('layout.reset') }}</button>
+    }
 
-  @if (layout.isOpen('lb')) {
-    <kb-leaderboard-panel [city]="city()" [cityName]="title()" (pick)="focusPlace($event)" />
+    @if (layout.isOpen('lb')) {
+      <kb-leaderboard-panel [city]="city()" [cityName]="title()" (pick)="focusPlace($event)" />
+    }
+    <kb-feed-panel [class.off]="!layout.isOpen('feed')" [city]="city()" (drop)="onDrop($event)" (pick)="focusPlace($event)" />
+    @if (nearby.result() && layout.isOpen('near')) {
+      <kb-nearby-panel [result]="nearby.result()" (radius)="nearby.setRadius($event)" (pick)="focusPlace($event)" (closed)="closeNearby()" />
+    }
+    @if (nearby.phase() === 'pick') {
+      <div class="pick-hint chip glass">{{ t('near.pickHint') }}</div>
+    }
+    <kb-legend />
   }
-  <kb-feed-panel [class.off]="!layout.isOpen('feed')" [city]="city()" (drop)="onDrop($event)" (pick)="focusPlace($event)" />
-  @if (nearby.result() && layout.isOpen('near')) {
-    <kb-nearby-panel [result]="nearby.result()" (radius)="nearby.setRadius($event)" (pick)="focusPlace($event)" (closed)="closeNearby()" />
-  }
-  @if (nearby.phase() === 'pick') {
-    <div class="pick-hint chip glass">{{ t('near.pickHint') }}</div>
-  }
-  <kb-legend />
   <kb-dock (review)="openReview()" />
 
   @if (selectedId(); as id) {
     <kb-place-card
       class="place-card"
-      [class.sheet]="layout.mobile()"
-      [style.left.px]="layout.mobile() ? null : cardPos()?.x"
-      [style.top.px]="layout.mobile() ? null : cardPos()?.y"
+      [class.sheet]="layout.mobile() || dash()"
+      [style.left.px]="layout.mobile() || dash() ? null : cardPos()?.x"
+      [style.top.px]="layout.mobile() || dash() ? null : cardPos()?.y"
       [placeId]="id"
       [city]="city()"
       (closed)="selectedId.set(null)"
