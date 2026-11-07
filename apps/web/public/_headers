@@ -14,4 +14,4 @@
   Cache-Control: public, max-age=31536000, immutable
 
 /i18n/*
-  Cache-Control: public, max-age=300
+  Cache-Control: no-cache

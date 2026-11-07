@@ -24,4 +24,10 @@ describe('static asset headers', () => {
     expect(h).toContain('Permissions-Policy: geolocation=(self)');
     expect(h).toContain('Strict-Transport-Security: max-age=');
   });
+
+  it('revalidates translations on every load, so new UI strings never show up as raw keys after a deploy', () => {
+    // hashed JS changes the moment we deploy; an unhashed translation file must not lag behind it
+    const block = headers().split(/\n(?=\/)/).find((b) => b.startsWith('/i18n/'));
+    expect(block).toContain('Cache-Control: no-cache');
+  });
 });
