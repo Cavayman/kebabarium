@@ -124,7 +124,7 @@ describe('sync & budget', () => {
   it('reports budget usage against caps', async () => {
     const body = (await (await call('GET', '/api/admin/budget', admin)).json()) as { usage: { sku: string; used: number; cap: number }[] };
     expect(body.usage.map((u) => u.sku)).toEqual(['places.text_search_ids', 'places.details_pro', 'places.details_enterprise_atmosphere', 'threads.search']);
-    expect(body.usage.find((u) => u.sku === 'places.details_pro')).toMatchObject({ cap: 4500 });
+    expect(body.usage.find((u) => u.sku === 'places.details_pro')).toMatchObject({ cap: 4800 }); // just under Google's 5 000 free Place Details Pro calls;
   });
 
   it('scans one chunk of a city on demand and reports progress for the next chunk', async () => {
@@ -136,6 +136,17 @@ describe('sync & budget', () => {
     const runs = (await (await call('GET', '/api/admin/sync-runs', admin)).json()) as { id: number; kind: string; finishedAt: string | null }[];
     expect(runs[0]).toMatchObject({ id: body.runId, kind: 'scan' });
     expect(runs[0]!.finishedAt).not.toBeNull();
+  });
+
+  it('pulls Google ratings for a chunk of places on demand and says how many are still unrated', async () => {
+    const res = await call('POST', '/api/admin/ratings', admin, {});
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { runId: number; done: number; remaining: number; notes: string[] };
+    expect(body).toMatchObject({ done: 0, notes: ['google_not_configured'] }); // the test env has no Places key
+    expect(body.remaining).toBeGreaterThanOrEqual(0);
+    const runs = (await (await call('GET', '/api/admin/sync-runs', admin)).json()) as { id: number; kind: string }[];
+    expect(runs[0]).toMatchObject({ id: body.runId, kind: 'ratings' });
+    expect((await call('POST', '/api/admin/ratings', user, {})).status).toBe(403);
   });
 
   it('refuses a scan for regular users and unknown cities', async () => {

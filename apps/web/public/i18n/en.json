@@ -177,6 +177,7 @@
     "runNow": "Run now",
     "scanAll": "Scan the whole city",
     "scanNew": "new",
+    "pullRatings": "Pull Google ratings for all",
     "budget": "API budget this month",
     "pending": "Pending",
     "held": "Held",

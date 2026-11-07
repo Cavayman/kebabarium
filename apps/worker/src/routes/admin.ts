@@ -8,6 +8,7 @@ import type { AppEnv } from '../env';
 import { ApiError } from '../errors';
 import { CAPS, SYNC, SYNC_KINDS } from '../sync/config';
 import { runDiscovery } from '../sync/discovery';
+import { runRefresh } from '../sync/refresh';
 import { newStats } from '../sync/stats';
 import { finishSyncRun, runSync, startSyncRun, SYNC_RUN_SELECT } from '../sync/run';
 import { body } from '../validate';
@@ -274,6 +275,28 @@ adminRoutes.post('/admin/scan', async (c) => {
   const progress = await runDiscovery(c.env.DB, c.env, city, stats, fetch, SYNC.scanCallsPerRequest);
   const run = await finishSyncRun(c.env.DB, runId, 'scan', stats);
   return c.json({ runId, ...progress, placesAdded: stats.placesAdded, callsUsed: stats.callsUsed, error: run.error, notes: [...new Set(stats.notes)] });
+});
+
+/**
+ * One chunk of Google ratings + reviews for places that have never been rated (then the oldest ones);
+ * the admin page repeats it until `remaining` reaches 0. Same 40-call chunk size as the scan.
+ */
+adminRoutes.post('/admin/ratings', async (c) => {
+  const runId = await startSyncRun(c.env.DB, 'ratings');
+  const stats = newStats();
+  await runRefresh(c.env.DB, c.env, stats, fetch, SYNC.scanCallsPerRequest);
+  const run = await finishSyncRun(c.env.DB, runId, 'ratings', stats);
+  const left = await c.env.DB.prepare(
+    `SELECT COUNT(*) AS n FROM places WHERE google_place_id IS NOT NULL AND status != 'hidden' AND google_last_synced_at IS NULL`,
+  ).first<{ n: number }>();
+  return c.json({
+    runId,
+    done: stats.callsUsed,
+    remaining: left?.n ?? 0,
+    externalAdded: stats.externalAdded,
+    error: run.error,
+    notes: [...new Set(stats.notes)],
+  });
 });
 
 adminRoutes.get('/admin/sync-runs', async (c) => {

@@ -102,5 +102,20 @@ describe('admin', () => {
       expect(f.nativeElement.textContent).toContain('budget_exhausted:places.details_pro');
       expect((f.nativeElement.querySelector('[data-scan]') as HTMLButtonElement).disabled).toBe(false);
     });
+
+    it('pulls Google ratings chunk by chunk until no place is left unrated', async () => {
+      const f = open();
+      const run = f.componentInstance.pullRatings();
+      for (const c of [{ done: 40, remaining: 10 }, { done: 10, remaining: 0 }]) {
+        await tick();
+        http.expectOne('/api/admin/ratings').flush({ runId: 2, externalAdded: 0, error: null, notes: [], ...c });
+      }
+      await run;
+      http.expectNone('/api/admin/ratings');
+      http.expectOne('/api/admin/sync-runs').flush([]);
+      http.expectOne('/api/admin/budget').flush({ month: '2026-11', usage: [] });
+      f.detectChanges();
+      expect(f.nativeElement.querySelector('[data-ratings-progress]').textContent).toContain('50 / 50');
+    });
   });
 });

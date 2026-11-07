@@ -25,8 +25,8 @@ export const SYNC_RUN_SELECT = `SELECT id, kind, started_at AS startedAt, finish
   places_added AS placesAdded, places_updated AS placesUpdated, marked_dead AS markedDead, external_added AS externalAdded,
   threads_status AS threadsStatus, error, notes FROM sync_runs`;
 
-/** Hourly/manual sync kinds, plus "scan": one chunk of an admin-driven full city scan. */
-export type RunKind = SyncKind | 'scan';
+/** Hourly/manual sync kinds, plus admin-driven chunks: "scan" (full city discovery) and "ratings" (bulk Google ratings). */
+export type RunKind = SyncKind | 'scan' | 'ratings';
 
 export async function startSyncRun(db: D1Database, kind: RunKind): Promise<number> {
   const r = await db.prepare(`INSERT INTO sync_runs (kind) VALUES (?) RETURNING id`).bind(kind).first<{ id: number }>();

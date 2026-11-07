@@ -1,6 +1,7 @@
 import { env } from 'cloudflare:test';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { takeBudget } from '../src/sync/budget';
+import { CAPS } from '../src/sync/config';
 import { assignChain, normalizeName } from '../src/sync/chains';
 import { districtOf } from '../src/sync/districts';
 import { runDiscovery, tilesFor } from '../src/sync/discovery';
@@ -177,7 +178,7 @@ describe('discovery', () => {
 
   it('stops without paying once the details budget is used up', async () => {
     const month = new Date().toISOString().slice(0, 7);
-    await env.DB.prepare(`INSERT INTO budget_usage (month, sku, calls) VALUES (?, 'places.details_pro', 4500)`).bind(month).run();
+    await env.DB.prepare(`INSERT INTO budget_usage (month, sku, calls) VALUES (?, 'places.details_pro', ?)`).bind(month, CAPS['places.details_pro']).run();
     const { f, calls } = fakeFetch((u) => (isSearch(u) ? { places: [{ id: 'gp-no-budget' }] } : detailsOf('gp-no-budget')));
     const s = newStats();
     const r = await runDiscovery(env.DB, genv(), await lviv(), s, f, 10);
@@ -241,5 +242,17 @@ describe('refresh', () => {
     const { f } = fakeFetch(() => ({ rating: 3.4, userRatingCount: 22, businessStatus: 'OPERATIONAL', reviews: [] }));
     await runRefresh(env.DB, genv(), newStats(), f);
     expect((await env.DB.prepare('SELECT dead_candidate AS d, status FROM places WHERE id = 9').first())).toEqual({ d: 1, status: 'open' });
+  });
+
+  it('rates many places in one go when asked, never-rated places first', async () => {
+    await env.DB.prepare(`UPDATE places SET google_last_synced_at = '2000-01-01T00:00:00.000Z' WHERE google_place_id IS NOT NULL`).run();
+    for (const id of [5, 6, 7]) await env.DB.prepare(`UPDATE places SET google_place_id = ?, google_last_synced_at = NULL WHERE id = ?`).bind(`gp-bulk-${id}`, id).run();
+    const { f, calls } = fakeFetch(() => ({ rating: 4.6, userRatingCount: 80, businessStatus: 'OPERATIONAL', reviews: [] }));
+    const s = newStats();
+    await runRefresh(env.DB, genv(), s, f, 3);
+    expect(calls.map((c) => c.url.split('/places/')[1]!.split('?')[0])).toEqual(['gp-bulk-5', 'gp-bulk-6', 'gp-bulk-7']);
+    expect(s.callsUsed).toBe(3);
+    const { results } = await env.DB.prepare(`SELECT google_rating AS g FROM places WHERE id IN (5, 6, 7)`).all();
+    expect(results).toEqual([{ g: 4.6 }, { g: 4.6 }, { g: 4.6 }]);
   });
 });

@@ -29,8 +29,14 @@ function nextStatus(t: Target, d: PlaceDetails): { status: string; deadReason: s
   }
 }
 
-/** Refreshes rating/status/reviews for the oldest-synced places, then flags dead candidates (spec §8 steps 2–3). */
-export async function runRefresh(db: D1Database, env: Env, stats: SyncStats, fetcher: typeof fetch = fetch): Promise<void> {
+/** Refreshes rating/status/reviews for the `limit` oldest-synced (never-synced first) places, then flags dead candidates (spec §8 steps 2–3). */
+export async function runRefresh(
+  db: D1Database,
+  env: Env,
+  stats: SyncStats,
+  fetcher: typeof fetch = fetch,
+  limit: number = SYNC.refreshPerRun,
+): Promise<void> {
   if (!env.GOOGLE_PLACES_KEY) {
     stats.notes.push('google_not_configured');
   } else {
@@ -41,7 +47,7 @@ export async function runRefresh(db: D1Database, env: Env, stats: SyncStats, fet
          WHERE google_place_id IS NOT NULL AND status != 'hidden'
          ORDER BY google_last_synced_at IS NOT NULL, google_last_synced_at, id LIMIT ?`,
       )
-      .bind(SYNC.refreshPerRun)
+      .bind(limit)
       .all<Target>();
     for (const t of results) {
       if (!(await takeBudget(db, SKU_DETAILS))) {

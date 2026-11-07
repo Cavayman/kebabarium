@@ -34,6 +34,16 @@ type Kind = 'discovery' | 'refresh' | 'threads' | 'all';
           <span class="danger">{{ err }}</span>
         }
       </div>
+      <div class="scan">
+        <button type="button" class="chip sm" data-ratings (click)="pullRatings()" [disabled]="rating()">{{ t('admin.pullRatings') }}</button>
+        @if (ratingTotal()) {
+          <div class="bar"><i [style.width.%]="pct(ratingDone(), ratingTotal())"></i></div>
+          <span class="muted" data-ratings-progress>{{ ratingDone() }} / {{ ratingTotal() }}</span>
+        }
+        @if (ratingError(); as err) {
+          <span class="danger">{{ err }}</span>
+        }
+      </div>
       <div class="scroll">
         <table>
           <thead><tr><th>#</th><th>kind</th><th>start</th><th>calls</th><th>+places</th><th>upd</th><th>dead</th><th>+ext</th><th>threads</th><th>error / notes</th></tr></thead>
@@ -119,6 +129,37 @@ export class SyncTab {
       this.scanError.set(e instanceof Error ? e.message : String(e));
     } finally {
       this.scanning.set(false);
+      this.load();
+    }
+  }
+
+  readonly rating = signal(false);
+  readonly ratingDone = signal(0);
+  readonly ratingTotal = signal(0);
+  readonly ratingError = signal<string | null>(null);
+
+  /** Google ratings + reviews for every never-rated place, one server chunk per request. */
+  async pullRatings(): Promise<void> {
+    if (this.rating()) return;
+    this.rating.set(true);
+    this.ratingDone.set(0);
+    this.ratingTotal.set(0);
+    this.ratingError.set(null);
+    try {
+      for (;;) {
+        const r = await firstValueFrom(this.api.admin.ratings());
+        this.ratingDone.update((d) => d + r.done);
+        this.ratingTotal.set(this.ratingDone() + r.remaining);
+        if (r.remaining === 0) break;
+        if (r.done === 0) {
+          this.ratingError.set(r.error || r.notes.join(', ') || 'no progress');
+          break;
+        }
+      }
+    } catch (e) {
+      this.ratingError.set(e instanceof Error ? e.message : String(e));
+    } finally {
+      this.rating.set(false);
       this.load();
     }
   }

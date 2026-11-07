@@ -23,9 +23,10 @@ export const SYNC = {
 export const CAPS: Record<string, number> = {
   /** Free without a cap; this only stops a runaway loop. */
   'places.text_search_ids': 30000,
-  /** Name/location of newly found places: 5 000 free/month. */
-  'places.details_pro': 4500,
-  'places.details_enterprise_atmosphere': 900,
+  /** Name/location of newly found places: 5 000 free/month (small margin). */
+  'places.details_pro': 4800,
+  /** Ratings + reviews: 1 000 free/month (small margin). */
+  'places.details_enterprise_atmosphere': 950,
   'threads.search': 1800,
 };
 

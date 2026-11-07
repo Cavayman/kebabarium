@@ -111,6 +111,8 @@ export class ApiService {
     sync: (kind: 'discovery' | 'refresh' | 'threads' | 'all') => this.http.post<{ runId: number }>('/api/admin/sync', { kind }),
     syncRuns: () => this.http.get<AdminSyncRun[]>('/api/admin/sync-runs'),
     scan: (city: string) => this.http.post<AdminScanChunk>('/api/admin/scan', { city }),
+    ratings: () =>
+      this.http.post<{ runId: number; done: number; remaining: number; externalAdded: number; error: string | null; notes: string[] }>('/api/admin/ratings', {}),
     budget: () => this.http.get<{ month: string; usage: { sku: string; used: number; cap: number }[] }>('/api/admin/budget'),
   };
 }
