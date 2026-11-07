@@ -9,10 +9,11 @@ import { seedDev } from './helpers';
 beforeAll(seedDev);
 
 describe('db layer', () => {
-  it('has Lviv as the active seeded city', async () => {
+  it('has Lviv and Sumy as active cities', async () => {
     const lviv = await getCityBySlug(env.DB, 'lviv');
     expect(lviv).toMatchObject({ slug: 'lviv', name: 'Львів', centerLat: 49.832, centerLng: 24.022 });
-    expect((await listCities(env.DB)).map((c) => c.slug)).toEqual(['lviv']);
+    expect((await listCities(env.DB)).map((c) => c.slug)).toEqual(['lviv', 'sumy']);
+    expect(await getCityBySlug(env.DB, 'sumy')).toMatchObject({ name: 'Суми', bbox: [34.7, 50.85, 34.9, 50.96] });
   });
 
   it('lists the 13 dev-seed places for Lviv', async () => {

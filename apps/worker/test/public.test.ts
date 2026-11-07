@@ -11,9 +11,9 @@ const get = async <T>(path: string) => {
 beforeAll(seedDev);
 
 describe('cities & places', () => {
-  it('lists Lviv with its spot count', async () => {
+  it('lists the cities with their spot counts', async () => {
     const { body } = await get<{ slug: string; spots: number }[]>('/api/cities');
-    expect(body).toEqual([expect.objectContaining({ slug: 'lviv', spots: 13 })]);
+    expect(body).toEqual([expect.objectContaining({ slug: 'lviv', spots: 13 }), expect.objectContaining({ slug: 'sumy', name: 'Суми', spots: 0 })]);
   });
 
   it('returns combined scores for every place', async () => {
