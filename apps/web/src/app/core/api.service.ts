@@ -90,7 +90,8 @@ export class ApiService {
 
   // ---------- admin ----------
   admin = {
-    places: (q: { city?: string; status?: string; q?: string; deadCandidate?: 1; page?: number }) =>
+    overview: (city: string) => this.http.get<AdminOverview>('/api/admin/overview', { params: params({ city }) }),
+    places: (q: { city?: string; status?: string; q?: string; deadCandidate?: 1; page?: number; sort?: AdminPlaceSort }) =>
       this.http.get<{ items: AdminPlace[]; total: number; page: number }>('/api/admin/places', { params: params(q) }),
     patchPlace: (id: number, patch: Partial<Pick<AdminPlace, 'name' | 'chainId' | 'logoUrl' | 'district' | 'status'>> & { deadCandidate?: boolean }) =>
       this.http.patch<AdminPlace>(`/api/admin/places/${id}`, patch),
@@ -130,8 +131,22 @@ export interface AdminPlace {
   deadCandidate: boolean;
   movedToPlaceId: number | null;
   googleRating: number | null;
+  googleRatingCount: number | null;
+  googlePlaceId: string | null;
+  lastSeenAt: string | null;
   lat: number;
   lng: number;
+}
+
+export type AdminPlaceSort = 'name' | 'rating' | 'reviews' | 'newest' | 'seen';
+
+/** Per-city numbers for the admin overview (all counted server-side from the data). */
+export interface AdminOverview {
+  city: { slug: string; name: string };
+  places: { total: number; open: number; closedTemp: number; dead: number; hidden: number; unrated: number; deadCandidates: number };
+  reviews: { published: number; pending: number; held: number; google: number; threads: number };
+  lastSyncAt: string | null;
+  lastScanAt: string | null;
 }
 
 export interface AdminChain {

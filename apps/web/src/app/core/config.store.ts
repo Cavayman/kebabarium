@@ -21,5 +21,5 @@ export class ConfigStore {
 }
 
 /** Genitive city names for "Топ Львова" (uk); English uses nameEn. */
-const GENITIVE: Record<string, string> = { lviv: 'Львова', kyiv: 'Києва', warsaw: 'Варшави', odesa: 'Одеси', kharkiv: 'Харкова' };
+const GENITIVE: Record<string, string> = { lviv: 'Львова', sumy: 'Сум', kyiv: 'Києва', warsaw: 'Варшави', odesa: 'Одеси', kharkiv: 'Харкова' };
 export const cityTitle = (c: City, lang: string) => (lang === 'en' ? (c.nameEn ?? c.name) : (GENITIVE[c.slug] ?? c.name));

@@ -29,7 +29,52 @@ const slugify = (s: string) =>
     .replace(/[^\p{L}\p{N}]+/gu, '-')
     .replace(/^-|-$/g, '');
 
+// ---------- overview ----------
+/** Per-city numbers for the admin overview, all counted from the data. */
+adminRoutes.get('/admin/overview', async (c) => {
+  const city = await getCityBySlug(c.env.DB, c.req.query('city') ?? 'lviv');
+  if (!city) throw new ApiError(404, 'city_not_found', 'City not found');
+  const db = c.env.DB;
+  const [places, ours, ext, runs] = await db.batch([
+    db
+      .prepare(
+        `SELECT COUNT(*) AS total, COALESCE(SUM(status = 'open'), 0) AS open, COALESCE(SUM(status = 'closed_temp'), 0) AS closedTemp,
+           COALESCE(SUM(status = 'dead'), 0) AS dead, COALESCE(SUM(status = 'hidden'), 0) AS hidden,
+           COALESCE(SUM(status != 'hidden' AND google_rating IS NULL), 0) AS unrated, COALESCE(SUM(dead_candidate = 1), 0) AS deadCandidates
+         FROM places WHERE city_id = ?`,
+      )
+      .bind(city.id),
+    db
+      .prepare(
+        `SELECT COALESCE(SUM(r.status = 'published'), 0) AS published, COALESCE(SUM(r.status = 'pending'), 0) AS pending,
+           COALESCE(SUM(r.status = 'held'), 0) AS held
+         FROM ratings r JOIN places p ON p.id = r.place_id WHERE p.city_id = ?`,
+      )
+      .bind(city.id),
+    db
+      .prepare(`SELECT COALESCE(SUM(source = 'google'), 0) AS google, COALESCE(SUM(source = 'threads'), 0) AS threads FROM external_reviews WHERE city_id = ?`)
+      .bind(city.id),
+    db.prepare(`SELECT MAX(finished_at) AS lastSyncAt, MAX(CASE WHEN kind = 'scan' THEN finished_at END) AS lastScanAt FROM sync_runs`),
+  ]);
+  const first = <T>(r: D1Result | undefined) => (r!.results[0] ?? {}) as T;
+  return c.json({
+    city: { slug: city.slug, name: city.name },
+    places: first<Record<string, number>>(places),
+    reviews: { ...first<Record<string, number>>(ours), ...first<Record<string, number>>(ext) },
+    ...first<{ lastSyncAt: string | null; lastScanAt: string | null }>(runs),
+  });
+});
+
 // ---------- places ----------
+/** Admin list orders; NULLs (unrated) always last. */
+const PLACE_SORTS: Record<string, string> = {
+  name: 'p.name',
+  rating: 'p.google_rating IS NULL, p.google_rating DESC, p.google_rating_count DESC, p.name',
+  reviews: 'p.google_rating_count IS NULL, p.google_rating_count DESC, p.name',
+  newest: 'p.id DESC',
+  seen: 'p.last_seen_at IS NULL, p.last_seen_at, p.name',
+};
+
 adminRoutes.get('/admin/places', async (c) => {
   const city = await getCityBySlug(c.env.DB, c.req.query('city') ?? 'lviv');
   if (!city) throw new ApiError(404, 'city_not_found', 'City not found');
@@ -41,9 +86,12 @@ adminRoutes.get('/admin/places', async (c) => {
   const q = c.req.query('q')?.trim().toLowerCase();
   if (q) where.push('(LOWER(p.name) LIKE ? OR p.norm_name LIKE ? OR LOWER(COALESCE(p.address, \'\')) LIKE ?)'), args.push(`%${q}%`, `%${q}%`, `%${q}%`);
   const page = Math.max(1, Number(c.req.query('page') ?? 1) || 1);
+  const sort = c.req.query('sort') ?? 'name';
+  const order = PLACE_SORTS[sort];
+  if (!order) throw new ApiError(400, 'validation_error', 'Invalid sort');
   const sqlWhere = where.join(' AND ');
   const [list, total] = await c.env.DB.batch([
-    c.env.DB.prepare(`${PLACE_SELECT} WHERE ${sqlWhere} ORDER BY p.name LIMIT ${PAGE} OFFSET ${(page - 1) * PAGE}`).bind(...args),
+    c.env.DB.prepare(`${PLACE_SELECT} WHERE ${sqlWhere} ORDER BY ${order} LIMIT ${PAGE} OFFSET ${(page - 1) * PAGE}`).bind(...args),
     c.env.DB.prepare(`SELECT COUNT(*) AS n FROM places p WHERE ${sqlWhere}`).bind(...args),
   ]);
   return c.json({

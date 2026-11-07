@@ -214,7 +214,49 @@
     "pending": "Pending",
     "held": "Held",
     "newChain": "New chain",
-    "empty": "Empty"
+    "empty": "Empty",
+    "overview": "Overview",
+    "scanCity": "Scan {{city}}",
+    "lastSync": "Last sync",
+    "lastScan": "last full scan",
+    "reviewsTitle": "Reviews",
+    "attention": "Needs attention",
+    "todoModeration": "{{n}} reviews wait for moderation",
+    "todoCandidates": "{{n}} spots look closed",
+    "todoUnrated": "{{n}} spots have no Google rating yet — press “Pull Google ratings”",
+    "allGood": "All clear, nothing on fire",
+    "unhide": "Show",
+    "hideHint": "Remove from the map (e.g. a pizzeria, not shawarma)",
+    "onSite": "On site",
+    "sortBy": "Sort",
+    "sort": {
+      "name": "name",
+      "rating": "Google rating",
+      "reviews": "review count",
+      "newest": "newest first",
+      "seen": "not seen longest"
+    },
+    "col": {
+      "name": "Name",
+      "chain": "Chain",
+      "district": "District",
+      "logo": "Logo URL",
+      "seen": "Seen"
+    },
+    "n": {
+      "total": "total",
+      "open": "open",
+      "closedTemp": "temporarily closed",
+      "dead": "closed",
+      "hidden": "hidden",
+      "unrated": "no rating",
+      "deadCandidates": "may be closed",
+      "published": "ours published",
+      "pending": "pending",
+      "held": "held",
+      "google": "from Google",
+      "threads": "from Threads"
+    }
   },
   "map": {
     "moved": "moved → {{name}}"

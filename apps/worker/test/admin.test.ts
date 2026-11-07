@@ -32,6 +32,38 @@ describe('admin guard', () => {
   });
 });
 
+describe('overview', () => {
+  it('summarises a city with numbers taken straight from the data', async () => {
+    const res = await call('GET', '/api/admin/overview?city=lviv', admin);
+    expect(res.status).toBe(200);
+    const b = (await res.json()) as {
+      city: { slug: string; name: string };
+      places: Record<'total' | 'open' | 'closedTemp' | 'dead' | 'hidden' | 'unrated' | 'deadCandidates', number>;
+      reviews: Record<'published' | 'pending' | 'held' | 'google' | 'threads', number>;
+      lastSyncAt: string | null;
+    };
+    const n = async (sql: string) => (await env.DB.prepare(sql).first<{ n: number }>())!.n;
+    expect(b.city).toEqual({ slug: 'lviv', name: 'Львів' });
+    expect(b.places).toEqual({
+      total: await n(`SELECT COUNT(*) AS n FROM places WHERE city_id = 1`),
+      open: await n(`SELECT COUNT(*) AS n FROM places WHERE city_id = 1 AND status = 'open'`),
+      closedTemp: await n(`SELECT COUNT(*) AS n FROM places WHERE city_id = 1 AND status = 'closed_temp'`),
+      dead: await n(`SELECT COUNT(*) AS n FROM places WHERE city_id = 1 AND status = 'dead'`),
+      hidden: await n(`SELECT COUNT(*) AS n FROM places WHERE city_id = 1 AND status = 'hidden'`),
+      unrated: await n(`SELECT COUNT(*) AS n FROM places WHERE city_id = 1 AND status != 'hidden' AND google_rating IS NULL`),
+      deadCandidates: await n(`SELECT COUNT(*) AS n FROM places WHERE city_id = 1 AND dead_candidate = 1`),
+    });
+    expect(b.reviews.published).toBe(await n(`SELECT COUNT(*) AS n FROM ratings r JOIN places p ON p.id = r.place_id WHERE p.city_id = 1 AND r.status = 'published'`));
+    expect(b.reviews.google).toBe(await n(`SELECT COUNT(*) AS n FROM external_reviews WHERE city_id = 1 AND source = 'google'`));
+    expect(b.places.total).toBeGreaterThan(0);
+  });
+
+  it('is for admins only and knows only real cities', async () => {
+    expect((await call('GET', '/api/admin/overview?city=lviv', user)).status).toBe(403);
+    expect((await call('GET', '/api/admin/overview?city=atlantis', admin)).status).toBe(404);
+  });
+});
+
 describe('places & chains', () => {
   it('lists and filters places', async () => {
     const res = await call('GET', '/api/admin/places?city=lviv&status=dead', admin);
@@ -39,6 +71,17 @@ describe('places & chains', () => {
     expect(body).toMatchObject({ total: 1, items: [{ id: 12 }] });
     const q = (await (await call('GET', '/api/admin/places?city=lviv&q=кебаб', admin)).json()) as { total: number };
     expect(q.total).toBe(2);
+  });
+
+  it('sorts places by Google reviews, rating or newest, and refuses unknown sorts', async () => {
+    type Row = { id: number; googleRating: number | null; googleRatingCount: number | null };
+    const list = async (sort: string) => ((await (await call('GET', `/api/admin/places?city=lviv&sort=${sort}`, admin)).json()) as { items: Row[] }).items;
+    const desc = (xs: (number | null)[]) => xs.every((x, i) => i === 0 || (x ?? -1) <= (xs[i - 1] ?? -1));
+    expect(desc((await list('reviews')).map((r) => r.googleRatingCount))).toBe(true);
+    expect(desc((await list('rating')).map((r) => r.googleRating))).toBe(true);
+    const newest = (await list('newest')).map((r) => r.id);
+    expect(newest).toEqual([...newest].sort((a, b) => b - a));
+    expect((await call('GET', '/api/admin/places?city=lviv&sort=nope', admin)).status).toBe(400);
   });
 
   it('edits a place', async () => {

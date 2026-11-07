@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, signal, untracked } from '@angular/core';
+import type { City } from '@kebabarium/shared';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { ApiService, type AdminChain } from '../core/api.service';
 
@@ -32,22 +33,26 @@ import { ApiService, type AdminChain } from '../core/api.service';
   styleUrl: './admin.scss',
 })
 export class ChainsTab {
+  readonly city = input.required<City>();
   private readonly api = inject(ApiService);
   readonly items = signal<AdminChain[]>([]);
   readonly name = signal('');
 
   constructor() {
-    this.load();
+    effect(() => {
+      this.city();
+      untracked(() => this.load());
+    });
   }
 
   load(): void {
-    this.api.admin.chains().subscribe((c) => this.items.set(c));
+    this.api.admin.chains(this.city().slug).subscribe((c) => this.items.set(c));
   }
 
   create(): void {
     const name = this.name().trim();
     if (!name) return;
-    this.api.admin.createChain({ name, cityId: 1 }).subscribe(() => {
+    this.api.admin.createChain({ name, cityId: this.city().id }).subscribe(() => {
       this.name.set('');
       this.load();
     });
