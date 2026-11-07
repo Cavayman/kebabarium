@@ -52,6 +52,23 @@ describe('PlaceCardComponent', () => {
     expect(when.textContent!.trim()).toBe(reviewTime('2026-11-06T10:00:00Z', 'uk').short);
   });
 
+  it('formats review times in the app language, whatever the <html lang> attribute says at the time', () => {
+    const before = document.documentElement.lang;
+    document.documentElement.lang = 'en'; // seen on prod during the first render while the UI was Ukrainian
+    try {
+      const f = TestBed.createComponent(PlaceCardComponent);
+      f.componentRef.setInput('placeId', 3);
+      f.detectChanges();
+      http.expectOne('/api/places/3').flush(detail({ reviews: [detail().reviews[1]!] }));
+      f.detectChanges();
+      const old = '2024-03-19T10:00:00Z';
+      expect(f.componentInstance.when(old).short).toBe(reviewTime(old, 'uk').short);
+      expect((f.nativeElement.querySelector('.rv time') as HTMLElement).textContent!.trim()).toBe(reviewTime('2026-11-05T10:00:00Z', 'uk').short);
+    } finally {
+      document.documentElement.lang = before;
+    }
+  });
+
   it('shows where a closed place moved to', () => {
     const f = TestBed.createComponent(PlaceCardComponent);
     f.componentRef.setInput('placeId', 12);

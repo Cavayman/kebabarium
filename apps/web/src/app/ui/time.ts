@@ -19,5 +19,5 @@ export function reviewTime(iso: string, lang: 'uk' | 'en', now = new Date()): { 
   return { short, full };
 }
 
-/** The page language as used by the time formats. */
-export const pageLang = (): 'uk' | 'en' => (document.documentElement.lang === 'en' ? 'en' : 'uk');
+/** The app's active language (Transloco) as a time-format language. */
+export const asTimeLang = (lang: string): 'uk' | 'en' => (lang === 'en' ? 'en' : 'uk');

@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TranslocoDirective } from '@jsverse/transloco';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { ratingColor, type PlaceDetail } from '@kebabarium/shared';
 import { ApiService } from '../core/api.service';
 import { IconComponent } from '../ui/icon.component';
-import { pageLang, reviewTime } from '../ui/time';
+import { asTimeLang, reviewTime } from '../ui/time';
 import { LogoTileComponent } from './logo-tile.component';
 
 /** Detail card for a column: stays open until closed (no hover flicker). Also the body of the place page. */
@@ -27,6 +27,7 @@ export class PlaceCardComponent {
   readonly detail = signal<PlaceDetail | null>(null);
   readonly error = signal(false);
   private readonly api = inject(ApiService);
+  private readonly transloco = inject(TranslocoService);
 
   constructor() {
     effect((onCleanup) => {
@@ -57,6 +58,6 @@ export class PlaceCardComponent {
   }
 
   when(iso: string): { short: string; full: string } {
-    return reviewTime(iso, pageLang());
+    return reviewTime(iso, asTimeLang(this.transloco.getActiveLang()));
   }
 }
