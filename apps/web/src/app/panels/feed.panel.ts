@@ -4,6 +4,7 @@ import type { FeedItem, ReviewSource } from '@kebabarium/shared';
 import type { Subscription } from 'rxjs';
 import { ApiService } from '../core/api.service';
 import { GlassPanelComponent } from '../ui/glass-panel.component';
+import { pageLang, reviewTime } from '../ui/time';
 
 export interface DropEvent {
   placeId: number;
@@ -142,5 +143,9 @@ export class FeedPanel {
 
   stars(n: number | null): string {
     return n ? '★'.repeat(n) : '';
+  }
+
+  when(iso: string): { short: string; full: string } {
+    return reviewTime(iso, pageLang());
   }
 }

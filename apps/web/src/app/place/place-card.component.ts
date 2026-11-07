@@ -4,6 +4,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
 import { ratingColor, type PlaceDetail } from '@kebabarium/shared';
 import { ApiService } from '../core/api.service';
 import { IconComponent } from '../ui/icon.component';
+import { pageLang, reviewTime } from '../ui/time';
 import { LogoTileComponent } from './logo-tile.component';
 
 /** Detail card for a column: stays open until closed (no hover flicker). Also the body of the place page. */
@@ -55,13 +56,7 @@ export class PlaceCardComponent {
     return `https://www.google.com/maps/dir/?api=1&destination=${d.lat},${d.lng}`;
   }
 
-  ago(iso: string): string {
-    const s = Math.max(1, Math.round((Date.now() - Date.parse(iso)) / 1000));
-    const lang = document.documentElement.lang === 'en' ? 'en' : 'uk';
-    const rtf = new Intl.RelativeTimeFormat(lang, { numeric: 'auto', style: 'short' });
-    if (s < 3600) return rtf.format(-Math.round(s / 60) || -1, 'minute');
-    if (s < 86400) return rtf.format(-Math.round(s / 3600), 'hour');
-    if (s < 86400 * 30) return rtf.format(-Math.round(s / 86400), 'day');
-    return rtf.format(-Math.round(s / (86400 * 30)), 'month');
+  when(iso: string): { short: string; full: string } {
+    return reviewTime(iso, pageLang());
   }
 }

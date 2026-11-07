@@ -5,6 +5,7 @@ import { ratingColor, type FeedItem } from '@kebabarium/shared';
 import { provideTestI18n } from '../core/testing';
 import { FeedPanel } from './feed.panel';
 import { LeaderboardPanel } from './leaderboard.panel';
+import { reviewTime } from '../ui/time';
 
 const rgb = (hex: string) => `rgb(${[1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)).join(', ')})`;
 
@@ -69,6 +70,10 @@ describe('panels', () => {
     f.detectChanges();
     expect(f.nativeElement.querySelectorAll('.msg:not(.typing)').length).toBe(2);
     expect(drops).toEqual([{ placeId: 1, stars: 5, caption: 'oleg поставив 5★' }]);
+    const when = f.nativeElement.querySelector('.msg:not(.typing) time') as HTMLTimeElement;
+    expect(when.dateTime).toBe('2026-11-06T10:00:00.000Z');
+    expect(when.textContent!.trim()).toBe(reviewTime('2026-11-06T10:00:00.000Z', 'uk').short);
+    expect(when.title).toBe(reviewTime('2026-11-06T10:00:00.000Z', 'uk').full);
     vi.useRealTimers();
   });
 });

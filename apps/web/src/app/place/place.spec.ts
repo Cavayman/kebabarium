@@ -6,6 +6,7 @@ import type { PlaceDetail } from '@kebabarium/shared';
 import { provideTestI18n } from '../core/testing';
 import { monogram } from './logo-tile.component';
 import { PlaceCardComponent } from './place-card.component';
+import { reviewTime } from '../ui/time';
 
 const detail = (extra: Partial<PlaceDetail> = {}): PlaceDetail => ({
   id: 3, name: 'Кебаб-Шеф Сихів', lat: 49.79, lng: 24.05, district: 'Сихівський', address: 'просп. 1', status: 'open', deadReason: null,
@@ -46,6 +47,9 @@ describe('PlaceCardComponent', () => {
     expect(el.querySelector('.rv p b')).toBeNull();
     expect(el.querySelector('.src-google')!.textContent).toContain('Google');
     expect(el.querySelector('.logo')!.textContent!.trim()).toBe('ШС');
+    const when = el.querySelector('.rv time') as HTMLTimeElement;
+    expect(when.dateTime).toBe('2026-11-06T10:00:00Z');
+    expect(when.textContent!.trim()).toBe(reviewTime('2026-11-06T10:00:00Z', 'uk').short);
   });
 
   it('shows where a closed place moved to', () => {

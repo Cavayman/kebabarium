@@ -37,7 +37,12 @@
               <span class="src" [class]="'src src-' + r.source">{{ r.source === 'ours' ? t('feed.badgeOurs') : t('card.googleBadge') }}</span>
               <span class="st">{{ stars(r.stars) }}</span>
             </span>
-            <span class="when">{{ r.ownPending ? t('feed.pending') : ago(r.createdAt) }}</span>
+            @if (r.ownPending) {
+              <span class="when">{{ t('feed.pending') }}</span>
+            } @else {
+              @let w = when(r.createdAt);
+              <time class="when" [attr.datetime]="r.createdAt" [title]="w.full">{{ w.short }}</time>
+            }
           </div>
           @if (r.text) {
             <p>{{ r.text }}</p>

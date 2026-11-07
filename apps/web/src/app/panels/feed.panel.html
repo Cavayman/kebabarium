@@ -22,6 +22,9 @@
               }
               @if (i.ownPending) {
                 <span class="pend">{{ t('feed.pending') }}</span>
+              } @else {
+                @let w = when(i.createdAt);
+                <time class="when" [attr.datetime]="i.createdAt" [title]="w.full">{{ w.short }}</time>
               }
             </div>
             @if (i.placeName) {
