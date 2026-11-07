@@ -1,0 +1,46 @@
+<ng-container *transloco="let t">
+  <kb-glass-panel class="chat" panelId="chat" icon="users" [title]="t('chat.title')" [closeLabel]="t('layout.collapse')">
+    <span panel-extra class="live"><i></i>{{ t('feed.live') }}</span>
+    <div #log class="bd" role="log" aria-live="polite">
+      @for (m of items(); track m.id) {
+        <div class="cm" [class.own]="m.own">
+          @if (!m.own) {
+            <div class="ava" [style.color]="color(m.author)" [style.background]="color(m.author) + '2e'">{{ initial(m.author) }}</div>
+          }
+          <div class="bub">
+            <div class="who">
+              <b>{{ m.own ? t('chat.you') : m.author }}</b>
+              <time [attr.datetime]="m.createdAt" [title]="full(m.createdAt)">{{ when(m.createdAt) }}</time>
+            </div>
+            <p>{{ m.text }}</p>
+          </div>
+        </div>
+      } @empty {
+        <p class="note">{{ t('chat.empty') }}</p>
+      }
+    </div>
+
+    @if (canPost()) {
+      <form class="say" (submit)="$event.preventDefault(); send()">
+        <textarea
+          #box
+          rows="1"
+          [maxLength]="max"
+          [placeholder]="t('chat.placeholder')"
+          [value]="draft()"
+          (input)="draft.set($any($event.target).value)"
+          (keydown)="onKey($event)"
+          [attr.aria-label]="t('chat.placeholder')"
+        ></textarea>
+        <button type="submit" class="send" [disabled]="!draft().trim() || sending()" [attr.aria-label]="t('chat.send')"><kb-icon name="nav" [size]="15" /></button>
+      </form>
+      @if (error(); as err) {
+        <p class="err">{{ err }}</p>
+      }
+    } @else if (auth.me()) {
+      <p class="signin">{{ t('chat.needNick') }} <a routerLink="/me">{{ t('chat.toProfile') }}</a></p>
+    } @else {
+      <p class="signin">{{ t('chat.signIn') }}</p>
+    }
+  </kb-glass-panel>
+</ng-container>

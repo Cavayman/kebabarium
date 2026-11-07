@@ -41,7 +41,7 @@ const CITY_KEY = 'kb.admin.city';
             @case ('overview') { <kb-admin-overview [city]="c" (open)="tab.set($event)" /> }
             @case ('places') { <kb-admin-places [city]="c" /> }
             @case ('chains') { <kb-admin-chains [city]="c" /> }
-            @case ('moderation') { <kb-admin-moderation /> }
+            @case ('moderation') { <kb-admin-moderation [city]="c" /> }
             @case ('sync') { <kb-admin-sync [city]="c" /> }
           }
         }

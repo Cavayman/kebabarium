@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { LayoutStore } from '../state/layout.store';
+import { LayoutStore, type PanelId } from '../state/layout.store';
 import { IconComponent } from '../ui/icon.component';
 
 /** Bottom-centre controls: pills for collapsed panels and the flat orange "Залишити відгук" button. */
@@ -10,14 +10,14 @@ import { IconComponent } from '../ui/icon.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <ng-container *transloco="let t">
-      @if (layout.collapsedPills().length) {
+      @if (pills().length) {
         <div class="pills">
-          @for (id of layout.collapsedPills(); track id) {
+          @for (id of pills(); track id) {
             <button type="button" class="chip glass" (click)="layout.open(id)">
-              @if (id === 'lb') {
-                <kb-icon name="trophy" [size]="15" />{{ t('lb.short') }}
-              } @else {
-                <kb-icon name="chat" [size]="15" />{{ t('feed.title') }}<i class="dot"></i>
+              @switch (id) {
+                @case ('lb') { <kb-icon name="trophy" [size]="15" />{{ t('lb.short') }} }
+                @case ('chat') { <kb-icon name="users" [size]="15" />{{ t('chat.title') }} }
+                @default { <kb-icon name="chat" [size]="15" />{{ t('feed.title') }}<i class="dot"></i> }
               }
             </button>
           }
@@ -41,5 +41,11 @@ import { IconComponent } from '../ui/icon.component';
 })
 export class DockComponent {
   protected readonly layout = inject(LayoutStore);
+  /** Limit the pills (the dashboard has no leaderboard/feed panels, only the chat). */
+  readonly only = input<PanelId[] | null>(null);
   readonly review = output<void>();
+  readonly pills = computed(() => {
+    const only = this.only();
+    return this.layout.collapsedPills().filter((id) => !only || only.includes(id));
+  });
 }

@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, signal, untracked } from '@angular/core';
+import type { City } from '@kebabarium/shared';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { ApiService, type AdminBan, type AdminReview } from '../core/api.service';
+import { ApiService, type AdminBan, type AdminChatMessage, type AdminReview } from '../core/api.service';
 
 type BanKind = 'ip_prefix' | 'device' | 'user';
 
@@ -39,6 +40,26 @@ type BanKind = 'ip_prefix' | 'device' | 'user';
         <p class="muted">{{ t('admin.empty') }}</p>
       }
 
+      @if (city(); as c) {
+        <h3>{{ t('admin.chatTitle') }} · {{ c.name }}</h3>
+        <div class="chatlog">
+          @for (m of chat(); track m.id) {
+            <div class="cl" [class.gone]="m.status === 'hidden'">
+              <span class="muted">{{ m.createdAt.slice(5, 16).replace('T', ' ') }}</span>
+              <b>{{ m.author ?? '#' + m.userId }}</b>
+              <span class="tx">{{ m.text }}</span>
+              @if (m.status === 'hidden') {
+                <span class="pill dead">{{ t('admin.chatHidden') }}</span>
+              } @else {
+                <button type="button" class="chip sm" [attr.data-hide-chat]="m.id" (click)="hideChat(m)">{{ t('admin.chatHide') }}</button>
+              }
+            </div>
+          } @empty {
+            <p class="muted">{{ t('admin.empty') }}</p>
+          }
+        </div>
+      }
+
       <h3>{{ t('admin.bans') }}</h3>
       <table>
         <tbody>
@@ -55,17 +76,35 @@ type BanKind = 'ip_prefix' | 'device' | 'user';
     </ng-container>
   `,
   styleUrl: './admin.scss',
-  styles: `h3 { font-family: var(--font-display); font-size: 14px; font-weight: 600; margin: 18px 0 6px; } .rv p { margin: 6px 0; overflow-wrap: anywhere; }`,
+  styles: `
+    h3 { font-family: var(--font-display); font-size: 14px; font-weight: 600; margin: 18px 0 6px; }
+    .rv p { margin: 6px 0; overflow-wrap: anywhere; }
+    .chatlog { max-height: 340px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+    .cl { display: grid; grid-template-columns: auto auto 1fr auto; gap: 10px; align-items: center; padding: 6px 8px; border-radius: 10px; background: rgba(255,255,255,.03); font-size: 12.5px; }
+    .cl .tx { overflow-wrap: anywhere; }
+    .cl.gone { opacity: .5; }
+  `,
 })
 export class ModerationTab {
+  /** Optional so the queue works without a city; the chat log needs one. */
+  readonly city = input<City | null>(null);
   private readonly api = inject(ApiService);
   readonly status = signal<'held' | 'pending'>('held');
   readonly items = signal<AdminReview[]>([]);
   readonly bans = signal<AdminBan[]>([]);
+  readonly chat = signal<AdminChatMessage[]>([]);
 
   constructor() {
     this.load();
     this.loadBans();
+    effect(() => {
+      const c = this.city();
+      if (c) untracked(() => this.api.admin.chat(c.slug).subscribe((m) => this.chat.set(m)));
+    });
+  }
+
+  hideChat(m: AdminChatMessage): void {
+    this.api.admin.hideChat(m.id).subscribe(() => this.chat.update((all) => all.map((x) => (x.id === m.id ? { ...x, status: 'hidden' } : x))));
   }
 
   load(): void {

@@ -105,6 +105,25 @@ export interface NearResponse {
   items: NearItem[];
 }
 
+/** One message in a city's chat room. Author is the public name (nickname, or real name on opt-in). */
+export interface ChatMessage {
+  id: number;
+  author: string;
+  text: string;
+  createdAt: string;
+  /** Written by the viewer. */
+  own: boolean;
+}
+
+export interface ChatResponse {
+  /** Oldest first. */
+  items: ChatMessage[];
+  /** Signed in with a public name and not banned. */
+  canPost: boolean;
+}
+
+export const CHAT_MAX_TEXT = 500;
+
 export interface Me {
   id: number;
   nickname: string | null;

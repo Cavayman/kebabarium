@@ -104,6 +104,7 @@ const PAGE = 50;
   `,
   styleUrl: './admin.scss',
   styles: `
+    td:nth-child(2) .field { min-width: 200px; }
     .g { white-space: nowrap; }
     .gs { display: inline-block; min-width: 30px; text-align: center; padding: 2px 6px; margin-right: 6px; border-radius: 7px; font-weight: 800; font-size: 12px; color: #111; }
     .acts { display: flex; flex-wrap: wrap; gap: 4px; }

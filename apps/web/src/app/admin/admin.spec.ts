@@ -53,6 +53,25 @@ describe('admin', () => {
     expect(f.nativeElement.querySelectorAll('.rv').length).toBe(1);
   });
 
+  it('lists the city chat and hides a message for everyone', () => {
+    const f = TestBed.createComponent(ModerationTab);
+    f.componentRef.setInput('city', lviv);
+    f.detectChanges();
+    http.expectOne((r) => r.url === '/api/admin/reviews').flush({ items: [], page: 1 });
+    http.expectOne('/api/admin/bans').flush([]);
+    http.expectOne((r) => r.url === '/api/admin/chat' && r.params.get('city') === 'lviv').flush([
+      { id: 7, author: 'troll', userId: 9, text: 'спам спам', status: 'visible', createdAt: '2026-11-07T01:00:00Z' },
+    ]);
+    f.detectChanges();
+    expect(f.nativeElement.querySelector('.chatlog')!.textContent).toContain('спам спам');
+    (f.nativeElement.querySelector('[data-hide-chat="7"]') as HTMLElement).click();
+    const req = http.expectOne('/api/admin/chat/7');
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null);
+    f.detectChanges();
+    expect(f.nativeElement.querySelector('.chatlog')!.textContent).toContain('приховано');
+  });
+
   describe('admin page', () => {
     it('opens on the overview of the first city and switches every tab to the chosen city', async () => {
       const f = TestBed.createComponent(AdminPage);

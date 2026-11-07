@@ -51,7 +51,10 @@
     }
     <kb-legend />
   }
-  <kb-dock (review)="openReview()" />
+  @if (layout.isOpen('chat')) {
+    <kb-chat-panel [city]="city()" />
+  }
+  <kb-dock [only]="dash() ? ['chat'] : null" (review)="openReview()" />
 
   @if (selectedId(); as id) {
     <kb-place-card

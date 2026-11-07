@@ -9,6 +9,7 @@ import { ApiError } from '../errors';
 import { CAPS, SYNC, SYNC_KINDS } from '../sync/config';
 import { runDiscovery } from '../sync/discovery';
 import { runRefresh } from '../sync/refresh';
+import { CHAT_AUTHOR_SQL } from './chat';
 import { newStats } from '../sync/stats';
 import { finishSyncRun, runSync, startSyncRun, SYNC_RUN_SELECT } from '../sync/run';
 import { body } from '../validate';
@@ -345,6 +346,24 @@ adminRoutes.post('/admin/ratings', async (c) => {
     error: run.error,
     notes: [...new Set(stats.notes)],
   });
+});
+
+// ---------- chat ----------
+adminRoutes.get('/admin/chat', async (c) => {
+  const city = await getCityBySlug(c.env.DB, c.req.query('city') ?? 'lviv');
+  if (!city) throw new ApiError(404, 'city_not_found', 'City not found');
+  const { results } = await c.env.DB.prepare(
+    `SELECT m.id, ${CHAT_AUTHOR_SQL} AS author, m.user_id AS userId, m.text, m.status, m.created_at AS createdAt
+     FROM chat_messages m JOIN users u ON u.id = m.user_id WHERE m.city_id = ? ORDER BY m.id DESC LIMIT 100`,
+  )
+    .bind(city.id)
+    .all();
+  return c.json(results);
+});
+
+adminRoutes.delete('/admin/chat/:id', async (c) => {
+  await c.env.DB.prepare(`UPDATE chat_messages SET status = 'hidden' WHERE id = ?`).bind(intParam(c.req.param('id'), 'id')).run();
+  return c.body(null, 204);
 });
 
 adminRoutes.get('/admin/sync-runs', async (c) => {

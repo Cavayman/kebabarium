@@ -256,9 +256,32 @@
       "held": "held",
       "google": "from Google",
       "threads": "from Threads"
-    }
+    },
+    "chatTitle": "Chat",
+    "chatHide": "Hide",
+    "chatHidden": "hidden"
   },
   "map": {
     "moved": "moved → {{name}}"
+  },
+  "chat": {
+    "title": "Chat",
+    "live": "live",
+    "you": "You",
+    "empty": "Quiet in here. Start a shawarma talk!",
+    "placeholder": "Write to the chat…",
+    "send": "Send",
+    "signIn": "Everyone can read. Sign in with Google (top right) to write.",
+    "needNick": "Pick a nickname in your profile to write in the chat.",
+    "toProfile": "To profile",
+    "err": {
+      "chat_cooldown": "A bit slower — try again in a few seconds.",
+      "rate_limited": "Too many messages. Take a minute.",
+      "links_not_allowed": "Links are not allowed in the chat.",
+      "nickname_required": "Pick a nickname in your profile first.",
+      "banned": "You are not allowed to write in the chat.",
+      "unauthenticated": "Sign in to write.",
+      "generic": "Could not send. Try again."
+    }
   }
 }

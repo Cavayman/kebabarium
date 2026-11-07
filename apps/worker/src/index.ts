@@ -7,6 +7,7 @@ import { runSync } from './sync/run';
 import { csrfGuard, withUser } from './auth/middleware';
 import { adminRoutes } from './routes/admin';
 import { authRoutes } from './routes/auth';
+import { chatRoutes } from './routes/chat';
 import { publicRoutes } from './routes/public';
 import { reviewRoutes } from './routes/reviews';
 import { apiBodyLimit, apiSecurityHeaders } from './security';
@@ -20,6 +21,7 @@ app.get('/api/health', (c) => c.json({ ok: true, env: c.env.ENVIRONMENT }));
 app.route('/api', publicRoutes);
 app.route('/api', authRoutes);
 app.route('/api', reviewRoutes);
+app.route('/api', chatRoutes);
 app.route('/api', adminRoutes);
 
 app.notFound((c) => {

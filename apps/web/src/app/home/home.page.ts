@@ -26,13 +26,14 @@ import { BootState } from '../boot/boot.state';
 import type { CityStats } from '@kebabarium/shared';
 import { NearbyService } from '../nearby/nearby.service';
 import { DashboardView } from '../dashboard/dashboard.view';
+import { ChatPanel } from '../panels/chat.panel';
 import { ViewStore } from '../state/view.store';
 
 const PLACES_REFRESH_MS = 120_000;
 
 @Component({
   selector: 'kb-home',
-  imports: [DashboardView, MapComponent, NavbarComponent, LeaderboardPanel, FeedPanel, LegendComponent, DockComponent, IconComponent, PlaceCardComponent, ReviewModalComponent, NearbyPanel, AccountComponent, BootScreenComponent, TranslocoDirective],
+  imports: [ChatPanel, DashboardView, MapComponent, NavbarComponent, LeaderboardPanel, FeedPanel, LegendComponent, DockComponent, IconComponent, PlaceCardComponent, ReviewModalComponent, NearbyPanel, AccountComponent, BootScreenComponent, TranslocoDirective],
   providers: [NearbyService],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './home.page.html',

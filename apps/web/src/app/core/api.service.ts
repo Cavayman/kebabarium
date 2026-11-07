@@ -1,6 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import type {
+  ChatMessage,
+  ChatResponse,
   City,
   CityStats,
   FeedResponse,
@@ -53,6 +55,12 @@ export class ApiService {
   }
   feed(city: string, q: { since?: string; source?: 'all' | ReviewSource; limit?: number } = {}): Observable<FeedResponse> {
     return this.http.get<FeedResponse>(`/api/cities/${city}/feed`, { params: params(q) });
+  }
+  chat(city: string, after?: number): Observable<ChatResponse> {
+    return this.http.get<ChatResponse>(`/api/cities/${city}/chat`, { params: params({ after }) });
+  }
+  say(city: string, text: string): Observable<ChatMessage> {
+    return this.http.post<ChatMessage>(`/api/cities/${city}/chat`, { text });
   }
   leaderboard(city: string, kind: LeaderboardKind): Observable<LeaderboardRow[]> {
     return this.http.get<LeaderboardRow[]>(`/api/cities/${city}/leaderboard`, { params: params({ kind }) });
@@ -111,6 +119,8 @@ export class ApiService {
     unban: (id: number) => this.http.delete<void>(`/api/admin/bans/${id}`),
     sync: (kind: 'discovery' | 'refresh' | 'threads' | 'all') => this.http.post<{ runId: number }>('/api/admin/sync', { kind }),
     syncRuns: () => this.http.get<AdminSyncRun[]>('/api/admin/sync-runs'),
+    chat: (city: string) => this.http.get<AdminChatMessage[]>('/api/admin/chat', { params: params({ city }) }),
+    hideChat: (id: number) => this.http.delete<void>(`/api/admin/chat/${id}`),
     scan: (city: string) => this.http.post<AdminScanChunk>('/api/admin/scan', { city }),
     ratings: () =>
       this.http.post<{ runId: number; done: number; remaining: number; externalAdded: number; error: string | null; notes: string[] }>('/api/admin/ratings', {}),
@@ -139,6 +149,15 @@ export interface AdminPlace {
 }
 
 export type AdminPlaceSort = 'name' | 'rating' | 'reviews' | 'newest' | 'seen';
+
+export interface AdminChatMessage {
+  id: number;
+  author: string | null;
+  userId: number;
+  text: string;
+  status: 'visible' | 'hidden';
+  createdAt: string;
+}
 
 /** Per-city numbers for the admin overview (all counted server-side from the data). */
 export interface AdminOverview {
