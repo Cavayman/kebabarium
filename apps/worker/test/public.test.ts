@@ -98,6 +98,40 @@ describe('leaderboards', () => {
     const { res } = await get('/api/cities/lviv/leaderboard?kind=nope');
     expect(res.status).toBe(400);
   });
+
+  it('ranks spots by how many reviews back the score and how fresh the latest one is', async () => {
+    const day = 86400e3;
+    const ago = (d: number) => new Date(Date.now() - d * day).toISOString();
+    const spot = async (id: number, name: string, rating: number, count: number, lastReview: string) => {
+      await env.DB.prepare(
+        `INSERT INTO places (id, city_id, name, norm_name, lat, lng, status, google_rating, google_rating_count) VALUES (?, 1, ?, ?, 49.84, 24.03, 'open', ?, ?)`,
+      )
+        .bind(id, name, name.toLowerCase(), rating, count)
+        .run();
+      await env.DB.prepare(`INSERT INTO external_reviews (city_id, place_id, source, external_id, author, stars, published_at) VALUES (1, ?, 'google', ?, 'g', 5, ?)`)
+        .bind(id, `rank-${id}`, lastReview)
+        .run();
+    };
+    try {
+      await spot(901, 'Рідко Але 5.0', 5.0, 3, ago(2));
+      await spot(902, 'Тисяча Відгуків', 4.7, 1000, ago(2));
+      await spot(903, 'Колись Топ', 4.95, 5000, ago(1100));
+      await spot(904, 'Свіжий Топ', 4.9, 5000, ago(5));
+
+      const { body } = await get<LeaderboardRow[]>('/api/cities/lviv/leaderboard?kind=spots');
+      const rank = (name: string) => {
+        const i = body.findIndex((r) => r.name === name);
+        return i < 0 ? Infinity : i;
+      };
+      expect(rank('Свіжий Топ')).toBe(0);
+      expect(rank('Тисяча Відгуків')).toBeLessThan(rank('Рідко Але 5.0'));
+      expect(rank('Свіжий Топ')).toBeLessThan(rank('Колись Топ'));
+      expect(body.find((r) => r.name === 'Колись Топ')?.value ?? 5).toBe(5); // the shown score is still the plain rating (5.0 when rounded)
+    } finally {
+      await env.DB.prepare(`DELETE FROM external_reviews WHERE place_id BETWEEN 901 AND 904`).run();
+      await env.DB.prepare(`DELETE FROM places WHERE id BETWEEN 901 AND 904`).run();
+    }
+  });
 });
 
 describe('feed', () => {

@@ -23,6 +23,32 @@ export function combinedScore(our: number | null, google: number | null): number
   return a ?? b;
 }
 
+/** Leaderboard ranking knobs. */
+export const RANK = {
+  /** A place's score is blended with the city average as if it had this many extra average reviews. */
+  priorReviews: 30,
+  /** No freshness penalty while the latest review is at most this old. */
+  freshDays: 90,
+  /** The penalty grows linearly until the latest review is this old… */
+  staleDays: 730,
+  /** …and is then capped at this many stars. */
+  stalePenalty: 0.5,
+} as const;
+
+/**
+ * Ranking key for the "best spots" list (the shown score stays the plain one):
+ * a Bayesian average that needs many reviews to move far from the city average (`prior`),
+ * minus a penalty when nobody has reviewed the place for a long time.
+ */
+export function rankScore(score: number, reviews: number, lastReviewAt: string | null, prior: number, now = new Date()): number {
+  const n = Math.max(0, reviews);
+  const bayes = (n * score + RANK.priorReviews * prior) / (n + RANK.priorReviews);
+  const last = lastReviewAt ? Date.parse(lastReviewAt) : NaN;
+  const days = Number.isNaN(last) ? Infinity : (now.getTime() - last) / 86400e3;
+  const stale = Math.min(1, Math.max(0, (days - RANK.freshDays) / (RANK.staleDays - RANK.freshDays)));
+  return bayes - stale * RANK.stalePenalty;
+}
+
 const WORDS = {
   uk: ['погано', 'так собі', 'норм', 'смачно', 'топ!'],
   en: ['bad', 'meh', 'okay', 'tasty', 'top!'],

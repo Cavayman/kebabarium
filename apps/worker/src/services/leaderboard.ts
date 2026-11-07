@@ -1,4 +1,4 @@
-import { round1, type LeaderboardKind, type LeaderboardRow } from '@kebabarium/shared';
+import { rankScore, round1, type LeaderboardKind, type LeaderboardRow } from '@kebabarium/shared';
 import { loadCityPlaces, type ScoredPlace } from './places';
 
 const LIMIT = 10;
@@ -21,6 +21,21 @@ function groupAverage(places: ScoredPlace[], key: (p: ScoredPlace) => { id: numb
     .map(([id, g]) => ({ id, name: g.name, value: f(mean(g.scores)), extra: String(g.count) }));
 }
 
+/** Latest published review per place (ours or external), for the freshness part of the ranking. */
+async function lastReviewAt(db: D1Database, cityId: number): Promise<Map<number, string>> {
+  const { results } = await db
+    .prepare(
+      `SELECT place_id AS id, MAX(at) AS last FROM (
+         SELECT r.place_id, r.created_at AS at FROM ratings r JOIN places p ON p.id = r.place_id WHERE p.city_id = ?1 AND r.status = 'published'
+         UNION ALL
+         SELECT place_id, published_at FROM external_reviews WHERE city_id = ?1 AND place_id IS NOT NULL
+       ) GROUP BY place_id`,
+    )
+    .bind(cityId)
+    .all<{ id: number; last: string }>();
+  return new Map(results.map((r) => [r.id, r.last]));
+}
+
 export async function loadLeaderboard(db: D1Database, cityId: number, kind: LeaderboardKind): Promise<LeaderboardRow[]> {
   let rows: Omit<LeaderboardRow, 'rank' | 'kind'>[];
   if (kind === 'tasters') {
@@ -40,11 +55,19 @@ export async function loadLeaderboard(db: D1Database, cityId: number, kind: Lead
   } else {
     const places = await loadCityPlaces(db, cityId);
     if (kind === 'spots') {
-      rows = places
-        .filter((p) => alive(p) && p.summary.score != null)
-        .map((p) => ({ id: p.row.id, name: p.row.name, value: p.summary.score!, raw: p.combined! }))
-        .sort((a, b) => b.raw - a.raw || a.name.localeCompare(b.name))
-        .map(({ raw: _raw, ...r }) => r);
+      const scored = places.filter((p) => alive(p) && p.combined != null);
+      const prior = scored.length ? mean(scored.map((p) => p.combined!)) : 4;
+      const last = await lastReviewAt(db, cityId);
+      const now = new Date();
+      rows = scored
+        .map((p) => ({
+          id: p.row.id,
+          name: p.row.name,
+          value: p.summary.score!,
+          rank: rankScore(p.combined!, p.summary.reviewCount, last.get(p.row.id) ?? null, prior, now),
+        }))
+        .sort((a, b) => b.rank - a.rank || a.name.localeCompare(b.name))
+        .map(({ rank: _rank, ...r }) => r);
     } else if (kind === 'chains') {
       rows = groupAverage(places, (p) => (p.row.chainId ? { id: p.row.chainId, name: p.row.chainName ?? '' } : null), 1);
     } else {
