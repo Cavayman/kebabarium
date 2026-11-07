@@ -68,7 +68,7 @@ export class HomePage {
     return c ? cityTitle(c, this.lang()) : '';
   });
   readonly ranked = computed(() =>
-    [...this.places()].filter((p) => p.status !== 'dead').sort((a, b) => (b.score ?? -1) - (a.score ?? -1)),
+    [...this.places()].filter((p) => p.status !== 'dead').sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity) || (b.score ?? -1) - (a.score ?? -1)),
   );
 
   constructor() {

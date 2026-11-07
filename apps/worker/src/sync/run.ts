@@ -1,6 +1,6 @@
 import { listCities } from '../db/cities';
 import type { Env } from '../env';
-import type { SyncKind } from './config';
+import { SYNC, type SyncKind } from './config';
 import { runDiscovery } from './discovery';
 import { runRefresh } from './refresh';
 import { newStats, type SyncStats } from './stats';
@@ -48,7 +48,9 @@ export async function runSync(db: D1Database, env: Env, kind: SyncKind, runId?: 
   const cities = await listCities(db);
 
   if (kind === 'all' || kind === 'discovery') {
-    for (const city of cities) await step(stats, `discovery:${city.slug}`, () => runDiscovery(db, env, city, stats, fetcher));
+    // one hourly allowance shared by all cities, so adding a city never exceeds the per-invocation fetch limit
+    const perCity = Math.max(1, Math.floor(SYNC.discoveryCallsPerRun / Math.max(1, cities.length)));
+    for (const city of cities) await step(stats, `discovery:${city.slug}`, () => runDiscovery(db, env, city, stats, fetcher, perCity));
   }
   if (kind === 'all' || kind === 'refresh') await step(stats, 'refresh', () => runRefresh(db, env, stats, fetcher));
   if (kind === 'all' || kind === 'threads') {

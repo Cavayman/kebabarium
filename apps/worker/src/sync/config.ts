@@ -6,7 +6,7 @@
 export const SYNC = {
   queries: ['шаурма', 'кебаб', 'doner', 'шаверма'],
   tileKm: 1.5,
-  /** Google calls (ID searches + details of new places) per hourly run: ~20 × 744 ≈ 15 000 free ID searches/month, a full city pass about every day. */
+  /** Google calls (ID searches + details of new places) per hourly run, shared by all cities: 20 × 744 ≈ 15 000 free ID searches/month. */
   discoveryCallsPerRun: 20,
   /** Google calls per admin "scan now" request: Workers Free allows 50 outgoing fetches per invocation, keep a margin. */
   scanCallsPerRequest: 40,

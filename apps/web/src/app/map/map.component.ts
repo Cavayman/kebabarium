@@ -143,14 +143,14 @@ export class MapComponent {
     });
   }
 
-  /** Pills over the top three spots and over dead spots that moved. */
+  /** Pills over the top three spots of the city ranking (same order as the top list) and over dead spots that moved. */
   refreshLabels(): void {
     const p = this.provider;
     if (!p) return;
     const all = this.places();
     const top = all
       .filter((x) => x.status !== 'dead' && x.score != null)
-      .sort((a, b) => b.score! - a.score!)
+      .sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity) || b.score! - a.score!)
       .slice(0, 3);
     const moved = all.filter((x) => x.status === 'dead' && x.movedToPlaceId != null);
     const label = (x: PlaceSummary, dead: boolean): Label => {

@@ -35,6 +35,21 @@ describe('panels', () => {
     expect(f.nativeElement.querySelector('.rank-1')).not.toBeNull();
   });
 
+  it('shows how many reviews back each top spot', async () => {
+    const f = TestBed.createComponent(LeaderboardPanel);
+    f.componentRef.setInput('city', 'lviv');
+    f.componentRef.setInput('cityName', 'Львова');
+    f.detectChanges();
+    http.expectOne((r) => r.url === '/api/cities/lviv/leaderboard').flush([
+      { rank: 1, id: 1, name: 'Babo Gardens', value: 4.8, kind: 'spots', extra: '2096' },
+    ]);
+    f.detectChanges();
+    await f.whenStable();
+    const n = f.nativeElement.querySelector('.row .n') as HTMLElement;
+    expect(n.textContent!.replace(/\s+/g, ' ').trim()).toBe((2096).toLocaleString('uk').replace(/\s+/g, ' '));
+    expect(n.getAttribute('title')).toBe(`${(2096).toLocaleString('uk')} відгуків`);
+  });
+
   it('asks the API for Google-only items when the Google filter is chosen', () => {
     vi.useFakeTimers();
     const f = TestBed.createComponent(FeedPanel);

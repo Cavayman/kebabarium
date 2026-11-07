@@ -51,6 +51,22 @@ describe('MapComponent', () => {
     expect(labels).toEqual(['4.8 P1', '3.1 P2']);
   });
 
+  it('labels the top three of the ranking, not the three highest raw scores', async () => {
+    fixture.componentRef.setInput('places', [
+      place(1, 5.0, { rank: 3 }),
+      place(2, 4.7, { rank: 1 }),
+      place(4, 4.8, { rank: 2 }),
+      place(5, 5.0, { rank: 4 }),
+      place(6, null, { rank: null }),
+    ]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.componentInstance.refreshLabels();
+    fixture.detectChanges();
+    const labels = [...fixture.nativeElement.querySelectorAll('.tag')].map((e: HTMLElement) => e.textContent?.trim());
+    expect(labels).toEqual(['4.7 P2', '4.8 P4', '5.0 P1']);
+  });
+
   it('starts columns only when asked to grow', () => {
     expect(fake.grown).toBe(false);
     fixture.componentInstance.grow();

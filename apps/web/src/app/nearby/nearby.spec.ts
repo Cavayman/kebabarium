@@ -108,4 +108,14 @@ describe('NearbyPanel', () => {
     chip.click();
     expect(picked).toEqual([2]);
   });
+
+  it('shows how many reviews back each spot, in proper Ukrainian plural forms', () => {
+    const f = TestBed.createComponent(NearbyPanel);
+    const item = (id: number, reviewCount: number) =>
+      ({ id, name: `P${id}`, score: 4.5, lat: 49.84, lng: 24.03, distanceM: 300, walkMin: 4, reviewCount }) as unknown as NearResponse['items'][number];
+    f.componentRef.setInput('result', { radiusKm: 1, autoWidened: false, items: [item(1, 1), item(2, 3), item(3, 219), item(4, 2096), item(5, 0)] });
+    f.detectChanges();
+    const pills = [...f.nativeElement.querySelectorAll('.ni .rv')].map((e: HTMLElement) => e.textContent!.replace(/\s+/g, ' ').trim());
+    expect(pills).toEqual(['1 відгук', '3 відгуки', '219 відгуків', `${(2096).toLocaleString('uk')} відгуків`.replace(/\s+/g, ' '), 'ще без відгуків']);
+  });
 });

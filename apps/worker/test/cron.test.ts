@@ -1,6 +1,7 @@
 import { createExecutionContext, createScheduledController, env, waitOnExecutionContext } from 'cloudflare:test';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import worker from '../src/index';
+import { SYNC } from '../src/sync/config';
 import { runSync } from '../src/sync/run';
 import { seedDev } from './helpers';
 
@@ -26,6 +27,27 @@ describe('runSync', () => {
     expect(run.threadsStatus).toBe('ok');
     expect(run.externalAdded).toBe(1);
     expect(await env.DB.prepare(`SELECT COUNT(*) AS n FROM external_reviews WHERE external_id = 'cron-t-1'`).first()).toEqual({ n: 1 });
+  });
+});
+
+describe('hourly discovery budget', () => {
+  it('splits the hourly Google calls between all cities instead of giving each city the full amount', async () => {
+    const perCity = new Map<string, number>();
+    const cities = await env.DB.prepare(`SELECT slug, bbox_json AS b FROM cities WHERE active = 1`).all<{ slug: string; b: string }>();
+    expect(cities.results.length).toBeGreaterThan(1);
+    const f = (async (_input: RequestInfo | URL, init: RequestInit = {}) => {
+      const lat = JSON.parse(String(init.body)).locationRestriction.rectangle.low.latitude as number;
+      const city = cities.results.find((c) => {
+        const [, minLat, , maxLat] = JSON.parse(c.b) as number[];
+        return lat >= minLat! && lat <= maxLat!;
+      })!.slug;
+      perCity.set(city, (perCity.get(city) ?? 0) + 1);
+      return new Response('{}');
+    }) as typeof fetch;
+    await runSync(env.DB, { ...env, GOOGLE_PLACES_KEY: 'k' }, 'discovery', undefined, f);
+    const total = [...perCity.values()].reduce((a, b) => a + b, 0);
+    expect(total).toBeLessThanOrEqual(SYNC.discoveryCallsPerRun);
+    expect(perCity.size).toBe(cities.results.length);
   });
 });
 

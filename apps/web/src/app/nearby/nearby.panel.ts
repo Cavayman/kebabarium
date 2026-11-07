@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { TranslocoDirective } from '@jsverse/transloco';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { ratingColor, type NearResponse } from '@kebabarium/shared';
+import { reviewsText } from '../ui/count';
 import { GlassPanelComponent } from '../ui/glass-panel.component';
 import { IconComponent } from '../ui/icon.component';
 import type { Radius } from './nearby.service';
@@ -35,6 +36,7 @@ import type { Radius } from './nearby.service';
                     · <em>{{ t('near.best') }}</em>
                   }
                 </span>
+                <span class="rv" [class.none]="!p.reviewCount" [class.many]="p.reviewCount >= 500"><kb-icon name="chat" [size]="10" />{{ reviews(p.reviewCount) }}</span>
               </div>
               <a class="go mini" [href]="'https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=' + p.lat + ',' + p.lng" target="_blank" rel="noopener noreferrer" (click)="$event.stopPropagation()" [attr.aria-label]="t('card.route')"><kb-icon name="nav" [size]="13" /></a>
             </div>
@@ -60,6 +62,10 @@ import type { Radius } from './nearby.service';
     .tx b { display: block; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .tx span { font-size: 11px; color: var(--dim); }
     .tx em { font-style: normal; font-weight: 800; color: var(--ok); }
+    .rv { display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; padding: 2px 7px; border-radius: 999px; font-size: 10.5px; font-weight: 700; color: var(--fg); background: rgba(255,255,255,.07); font-variant-numeric: tabular-nums; }
+    .rv.many { background: color-mix(in srgb, var(--ok) 18%, transparent); color: var(--ok); }
+    .rv.none { color: var(--dim); font-weight: 600; background: none; padding-left: 0; }
+    .tx > span:first-of-type { display: block; }
     .go { text-decoration: none; }
     @keyframes kb-near-in { from { transform: translateY(10px); opacity: 0; } to { transform: none; opacity: 1; } }
   `,
@@ -73,5 +79,10 @@ export class NearbyPanel {
 
   color(v: number | null): string {
     return ratingColor(v);
+  }
+
+  private readonly t = inject(TranslocoService);
+  reviews(n: number): string {
+    return reviewsText(this.t, n);
   }
 }

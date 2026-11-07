@@ -36,6 +36,23 @@ async function lastReviewAt(db: D1Database, cityId: number): Promise<Map<number,
   return new Map(results.map((r) => [r.id, r.last]));
 }
 
+/**
+ * All places of a city with `summary.rank` set: 1 = best by review-count- and freshness-weighted score
+ * (see rankScore); null for unscored, dead or hidden places. The one ranking the map, lists and top use.
+ */
+export async function loadRankedPlaces(db: D1Database, cityId: number): Promise<ScoredPlace[]> {
+  const [places, last] = await Promise.all([loadCityPlaces(db, cityId), lastReviewAt(db, cityId)]);
+  const scored = places.filter((p) => alive(p) && p.combined != null);
+  const prior = scored.length ? mean(scored.map((p) => p.combined!)) : 4;
+  const now = new Date();
+  const keys = new Map(scored.map((p) => [p.row.id, rankScore(p.combined!, p.summary.reviewCount, last.get(p.row.id) ?? null, prior, now)]));
+  [...scored]
+    .sort((a, b) => keys.get(b.row.id)! - keys.get(a.row.id)! || a.row.name.localeCompare(b.row.name))
+    .forEach((p, i) => (p.summary.rank = i + 1));
+  for (const p of places) p.summary.rank ??= null;
+  return places;
+}
+
 export async function loadLeaderboard(db: D1Database, cityId: number, kind: LeaderboardKind): Promise<LeaderboardRow[]> {
   let rows: Omit<LeaderboardRow, 'rank' | 'kind'>[];
   if (kind === 'tasters') {
@@ -53,25 +70,16 @@ export async function loadLeaderboard(db: D1Database, cityId: number, kind: Lead
       .all<{ id: number; name: string; value: number }>();
     rows = results;
   } else {
-    const places = await loadCityPlaces(db, cityId);
     if (kind === 'spots') {
-      const scored = places.filter((p) => alive(p) && p.combined != null);
-      const prior = scored.length ? mean(scored.map((p) => p.combined!)) : 4;
-      const last = await lastReviewAt(db, cityId);
-      const now = new Date();
-      rows = scored
-        .map((p) => ({
-          id: p.row.id,
-          name: p.row.name,
-          value: p.summary.score!,
-          rank: rankScore(p.combined!, p.summary.reviewCount, last.get(p.row.id) ?? null, prior, now),
-        }))
-        .sort((a, b) => b.rank - a.rank || a.name.localeCompare(b.name))
-        .map(({ rank: _rank, ...r }) => r);
+      rows = (await loadRankedPlaces(db, cityId))
+        .filter((p) => p.summary.rank != null)
+        .sort((a, b) => a.summary.rank! - b.summary.rank!)
+        .map((p) => ({ id: p.row.id, name: p.row.name, value: p.summary.score!, extra: String(p.summary.reviewCount) }));
     } else if (kind === 'chains') {
+      const places = await loadCityPlaces(db, cityId);
       rows = groupAverage(places, (p) => (p.row.chainId ? { id: p.row.chainId, name: p.row.chainName ?? '' } : null), 1);
     } else {
-      rows = groupAverage(places, (p) => (p.row.district ? { id: p.row.district, name: p.row.district } : null), 2);
+      rows = groupAverage(await loadCityPlaces(db, cityId), (p) => (p.row.district ? { id: p.row.district, name: p.row.district } : null), 2);
     }
     if (kind !== 'spots') rows.sort((a, b) => b.value - a.value || a.name.localeCompare(b.name));
   }

@@ -75,6 +75,19 @@ describe('leaderboards', () => {
     expect(body.some((r) => r.name === 'Шаурма на Патона')).toBe(false);
   });
 
+  it('gives every spot its review count and the same order as the rank on /places', async () => {
+    const [{ body: top }, { body: places }] = await Promise.all([
+      get<LeaderboardRow[]>('/api/cities/lviv/leaderboard?kind=spots'),
+      get<PlaceSummary[]>('/api/cities/lviv/places'),
+    ]);
+    const byId = new Map(places.map((p) => [p.id, p]));
+    for (const r of top) expect(r.extra).toBe(String(byId.get(r.id as number)!.reviewCount));
+    const ranked = places.filter((p) => p.rank != null).sort((a, b) => a.rank! - b.rank!);
+    expect(ranked.map((p) => p.rank)).toEqual(ranked.map((_, i) => i + 1));
+    expect(ranked.slice(0, top.length).map((p) => p.id)).toEqual(top.map((r) => r.id));
+    expect(places.filter((p) => p.score == null || p.status === 'dead').every((p) => p.rank == null)).toBe(true);
+  });
+
   it('ranks chains by the average of their spots', async () => {
     const { body } = await get<LeaderboardRow[]>('/api/cities/lviv/leaderboard?kind=chains');
     expect(body[0]).toMatchObject({ name: 'Кебаб-Шеф', value: 4.4, extra: '2' });

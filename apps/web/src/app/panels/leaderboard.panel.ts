@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
-import { TranslocoDirective } from '@jsverse/transloco';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { ratingColor, type LeaderboardKind, type LeaderboardRow } from '@kebabarium/shared';
 import { ApiService } from '../core/api.service';
+import { formatCount, reviewsText } from '../ui/count';
 import { GlassPanelComponent } from '../ui/glass-panel.component';
+import { IconComponent } from '../ui/icon.component';
 
 @Component({
   selector: 'kb-leaderboard-panel',
-  imports: [GlassPanelComponent, TranslocoDirective],
+  imports: [GlassPanelComponent, IconComponent, TranslocoDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <ng-container *transloco="let t">
@@ -21,6 +23,9 @@ import { GlassPanelComponent } from '../ui/glass-panel.component';
             <li class="row" [class.clickable]="r.kind === 'spots'" (click)="r.kind === 'spots' && pick.emit(+r.id)">
               <span class="rank" [class]="'rank rank-' + r.rank">{{ r.rank }}</span>
               <span class="nm" [attr.title]="r.name">{{ r.name }}</span>
+              @if (r.kind === 'spots' && r.extra) {
+                <span class="n" [attr.title]="reviews(r.extra)"><kb-icon name="chat" [size]="10" />{{ count(r.extra) }}</span>
+              }
               @if (r.kind === 'tasters') {
                 <span class="v count">{{ r.value }}</span>
               } @else {
@@ -49,6 +54,7 @@ import { GlassPanelComponent } from '../ui/glass-panel.component';
     .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
     .v { font-weight: 800; font-variant-numeric: tabular-nums; }
     .count { color: var(--dim); }
+    .n { display: inline-flex; align-items: center; gap: 3px; flex: none; font-size: 10.5px; color: var(--dim); font-variant-numeric: tabular-nums; opacity: .85; }
     .empty { color: var(--dim); font-size: 12px; padding: 8px 4px; }
   `,
 })
@@ -71,5 +77,13 @@ export class LeaderboardPanel {
 
   color(v: number): string {
     return ratingColor(v);
+  }
+
+  private readonly t = inject(TranslocoService);
+  count(n: string | undefined): string {
+    return formatCount(this.t, Number(n ?? 0));
+  }
+  reviews(n: string | undefined): string {
+    return reviewsText(this.t, Number(n ?? 0));
   }
 }

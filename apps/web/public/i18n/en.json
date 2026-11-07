@@ -1,5 +1,12 @@
 {
   "brand": "kebabarium",
+  "reviews": {
+    "none": "no reviews yet",
+    "one": "{{n}} review",
+    "few": "{{n}} reviews",
+    "many": "{{n}} reviews",
+    "other": "{{n}} reviews"
+  },
   "nav": {
     "near": "Nearby",
     "login": "Log in",

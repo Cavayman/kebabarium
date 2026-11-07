@@ -38,6 +38,8 @@ export interface PlaceSummary {
   /** True when Google data is part of this object (UI must show a Google badge). */
   googleAttribution: boolean;
   reviewCount: number;
+  /** Position in the city's "best spots" ranking (1 = best); null for unscored, dead or hidden places. Only on city lists. */
+  rank?: number | null;
 }
 
 export interface ReviewItem {

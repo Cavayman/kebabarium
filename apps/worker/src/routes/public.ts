@@ -5,8 +5,8 @@ import { ApiError } from '../errors';
 import type { AppEnv } from '../env';
 import { loadFeed } from '../services/feed';
 import { findNear, RADII, type Radius } from '../services/geo';
-import { loadLeaderboard } from '../services/leaderboard';
-import { loadCityPlaces, loadPlaceDetail } from '../services/places';
+import { loadLeaderboard, loadRankedPlaces } from '../services/leaderboard';
+import { loadPlaceDetail } from '../services/places';
 import { loadStats } from '../services/stats';
 import { viewerOf } from '../viewer';
 
@@ -64,7 +64,7 @@ publicRoutes.get('/cities', async (c) => {
 });
 
 publicRoutes.get('/cities/:slug/places', async (c) => {
-  const places = await loadCityPlaces(c.env.DB, (await city(c)).id);
+  const places = await loadRankedPlaces(c.env.DB, (await city(c)).id);
   return c.json(places.map((p) => p.summary), 200, { 'Cache-Control': CACHE_30 });
 });
 
